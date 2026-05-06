@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tax Optimization Calculator - AssetIntel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#93000a",
+                        "surface-bright": "#343a3e",
+                        "on-secondary-container": "#a7b6cc",
+                        "inverse-surface": "#dee3e8",
+                        "tertiary-fixed-dim": "#ffb960",
+                        "on-primary-fixed": "#001e2c",
+                        "on-secondary-fixed": "#0d1c2d",
+                        "background": "#0f1418",
+                        "secondary-fixed": "#d4e4fa",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-secondary": "#233143",
+                        "on-primary-fixed-variant": "#004c69",
+                        "inverse-on-surface": "#2c3135",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#303539",
+                        "on-tertiary-fixed": "#2a1700",
+                        "surface-dim": "#0f1418",
+                        "inverse-primary": "#00668a",
+                        "on-primary-container": "#004965",
+                        "on-primary": "#00354a",
+                        "surface-container-low": "#171c20",
+                        "tertiary": "#ffc176",
+                        "primary-fixed-dim": "#7bd0ff",
+                        "outline": "#87929a",
+                        "primary": "#8ed5ff",
+                        "secondary-fixed-dim": "#b9c8de",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-tertiary-container": "#613b00",
+                        "surface": "#0f1418",
+                        "on-surface-variant": "#bdc8d1",
+                        "surface-variant": "#303539",
+                        "surface-container-lowest": "#0a0f12",
+                        "surface-tint": "#7bd0ff",
+                        "primary-container": "#38bdf8",
+                        "secondary-container": "#39485a",
+                        "on-tertiary": "#472a00",
+                        "on-surface": "#dee3e8",
+                        "on-error": "#690005",
+                        "surface-container": "#1b2024",
+                        "primary-fixed": "#c4e7ff",
+                        "tertiary-container": "#f1a02b",
+                        "surface-container-high": "#252b2e",
+                        "on-error-container": "#ffdad6",
+                        "on-background": "#dee3e8",
+                        "secondary": "#b9c8de",
+                        "on-secondary-fixed-variant": "#39485a",
+                        "outline-variant": "#3e484f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "0.5rem",
+                        "unit": "4px",
+                        "row-height-condensed": "28px",
+                        "container-padding": "1rem",
+                        "row-height-standard": "36px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Inter"],
+                        "body": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "mono-data": ["JetBrains Mono"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "mono-data": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glow-alert {
+            box-shadow: 0 0 12px 0 rgba(142, 213, 255, 0.3);
+        }
+        .glow-danger {
+            box-shadow: 0 0 12px 0 rgba(255, 180, 171, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-screen w-64 flex flex-col z-50 bg-slate-950 border-r border-slate-800 shadow-2xl hidden md:flex">
+<div class="px-4 py-6 border-b border-slate-800">
+<div class="flex items-center gap-3">
+<img alt="Firm Logo" class="w-8 h-8 rounded-full" data-alt="A minimalist, high-contrast firm logo featuring sleek geometric initials on a deep blue background, rendered in a professional, ultra-modern corporate identity style suitable for a high-stakes financial terminal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTeJKESNxneIuzn5zWtRSYN3cNqR-jtoajXIJNAG1r1mLkKApNVeb9V6t4k2493kfV6qfbvgJcQLyo1h36_at-J043JfgM_OHYWcXOnB1NWKTIz6gHSUjipvuTPfyPDbe_rf2ayzpEQcb2LtftbyPuW-eQm1IMzftaYXwYncRVf3vadSqpiPCabAhMTA3qlHpZQjYuGvTgFuZgIwoHkUMeVkIgegZ0toCuJRvFqjJGzluqjSeUIXjQbpMWakFnBE0qBZGdIDp1c2s7"/>
+<div>
+<h1 class="text-blue-500 font-black tracking-tighter text-h2 font-h2 uppercase">Alpha Terminal</h1>
+<p class="font-sans text-xs font-medium uppercase tracking-wider text-slate-500">Institutional Grade</p>
+</div>
+</div>
+</div>
+<div class="flex-1 py-4 flex flex-col gap-1 overflow-y-auto">
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">dashboard</span>
+<span class="font-sans text-xs font-medium uppercase tracking-wider">Dashboard</span>
+</a>
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">receipt_long</span>
+<span class="font-sans text-xs font-medium uppercase tracking-wider">Expenses</span>
+</a>
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">account_balance_wallet</span>
+<span class="font-sans text-xs font-medium uppercase tracking-wider">Portfolio</span>
+</a>
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">track_changes</span>
+<span class="font-sans text-xs font-medium uppercase tracking-wider">Strategy</span>
+</a>
+<a class="bg-blue-600/10 text-blue-400 border-l-4 border-blue-500 flex items-center px-4 py-3 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">query_stats</span>
+<span class="font-sans text-xs font-medium uppercase tracking-wider">Analytics</span>
+</a>
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">history</span>
+<span class="font-sans text-xs font-medium uppercase tracking-wider">History</span>
+</a>
+</div>
+<div class="border-t border-slate-800 py-4 flex flex-col gap-1">
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">settings</span>
+<span class="font-sans text-xs font-medium uppercase tracking-wider">Settings</span>
+</a>
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">account_circle</span>
+<span class="font-sans text-xs font-medium uppercase tracking-wider">Profile</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-64 bg-background min-h-screen overflow-hidden">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center h-12 px-4 w-full z-50 bg-white dark:bg-slate-900 docked full-width top-0 border-b border-b border-slate-200 dark:border-slate-800 flat no shadows text-blue-700 dark:text-blue-400 font-sans text-sm tracking-tight cursor-pointer active:opacity-80">
+<div class="flex items-center gap-4">
+<span class="text-lg font-bold text-slate-900 dark:text-white">AssetIntel</span>
+<div class="hidden md:flex items-center bg-surface-container-high rounded-DEFAULT border border-outline-variant px-3 py-1 ml-4 focus-within:border-primary focus-within:glow-alert transition-all">
+<span class="material-symbols-outlined text-outline mr-2 text-[16px]">search</span>
+<input class="bg-transparent border-none outline-none text-on-surface font-body text-body w-48 placeholder:text-outline focus:ring-0 p-0 h-6" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-1.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-DEFAULT">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-1.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-DEFAULT">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="p-1.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-DEFAULT">
+<span class="material-symbols-outlined">help</span>
+</button>
+<img alt="User profile" class="w-7 h-7 rounded-full ml-2 border border-outline-variant cursor-pointer" data-alt="A clean, highly stylized user profile avatar showcasing a bold initial on a bright cyan blue background, reflecting the technical, high-precision aesthetic of a modern financial command center UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCf04qH3c7z67jBv5Jte-rm6THLt0clGfHCJnD5OoqqoYJCwrzFn4RLuOz9dnNDJFkyyff6LNFJ3IJWuBoRBIjIcWxRCEiflWLkR2G-5_pznXowOjiNRyMb-vg7_VuQujL5TwC_UYJP8xIqUNHs-GMavgfNTxv-CP790l-JtF366ix4db2ZUT4Re8uoLZNXQ2CR8P__4zMBTTl7TQalN40HODAWo7y4GZ3YL9vqsj7_-XdenmckeUuOoYc52QmgK6gbg45aCQoi1YTy"/>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 overflow-y-auto p-container-padding flex flex-col gap-container-padding">
+<!-- Header Section -->
+<div class="flex justify-between items-end border-b border-surface-variant pb-2">
+<div>
+<h2 class="font-h1 text-h1 text-on-surface mb-1">Tax Optimization Calculator</h2>
+<p class="font-body text-body text-on-surface-variant">Real-time analysis of fiscal liability and optimization vectors. <span class="text-primary ml-2">• Live Sync</span></p>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-1.5 bg-transparent border border-outline text-on-surface rounded-DEFAULT font-label-caps text-label-caps hover:bg-surface-container-high transition-colors">Export Report</button>
+<button class="px-4 py-1.5 bg-primary-container text-on-primary-container rounded-DEFAULT font-label-caps text-label-caps hover:bg-primary transition-colors glow-alert">Run Simulation</button>
+</div>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-container-padding">
+<!-- Left Column: Inputs -->
+<div class="lg:col-span-3 flex flex-col gap-unit">
+<div class="bg-surface-container border border-surface-variant rounded-lg p-4 h-full">
+<div class="flex items-center gap-2 mb-4 pb-2 border-b border-surface-variant">
+<span class="material-symbols-outlined text-primary text-[18px]">manage_accounts</span>
+<h3 class="font-label-caps text-label-caps text-primary uppercase">Tax Profile &amp; Inputs</h3>
+</div>
+<div class="space-y-4">
+<!-- Filing Status -->
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">Filing Status</label>
+<select class="w-full bg-surface-container-highest border border-outline-variant rounded-DEFAULT text-on-surface font-body text-body py-1.5 px-2 focus:border-primary focus:ring-0 focus:glow-alert transition-all">
+<option>Single</option>
+<option>Married Filing Jointly</option>
+<option>Married Filing Separately</option>
+<option>Head of Household</option>
+</select>
+</div>
+<!-- Gross Income -->
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">Gross Income (W2/1099)</label>
+<div class="relative">
+<span class="absolute left-2 top-1.5 text-on-surface-variant font-mono-data text-mono-data">$</span>
+<input class="w-full bg-surface-container-highest border border-outline-variant rounded-DEFAULT text-on-surface font-mono-data text-mono-data py-1.5 pl-6 pr-2 focus:border-primary focus:ring-0 focus:glow-alert transition-all text-right" type="text" value="245,000"/>
+</div>
+</div>
+<div class="border-t border-surface-variant pt-3 mt-2">
+<span class="block font-label-caps text-label-caps text-on-surface-variant mb-3 uppercase">Itemized Deductions</span>
+<div class="space-y-3">
+<div>
+<div class="flex justify-between mb-1">
+<label class="font-body text-body text-on-surface">Mortgage Interest</label>
+</div>
+<div class="relative">
+<span class="absolute left-2 top-1.5 text-on-surface-variant font-mono-data text-mono-data">$</span>
+<input class="w-full bg-surface-container-highest border border-outline-variant rounded-DEFAULT text-on-surface font-mono-data text-mono-data py-1.5 pl-6 pr-2 focus:border-primary focus:ring-0 focus:glow-alert transition-all text-right" type="text" value="18,450"/>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<label class="font-body text-body text-on-surface">Charitable Contributions</label>
+</div>
+<div class="relative">
+<span class="absolute left-2 top-1.5 text-on-surface-variant font-mono-data text-mono-data">$</span>
+<input class="w-full bg-surface-container-highest border border-outline-variant rounded-DEFAULT text-on-surface font-mono-data text-mono-data py-1.5 pl-6 pr-2 focus:border-primary focus:ring-0 focus:glow-alert transition-all text-right" type="text" value="12,000"/>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<label class="font-body text-body text-on-surface">State &amp; Local Taxes (SALT)</label>
+</div>
+<div class="relative">
+<span class="absolute left-2 top-1.5 text-on-surface-variant font-mono-data text-mono-data">$</span>
+<input class="w-full bg-surface-container-highest opacity-50 border border-outline-variant rounded-DEFAULT text-on-surface font-mono-data text-mono-data py-1.5 pl-6 pr-2 text-right cursor-not-allowed" disabled="" type="text" value="10,000"/>
+</div>
+<span class="text-[10px] text-error font-mono-data mt-1 block">Capped at $10k</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Center Column: Breakdown -->
+<div class="lg:col-span-6 flex flex-col gap-unit">
+<div class="bg-surface-container border border-surface-variant rounded-lg p-4 h-full flex flex-col">
+<div class="flex items-center justify-between mb-4 pb-2 border-b border-surface-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-container text-[18px]">waterfall_chart</span>
+<h3 class="font-label-caps text-label-caps text-tertiary-container uppercase">Tax Liability Breakdown</h3>
+</div>
+<span class="font-mono-data text-mono-data text-on-surface-variant">Effective Rate: <span class="text-primary font-bold">24.8%</span></span>
+</div>
+<!-- Faux Chart Area -->
+<div class="flex-1 flex items-end justify-between py-6 relative px-4 border border-surface-variant bg-surface-container-lowest rounded-DEFAULT mb-4 min-h-[200px]">
+<!-- Grid lines -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20 py-6">
+<div class="border-b border-outline-variant w-full"></div>
+<div class="border-b border-outline-variant w-full"></div>
+<div class="border-b border-outline-variant w-full"></div>
+<div class="border-b border-outline-variant w-full"></div>
+</div>
+<!-- Waterfall Bars -->
+<div class="flex flex-col items-center z-10 w-1/5 h-[90%]">
+<span class="font-mono-data text-[10px] text-on-surface-variant mb-1">$245k</span>
+<div class="w-full flex-1 bg-secondary-container border border-outline-variant rounded-t-sm"></div>
+<span class="font-label-caps text-[9px] mt-2 text-on-surface-variant">GROSS</span>
+</div>
+<div class="flex flex-col items-center z-10 w-1/5 h-[15%] self-start mt-[10%]">
+<span class="font-mono-data text-[10px] text-error mb-1">-$40k</span>
+<div class="w-full h-full bg-error-container/50 border border-error/50 rounded-sm"></div>
+<span class="font-label-caps text-[9px] mt-2 text-on-surface-variant">DEDUCT</span>
+</div>
+<div class="flex flex-col items-center z-10 w-1/5 h-[75%]">
+<span class="font-mono-data text-[10px] text-primary mb-1">$205k</span>
+<div class="w-full flex-1 bg-primary-container border border-primary glow-alert rounded-sm"></div>
+<span class="font-label-caps text-[9px] mt-2 text-on-surface-variant">TAXABLE</span>
+</div>
+<div class="flex flex-col items-center z-10 w-1/5 h-[25%] self-start mt-[25%]">
+<span class="font-mono-data text-[10px] text-tertiary mb-1">-$60k</span>
+<div class="w-full h-full bg-tertiary-container/80 border border-tertiary rounded-sm"></div>
+<span class="font-label-caps text-[9px] mt-2 text-on-surface-variant">LIABILITY</span>
+</div>
+<div class="flex flex-col items-center z-10 w-1/5 h-[50%]">
+<span class="font-mono-data text-[10px] text-primary-fixed mb-1">$145k</span>
+<div class="w-full flex-1 bg-primary-fixed/20 border border-primary-fixed rounded-sm"></div>
+<span class="font-label-caps text-[9px] mt-2 text-on-surface-variant">NET</span>
+</div>
+</div>
+<!-- Data Summary -->
+<div class="grid grid-cols-3 gap-2">
+<div class="bg-surface-container-highest p-2 rounded-DEFAULT border border-surface-variant">
+<span class="block font-label-caps text-[10px] text-on-surface-variant mb-1 uppercase">Fed Bracket</span>
+<span class="font-mono-data text-h2 font-h2 text-on-surface">32%</span>
+</div>
+<div class="bg-surface-container-highest p-2 rounded-DEFAULT border border-surface-variant">
+<span class="block font-label-caps text-[10px] text-on-surface-variant mb-1 uppercase">State Bracket</span>
+<span class="font-mono-data text-h2 font-h2 text-on-surface">9.3%</span>
+</div>
+<div class="bg-surface-container-highest p-2 rounded-DEFAULT border border-surface-variant">
+<span class="block font-label-caps text-[10px] text-on-surface-variant mb-1 uppercase">Est Liability</span>
+<span class="font-mono-data text-h2 font-h2 text-tertiary">$60,760</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Optimization & Summary -->
+<div class="lg:col-span-3 flex flex-col gap-container-padding">
+<!-- Summary Card -->
+<div class="bg-surface-container border border-primary/50 glow-alert rounded-lg p-4 relative overflow-hidden">
+<!-- Abstract BG Gradient -->
+<div class="absolute -right-10 -top-10 w-32 h-32 bg-primary-container opacity-10 rounded-full blur-2xl"></div>
+<div class="flex items-center gap-2 mb-2 relative z-10">
+<span class="material-symbols-outlined text-primary text-[18px]">savings</span>
+<h3 class="font-label-caps text-label-caps text-primary uppercase">Potential Savings</h3>
+</div>
+<div class="relative z-10 mt-2">
+<span class="block font-mono-data text-[32px] leading-tight font-bold text-on-surface tracking-tighter">
+                                $14,250<span class="text-body text-on-surface-variant ml-1 font-body">.00</span>
+</span>
+<span class="font-label-caps text-[10px] text-primary-fixed-dim uppercase mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">trending_down</span>
+                                Reduces liability to $46,510
+                            </span>
+</div>
+</div>
+<!-- Strategies -->
+<div class="bg-surface-container border border-surface-variant rounded-lg p-4 flex-1">
+<div class="flex items-center gap-2 mb-4 pb-2 border-b border-surface-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">tune</span>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase">Optimization Strategies</h3>
+</div>
+<div class="space-y-4">
+<!-- Toggle 1 -->
+<div class="flex items-start justify-between group">
+<div>
+<h4 class="font-body text-body text-on-surface font-semibold group-hover:text-primary transition-colors">Max 401(k) Contribution</h4>
+<p class="font-mono-data text-[10px] text-on-surface-variant mt-0.5">Est. Savings: <span class="text-primary">$7,360</span></p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:border-outline after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="border-t border-surface-variant w-full h-px"></div>
+<!-- Toggle 2 -->
+<div class="flex items-start justify-between group">
+<div>
+<h4 class="font-body text-body text-on-surface font-semibold group-hover:text-primary transition-colors">HSA Max Funding</h4>
+<p class="font-mono-data text-[10px] text-on-surface-variant mt-0.5">Est. Savings: <span class="text-primary">$1,240</span></p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:border-outline after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="border-t border-surface-variant w-full h-px"></div>
+<!-- Toggle 3 -->
+<div class="flex items-start justify-between group">
+<div>
+<h4 class="font-body text-body text-on-surface font-semibold group-hover:text-primary transition-colors">Tax-Loss Harvesting</h4>
+<p class="font-mono-data text-[10px] text-on-surface-variant mt-0.5">Est. Savings: <span class="text-primary">$900</span></p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:border-outline after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="border-t border-surface-variant w-full h-px"></div>
+<!-- Toggle 4 -->
+<div class="flex items-start justify-between group">
+<div>
+<h4 class="font-body text-body text-on-surface font-semibold group-hover:text-primary transition-colors">Donor Advised Fund</h4>
+<p class="font-mono-data text-[10px] text-on-surface-variant mt-0.5">Est. Savings: <span class="text-primary">$4,750</span></p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:border-outline after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Table: Multi-Year Projection -->
+<div class="bg-surface-container border border-surface-variant rounded-lg overflow-hidden mt-2">
+<div class="flex items-center gap-2 p-3 border-b border-surface-variant bg-surface-container-highest">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">calendar_month</span>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase">Multi-Year Projection (Optimized)</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-mono-data text-mono-data">
+<thead class="bg-surface-container-low border-b border-surface-variant text-on-surface-variant">
+<tr>
+<th class="px-4 py-2 font-medium">Year</th>
+<th class="px-4 py-2 font-medium">Est. Gross</th>
+<th class="px-4 py-2 font-medium">Deductions</th>
+<th class="px-4 py-2 font-medium">Taxable Base</th>
+<th class="px-4 py-2 font-medium">Liability</th>
+<th class="px-4 py-2 font-medium text-right">Eff. Rate</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-variant">
+<tr class="hover:bg-surface-container-highest transition-colors cursor-default bg-primary-fixed/5 border-l-2 border-primary">
+<td class="px-4 py-1.5 text-primary">2024 (Current)</td>
+<td class="px-4 py-1.5 text-on-surface">$245,000</td>
+<td class="px-4 py-1.5 text-error">-$40,450</td>
+<td class="px-4 py-1.5 text-on-surface">$204,550</td>
+<td class="px-4 py-1.5 text-tertiary">$46,510</td>
+<td class="px-4 py-1.5 text-right text-on-surface">18.9%</td>
+</tr>
+<tr class="hover:bg-surface-container-highest transition-colors cursor-default">
+<td class="px-4 py-1.5 text-on-surface-variant">2025</td>
+<td class="px-4 py-1.5 text-on-surface">$257,250</td>
+<td class="px-4 py-1.5 text-error">-$41,200</td>
+<td class="px-4 py-1.5 text-on-surface">$216,050</td>
+<td class="px-4 py-1.5 text-tertiary">$49,691</td>
+<td class="px-4 py-1.5 text-right text-on-surface">19.3%</td>
+</tr>
+<tr class="hover:bg-surface-container-highest transition-colors cursor-default">
+<td class="px-4 py-1.5 text-on-surface-variant">2026</td>
+<td class="px-4 py-1.5 text-on-surface">$270,112</td>
+<td class="px-4 py-1.5 text-error">-$42,000</td>
+<td class="px-4 py-1.5 text-on-surface">$228,112</td>
+<td class="px-4 py-1.5 text-tertiary">$53,606</td>
+<td class="px-4 py-1.5 text-right text-on-surface">19.8%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>What-If Scenario Builder</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#001e2c",
+                        "outline-variant": "#3e484f",
+                        "on-tertiary": "#472a00",
+                        "secondary-fixed": "#d4e4fa",
+                        "on-secondary-fixed": "#0d1c2d",
+                        "outline": "#87929a",
+                        "on-tertiary-container": "#613b00",
+                        "on-background": "#dee3e8",
+                        "tertiary-container": "#f1a02b",
+                        "surface-container": "#1b2024",
+                        "surface": "#0f1418",
+                        "on-tertiary-fixed": "#2a1700",
+                        "inverse-on-surface": "#2c3135",
+                        "on-surface": "#dee3e8",
+                        "surface-bright": "#343a3e",
+                        "surface-container-low": "#171c20",
+                        "secondary": "#b9c8de",
+                        "error": "#ffb4ab",
+                        "background": "#0f1418",
+                        "surface-container-highest": "#303539",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "secondary-container": "#39485a",
+                        "inverse-surface": "#dee3e8",
+                        "on-error-container": "#ffdad6",
+                        "inverse-primary": "#00668a",
+                        "on-secondary-fixed-variant": "#39485a",
+                        "surface-tint": "#7bd0ff",
+                        "primary-fixed-dim": "#7bd0ff",
+                        "surface-dim": "#0f1418",
+                        "on-error": "#690005",
+                        "primary-container": "#38bdf8",
+                        "tertiary-fixed-dim": "#ffb960",
+                        "surface-container-lowest": "#0a0f12",
+                        "on-primary": "#00354a",
+                        "surface-variant": "#303539",
+                        "primary": "#8ed5ff",
+                        "primary-fixed": "#c4e7ff",
+                        "on-secondary": "#233143",
+                        "on-primary-container": "#004965",
+                        "on-surface-variant": "#bdc8d1",
+                        "error-container": "#93000a",
+                        "secondary-fixed-dim": "#b9c8de",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-secondary-container": "#a7b6cc",
+                        "tertiary": "#ffc176",
+                        "surface-container-high": "#252b2e",
+                        "on-primary-fixed-variant": "#004c69"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding": "1rem",
+                        "row-height-condensed": "28px",
+                        "row-height-standard": "36px",
+                        "unit": "4px",
+                        "gutter": "0.5rem"
+                    },
+                    "fontFamily": {
+                        "h2": ["Inter"],
+                        "mono-data": ["JetBrains Mono"],
+                        "label-caps": ["Inter"],
+                        "body": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "mono-data": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom Scrollbar for tight spaces */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3e484f;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #87929a;
+        }
+        
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 12px;
+            width: 12px;
+            border-radius: 0;
+            background: #8ed5ff;
+            cursor: pointer;
+            margin-top: -4px;
+            box-shadow: 0 0 8px rgba(142, 213, 255, 0.4);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #3e484f;
+        }
+        
+        /* Toggle Styling */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #8ed5ff;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #004965;
+        }
+        
+        /* Glow Effects */
+        .glow-success {
+            box-shadow: 0 0 12px rgba(123, 208, 255, 0.3);
+        }
+        .glow-danger {
+            box-shadow: 0 0 12px rgba(255, 180, 171, 0.3);
+        }
+        
+        /* Chart Grid Lines Simulation */
+        .bg-grid-pattern {
+            background-image: 
+                linear-gradient(to right, rgba(62, 72, 79, 0.2) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(62, 72, 79, 0.2) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar JSON Component -->
+<header class="flex justify-between items-center h-12 px-4 w-full z-50 bg-white dark:bg-slate-900 font-sans text-sm tracking-tight border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-4">
+<span class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">AssetIntel</span>
+<div class="hidden md:flex items-center bg-surface-container border border-outline-variant px-2 py-1 gap-2 focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-outline text-[18px]">search</span>
+<input class="bg-transparent border-none text-on-surface text-mono-data focus:ring-0 w-64 p-0 placeholder-outline-variant" placeholder="Search scenarios, metrics..." type="text"/>
+</div>
+</div>
+<!-- App Navigation Header (Scenario Selection context) -->
+<div class="flex items-center gap-6">
+<nav class="flex items-center gap-4">
+<a class="text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors px-2 py-1" href="#">Dashboard</a>
+<a class="text-blue-700 dark:text-blue-400 font-semibold cursor-pointer active:opacity-80 px-2 py-1" href="#">What-If Scenarios</a>
+<a class="text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors px-2 py-1" href="#">Reports</a>
+</nav>
+<div class="flex items-center gap-3">
+<button class="text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer active:opacity-80"><span class="material-symbols-outlined">notifications</span></button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer active:opacity-80"><span class="material-symbols-outlined">settings</span></button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer active:opacity-80"><span class="material-symbols-outlined">help</span></button>
+<img alt="User profile" class="w-7 h-7 rounded bg-surface-container-high border border-outline-variant object-cover ml-2" data-alt="A close-up portrait of a professional individual in a corporate setting, looking directly at the camera with a confident expression. The lighting is studio-quality, casting subtle shadows that highlight their features, set against a dark, minimalist background. The overall aesthetic is sharp, modern, and serious, fitting a high-end financial or tech dashboard context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3YZbrQqz1uWUMAOyjQgbjHODDEbGk4Wc4TOLNjx6_U84lxO5MlAkMe0UxF10Q7VoyovNCasHOEuV-gC6vYgeZrCW1odxLBykxiDloB7CCFD0seI1wifc5lYKe5-IYQOERQfijbCqUF9gUaBP1mA8xe-f7Z5dSBUx-CgVZ6QupzvpMwikCrAGdSs7q0JhS3pRsM3iIGTeO_RCc6YXhfIDLncELF1qI7TWKmG7OpyFp4KfBFdP5_KaQOVjiEjP21x_hUpLdSmTsWY2F"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- SideNavBar JSON Component (Hidden on Mobile) -->
+<nav class="hidden md:flex flex-col bg-slate-950 border-r border-slate-800 w-64 h-full shrink-0 shadow-2xl z-40">
+<div class="p-4 border-b border-slate-800 flex items-center gap-3">
+<div class="w-8 h-8 bg-blue-900 flex items-center justify-center border border-blue-700 text-blue-400 font-bold">A</div>
+<div>
+<div class="text-blue-500 font-black tracking-tighter text-sm uppercase">Alpha Terminal</div>
+<div class="text-slate-500 text-[10px] uppercase tracking-widest">Institutional Grade</div>
+</div>
+</div>
+<div class="flex-1 py-4 flex flex-col gap-1 font-sans text-xs font-medium uppercase tracking-wider">
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">dashboard</span>
+    Dashboard
+</a>
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">receipt_long</span>
+    Expenses
+</a>
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">account_balance_wallet</span>
+    Portfolio
+</a>
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">insights</span>
+    Strategy
+</a>
+<a class="bg-blue-600/10 text-blue-400 border-l-4 border-blue-500 flex items-center px-4 py-3 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px] fill">query_stats</span>
+    Analytics
+</a>
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">history</span>
+    History
+</a>
+</div>
+<div class="border-t border-slate-800 p-4 font-sans text-xs font-medium uppercase tracking-wider">
+<a class="text-slate-400 flex items-center px-4 py-2 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">settings</span>
+    Settings
+</a>
+<a class="text-slate-400 flex items-center px-4 py-2 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">person</span>
+    Profile
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-hidden bg-background">
+<!-- Scenario Control Header -->
+<div class="h-14 bg-surface-container-low border-b border-outline-variant flex items-center justify-between px-container-padding shrink-0">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline">account_tree</span>
+<h1 class="font-h1 text-h1 text-on-surface">Scenario Engine</h1>
+</div>
+<div class="h-6 w-px bg-outline-variant"></div>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">ACTIVE MODEL:</span>
+<select class="bg-surface border border-outline-variant text-primary font-mono-data text-mono-data py-1 pl-2 pr-8 focus:ring-1 focus:ring-primary focus:border-primary">
+<option>Aggressive Debt Payoff</option>
+<option>Baseline</option>
+<option>New Job (Tech)</option>
+<option>Market Downturn Stress Test</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="border border-outline-variant text-on-surface px-3 py-1 font-mono-data text-mono-data hover:bg-surface-container transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">save</span> Save State
+                    </button>
+<button class="bg-primary-container text-on-primary-container px-4 py-1 font-mono-data text-mono-data hover:opacity-90 transition-opacity flex items-center gap-1 glow-success">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span> Run Simulation
+                    </button>
+</div>
+</div>
+<div class="flex-1 flex overflow-hidden">
+<!-- Variables Control Panel (Left) -->
+<aside class="w-80 bg-surface-container border-r border-outline-variant overflow-y-auto shrink-0 flex flex-col">
+<div class="p-3 border-b border-outline-variant bg-surface-container-high sticky top-0 z-10">
+<h2 class="font-label-caps text-label-caps text-on-surface tracking-wider">Simulation Variables</h2>
+</div>
+<div class="p-4 flex flex-col gap-6">
+<!-- Income Adjustments -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-h2 text-body font-semibold text-primary">Income Adjustments</span>
+<span class="material-symbols-outlined text-outline text-[16px]">payments</span>
+</div>
+<div class="bg-surface p-3 border border-outline-variant flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<label class="font-label-caps text-[10px] text-on-surface-variant">BASE SALARY DELTA</label>
+<span class="font-mono-data text-mono-data text-surface-tint">+$15,000</span>
+</div>
+<input max="50000" min="-50000" step="1000" type="range" value="15000"/>
+<div class="flex justify-between font-mono-data text-[10px] text-outline">
+<span>-50k</span>
+<span>0</span>
+<span>+50k</span>
+</div>
+</div>
+<div class="bg-surface p-3 border border-outline-variant flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<label class="font-label-caps text-[10px] text-on-surface-variant">ANNUAL BONUS %</label>
+<span class="font-mono-data text-mono-data text-on-surface">15%</span>
+</div>
+<div class="flex items-center border border-outline-variant bg-surface-container-lowest">
+<button class="px-2 py-1 text-outline hover:text-on-surface bg-surface-container">-</button>
+<input class="w-full bg-transparent border-none text-center font-mono-data text-mono-data p-1 focus:ring-0" type="text" value="15"/>
+<button class="px-2 py-1 text-outline hover:text-on-surface bg-surface-container">+</button>
+</div>
+</div>
+</div>
+<!-- Debt Payoff -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-h2 text-body font-semibold text-tertiary-container">Debt Accelerated</span>
+<span class="material-symbols-outlined text-outline text-[16px]">credit_score</span>
+</div>
+<div class="flex flex-col gap-2">
+<label class="flex items-center gap-3 p-2 border border-outline-variant bg-surface hover:border-tertiary-container cursor-pointer transition-colors">
+<input checked="" class="form-checkbox bg-transparent border-outline-variant text-tertiary-container rounded-none focus:ring-tertiary-container focus:ring-offset-0 focus:ring-offset-surface w-4 h-4" type="checkbox"/>
+<div class="flex-1">
+<div class="font-body text-body text-on-surface">Chase Sapphire</div>
+<div class="font-mono-data text-[10px] text-error">Bal: $4,250 @ 22.9%</div>
+</div>
+<span class="font-mono-data text-mono-data text-on-surface-variant">+$500/mo</span>
+</label>
+<label class="flex items-center gap-3 p-2 border border-outline-variant bg-surface hover:border-tertiary-container cursor-pointer transition-colors">
+<input class="form-checkbox bg-transparent border-outline-variant text-tertiary-container rounded-none focus:ring-tertiary-container focus:ring-offset-0 focus:ring-offset-surface w-4 h-4" type="checkbox"/>
+<div class="flex-1">
+<div class="font-body text-body text-on-surface">Auto Loan</div>
+<div class="font-mono-data text-[10px] text-error">Bal: $18,400 @ 5.4%</div>
+</div>
+<span class="font-mono-data text-mono-data text-on-surface-variant">+$200/mo</span>
+</label>
+</div>
+</div>
+<!-- Expense Cuts -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-h2 text-body font-semibold text-secondary">Expense Optimization</span>
+<span class="material-symbols-outlined text-outline text-[16px]">content_cut</span>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between p-2 border border-outline-variant bg-surface">
+<div class="flex flex-col">
+<span class="font-body text-body text-on-surface">Subscription Purge</span>
+<span class="font-mono-data text-[10px] text-surface-tint">Saves $145/mo</span>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-none bg-surface-container border-2 border-outline-variant appearance-none cursor-pointer z-10" id="toggle1" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-none bg-surface-container-highest cursor-pointer border border-outline-variant" for="toggle1"></label>
+</div>
+</div>
+<div class="flex items-center justify-between p-2 border border-outline-variant bg-surface">
+<div class="flex flex-col">
+<span class="font-body text-body text-on-surface">Reduce Dining Out</span>
+<span class="font-mono-data text-[10px] text-surface-tint">Saves $300/mo</span>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-5 h-5 rounded-none bg-surface-container border-2 border-outline-variant appearance-none cursor-pointer z-10" id="toggle2" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-none bg-surface-container-highest cursor-pointer border border-outline-variant" for="toggle2"></label>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Visualization & Metrics Canvas -->
+<section class="flex-1 flex flex-col p-container-padding gap-container-padding overflow-y-auto">
+<!-- KPI Cards Row -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-container-padding shrink-0">
+<!-- Metric 1 -->
+<div class="bg-surface border border-outline-variant p-4 flex flex-col relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-surface-tint opacity-5 blur-xl"></div>
+<span class="font-label-caps text-label-caps text-outline mb-1">CASH FLOW DELTA (MO)</span>
+<div class="flex items-end gap-2">
+<span class="font-mono-data text-2xl font-bold text-surface-tint">+$645.00</span>
+<span class="font-mono-data text-[10px] text-on-surface-variant mb-1 pb-1">vs Base</span>
+</div>
+<div class="mt-2 h-1 w-full bg-surface-container-highest">
+<div class="h-full bg-surface-tint w-[75%]"></div>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="bg-surface border border-outline-variant p-4 flex flex-col border-l-2 border-l-tertiary-container relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-tertiary-container opacity-5 blur-xl"></div>
+<span class="font-label-caps text-label-caps text-outline mb-1">INTEREST SAVED (TOTAL)</span>
+<div class="flex items-end gap-2">
+<span class="font-mono-data text-2xl font-bold text-tertiary-container">$4,120.50</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary-container mb-1">trending_down</span>
+</div>
+<div class="mt-2 font-mono-data text-[10px] text-outline flex justify-between">
+<span>Current: $5,800</span>
+<span>New: $1,679</span>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="bg-surface border border-outline-variant p-4 flex flex-col relative overflow-hidden glow-success border-primary">
+<div class="absolute top-0 right-0 w-16 h-16 bg-primary opacity-10 blur-xl"></div>
+<span class="font-label-caps text-label-caps text-outline mb-1">YEARS TO FI DELTA</span>
+<div class="flex items-end gap-2">
+<span class="font-mono-data text-2xl font-bold text-primary">-2.4 YRS</span>
+<span class="font-mono-data text-[10px] text-primary mb-1 bg-primary/10 px-1 py-0.5">Accelerated</span>
+</div>
+<div class="mt-2 font-mono-data text-[10px] text-outline flex justify-between">
+<span>Base: 15.2y</span>
+<span>Proj: 12.8y</span>
+</div>
+</div>
+</div>
+<!-- Main Chart Area (Simulated) -->
+<div class="bg-surface border border-outline-variant flex-1 min-h-[300px] flex flex-col relative">
+<div class="p-3 border-b border-outline-variant flex justify-between items-center bg-surface-container-low z-10">
+<h3 class="font-label-caps text-label-caps text-on-surface">NET WORTH PROJECTION <span class="text-outline font-normal">(10 YR)</span></h3>
+<div class="flex gap-4">
+<div class="flex items-center gap-1">
+<div class="w-3 h-px bg-outline-variant dashed"></div>
+<span class="font-mono-data text-[10px] text-outline">Baseline</span>
+</div>
+<div class="flex items-center gap-1">
+<div class="w-3 h-[2px] bg-primary glow-success"></div>
+<span class="font-mono-data text-[10px] text-primary">Scenario</span>
+</div>
+</div>
+</div>
+<!-- Chart Canvas (Simulated with Grid and SVG paths) -->
+<div class="flex-1 relative bg-grid-pattern overflow-hidden p-4">
+<!-- Y-Axis Labels -->
+<div class="absolute left-4 top-4 bottom-4 flex flex-col justify-between font-mono-data text-[10px] text-outline z-10">
+<span>$1.0M</span>
+<span>$750K</span>
+<span>$500K</span>
+<span>$250K</span>
+<span>$0</span>
+</div>
+<!-- X-Axis Labels -->
+<div class="absolute left-16 right-4 bottom-2 flex justify-between font-mono-data text-[10px] text-outline z-10">
+<span>Y0</span>
+<span>Y2</span>
+<span>Y4</span>
+<span>Y6</span>
+<span>Y8</span>
+<span>Y10</span>
+</div>
+<!-- Lines -->
+<div class="absolute inset-0 left-16 bottom-8 right-4 top-4">
+<svg class="overflow-visible" height="100%" preserveaspectratio="none" viewbox="0 0 100 100" width="100%">
+<!-- Baseline (Dashed, muted) -->
+<path d="M 0,90 Q 20,85 40,70 T 80,40 T 100,20" fill="none" stroke="#3e484f" stroke-dasharray="2,2" stroke-width="1"></path>
+<!-- Scenario (Solid, glowing) -->
+<path d="M 0,90 Q 20,80 40,55 T 80,20 T 100,0" fill="none" filter="drop-shadow(0 0 4px rgba(142,213,255,0.4))" stroke="#8ed5ff" stroke-width="2"></path>
+<!-- Data Point Highlight -->
+<circle cx="80" cy="20" fill="#0f1418" r="3" stroke="#8ed5ff" stroke-width="2"></circle>
+<line opacity="0.5" stroke="#8ed5ff" stroke-dasharray="1,3" stroke-width="1" x1="80" x2="80" y1="20" y2="100"></line>
+</svg>
+<!-- Tooltip Simulation -->
+<div class="absolute bg-surface-container border border-outline-variant p-2 shadow-lg" style="left: 75%; top: 5%;">
+<div class="font-label-caps text-[10px] text-outline mb-1">YEAR 8</div>
+<div class="font-mono-data text-xs text-primary">Proj: $845,000</div>
+<div class="font-mono-data text-xs text-outline-variant">Base: $620,000</div>
+<div class="mt-1 pt-1 border-t border-outline-variant font-mono-data text-[10px] text-surface-tint">
+                                        Δ +$225,000
+                                    </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Comparison Table -->
+<div class="bg-surface border border-outline-variant flex flex-col shrink-0">
+<div class="p-2 border-b border-outline-variant bg-surface-container-highest">
+<h3 class="font-label-caps text-[10px] text-on-surface">5-YEAR IMPACT BREAKDOWN</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse font-mono-data text-mono-data">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="p-2 font-normal text-outline w-1/4">BUCKET</th>
+<th class="p-2 font-normal text-outline text-right w-1/4">BASELINE</th>
+<th class="p-2 font-normal text-outline text-right w-1/4">SCENARIO</th>
+<th class="p-2 font-normal text-outline text-right w-1/4">VARIANCE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-outline-variant hover:bg-surface-container-highest transition-colors h-[28px]">
+<td class="p-2 text-on-surface">Tax Liability</td>
+<td class="p-2 text-right text-on-surface-variant">$124,500</td>
+<td class="p-2 text-right text-on-surface">$132,000</td>
+<td class="p-2 text-right text-error">+$7,500</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-highest transition-colors h-[28px]">
+<td class="p-2 text-on-surface">Debt Paid</td>
+<td class="p-2 text-right text-on-surface-variant">$24,000</td>
+<td class="p-2 text-right text-on-surface">$42,000</td>
+<td class="p-2 text-right text-tertiary-container">+$18,000</td>
+</tr>
+<tr class="hover:bg-surface-container-highest transition-colors h-[28px]">
+<td class="p-2 text-on-surface">Investments</td>
+<td class="p-2 text-right text-on-surface-variant">$85,000</td>
+<td class="p-2 text-right text-on-surface">$142,500</td>
+<td class="p-2 text-right text-primary bg-primary/5">+$57,500</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>

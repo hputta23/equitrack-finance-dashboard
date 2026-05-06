@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AssetIntel - Income Strategy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ffb4ab",
+                        "surface-bright": "#343a3e",
+                        "on-background": "#dee3e8",
+                        "primary-fixed": "#c4e7ff",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#303539",
+                        "on-tertiary-container": "#613b00",
+                        "on-surface-variant": "#bdc8d1",
+                        "outline-variant": "#3e484f",
+                        "on-tertiary": "#472a00",
+                        "on-primary-fixed-variant": "#004c69",
+                        "surface-variant": "#303539",
+                        "on-secondary-fixed-variant": "#39485a",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#0d1c2d",
+                        "primary-fixed-dim": "#7bd0ff",
+                        "on-surface": "#dee3e8",
+                        "surface-container-high": "#252b2e",
+                        "inverse-on-surface": "#2c3135",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "surface-dim": "#0f1418",
+                        "on-primary-container": "#004965",
+                        "surface-container-lowest": "#0a0f12",
+                        "on-error-container": "#ffdad6",
+                        "on-primary": "#00354a",
+                        "inverse-surface": "#dee3e8",
+                        "secondary-fixed": "#d4e4fa",
+                        "outline": "#87929a",
+                        "tertiary": "#ffc176",
+                        "background": "#0f1418",
+                        "primary-container": "#38bdf8",
+                        "primary": "#8ed5ff",
+                        "secondary-fixed-dim": "#b9c8de",
+                        "tertiary-fixed": "#ffddb8",
+                        "tertiary-fixed-dim": "#ffb960",
+                        "surface": "#0f1418",
+                        "on-primary-fixed": "#001e2c",
+                        "secondary": "#b9c8de",
+                        "on-tertiary-fixed": "#2a1700",
+                        "surface-container": "#1b2024",
+                        "secondary-container": "#39485a",
+                        "on-secondary": "#233143",
+                        "surface-tint": "#7bd0ff",
+                        "surface-container-low": "#171c20",
+                        "tertiary-container": "#f1a02b",
+                        "on-secondary-container": "#a7b6cc",
+                        "inverse-primary": "#00668a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "0.5rem",
+                        "unit": "4px",
+                        "row-height-standard": "36px",
+                        "row-height-condensed": "28px",
+                        "container-padding": "1rem"
+                    },
+                    "fontFamily": {
+                        "body": ["Inter"],
+                        "h2": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h1": ["Inter"],
+                        "mono-data": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "h2": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "h1": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "mono-data": ["12px", { "lineHeight": "16px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        /* Custom Sankey-like curves */
+        .sankey-path {
+            fill: none;
+            stroke-width: 20;
+            stroke-opacity: 0.3;
+        }
+        .sankey-path:hover {
+            stroke-opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body text-body h-screen overflow-hidden flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-screen w-64 flex flex-col z-50 bg-slate-950 border-r border-slate-800 shadow-2xl">
+<div class="p-4 border-b border-slate-800 flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-on-primary-container font-bold">
+                A
+            </div>
+<div>
+<div class="text-blue-500 font-black tracking-tighter text-sm uppercase">Alpha Terminal</div>
+<div class="text-xs text-slate-500 uppercase tracking-widest text-[9px]">Institutional Grade</div>
+</div>
+</div>
+<div class="flex-1 py-4 flex flex-col gap-1">
+<!-- Inactive -->
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98] font-sans text-xs font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">dashboard</span>
+                Dashboard
+            </a>
+<!-- Inactive -->
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98] font-sans text-xs font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">account_balance_wallet</span>
+                Portfolio
+            </a>
+<!-- Active (Semantic match for Strategy/Analytics) -->
+<a class="bg-blue-600/10 text-blue-400 border-l-4 border-blue-500 flex items-center px-4 py-3 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98] font-sans text-xs font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px] icon-fill">query_stats</span>
+                Analytics
+            </a>
+<!-- Inactive -->
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98] font-sans text-xs font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">description</span>
+                Reports
+            </a>
+<!-- Inactive -->
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98] font-sans text-xs font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">verified_user</span>
+                Compliance
+            </a>
+</div>
+<div class="border-t border-slate-800 py-2">
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98] font-sans text-xs font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">headset_mic</span>
+                Support
+            </a>
+<a class="text-slate-400 flex items-center px-4 py-3 hover:text-slate-200 hover:bg-slate-900/50 transition-all duration-150 active:scale-[0.98] font-sans text-xs font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined mr-3 text-[18px]">terminal</span>
+                Logs
+            </a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<div class="ml-64 flex-1 flex flex-col h-full bg-surface-dim relative">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center h-12 px-4 w-full z-50 bg-slate-900 border-b border-slate-800">
+<div class="flex items-center gap-4">
+<div class="font-sans text-sm tracking-tight font-bold text-white">AssetIntel</div>
+<!-- Global Status -->
+<div class="flex items-center gap-2 bg-surface-container-high px-2 py-1 rounded border border-outline-variant">
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(142,213,255,0.6)]"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">System Nominal</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-high px-2 py-1 rounded border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] text-tertiary">sync</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Next Income Sync: 2d</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<!-- Search Bar (Left of icons) -->
+<div class="relative mr-2">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[16px] text-outline">search</span>
+<input class="bg-surface-container h-7 pl-8 pr-3 text-xs border border-outline-variant rounded focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none w-48 text-on-surface placeholder-outline font-mono-data" placeholder="Search entity..." type="text"/>
+</div>
+<button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:bg-slate-800 transition-colors cursor-pointer active:opacity-80 rounded">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:bg-slate-800 transition-colors cursor-pointer active:opacity-80 rounded">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:bg-slate-800 transition-colors cursor-pointer active:opacity-80 rounded">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-7 h-7 rounded bg-surface-container-highest border border-outline-variant ml-2 overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">person</span>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<main class="flex-1 overflow-auto p-container-padding flex gap-gutter">
+<!-- Center Column (Visualization & Table) -->
+<div class="flex-1 flex flex-col gap-gutter">
+<!-- Section Header -->
+<div class="flex justify-between items-end mb-2">
+<div>
+<h1 class="font-h1 text-h1 text-on-surface">Income Strategy</h1>
+<p class="font-body text-body text-on-surface-variant">Real-time allocation flows &amp; distribution targets.</p>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1 bg-surface-container border border-outline-variant text-on-surface text-xs font-mono-data rounded hover:bg-surface-container-high transition-colors">EXPORT CSV</button>
+</div>
+</div>
+<!-- Sankey Viz Panel -->
+<div class="bg-surface border border-outline-variant rounded-DEFAULT p-4 flex-1 min-h-[300px] flex flex-col relative overflow-hidden">
+<div class="absolute top-4 left-4 font-label-caps text-label-caps text-on-surface-variant z-10">INCOME FLOW TOPOLOGY</div>
+<!-- Simplified CSS-based Sankey/Flow representation -->
+<div class="flex-1 flex items-center justify-between mt-6 px-8 relative">
+<!-- Connecting Lines (SVG overlay) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" preserveaspectratio="none">
+<path class="sankey-path" d="M 150,150 C 300,150 400,50 600,50" stroke="#ffb4ab"></path>
+<path class="sankey-path" d="M 150,150 C 300,150 400,150 600,150" stroke="#7bd0ff"></path>
+<path class="sankey-path" d="M 150,150 C 300,150 400,250 600,250" stroke="#ffc176"></path>
+</svg>
+<!-- Source -->
+<div class="z-10 w-48 bg-surface-container border border-outline-variant rounded p-3 flex flex-col shadow-[0_0_15px_rgba(123,208,255,0.1)] border-l-2 border-l-primary">
+<div class="text-[10px] text-on-surface-variant uppercase tracking-wider mb-1">Gross Income (Mo)</div>
+<div class="font-mono-data text-[18px] text-primary">$18,450.00</div>
+</div>
+<!-- Nodes -->
+<div class="z-10 flex flex-col gap-6 w-48">
+<!-- Expenses Node -->
+<div class="bg-surface-container border border-outline-variant rounded p-2 flex flex-col border-l-2 border-l-error">
+<div class="flex justify-between items-center mb-1">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Fixed Exp</span>
+<span class="font-mono-data text-[10px] text-error">42%</span>
+</div>
+<div class="font-mono-data text-[14px] text-on-surface">$7,749.00</div>
+</div>
+<!-- Inv Node -->
+<div class="bg-surface-container border border-outline-variant rounded p-2 flex flex-col border-l-2 border-l-primary">
+<div class="flex justify-between items-center mb-1">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Investments</span>
+<span class="font-mono-data text-[10px] text-primary">35%</span>
+</div>
+<div class="font-mono-data text-[14px] text-on-surface">$6,457.50</div>
+</div>
+<!-- Debt Node -->
+<div class="bg-surface-container border border-outline-variant rounded p-2 flex flex-col border-l-2 border-l-tertiary">
+<div class="flex justify-between items-center mb-1">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Debt Service</span>
+<span class="font-mono-data text-[10px] text-tertiary">23%</span>
+</div>
+<div class="font-mono-data text-[14px] text-on-surface">$4,243.50</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Data Table Panel -->
+<div class="bg-surface border border-outline-variant rounded-DEFAULT flex flex-col h-64 overflow-hidden">
+<div class="p-3 border-b border-outline-variant bg-surface-container-high flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">DISTRIBUTION BREAKDOWN</span>
+<span class="material-symbols-outlined text-[16px] text-outline">filter_list</span>
+</div>
+<div class="overflow-y-auto">
+<table class="w-full text-left border-collapse">
+<thead class="sticky top-0 bg-surface-container-highest z-10">
+<tr>
+<th class="font-label-caps text-label-caps text-on-surface-variant py-2 px-3 border-b border-outline-variant">BUCKET</th>
+<th class="font-label-caps text-label-caps text-on-surface-variant py-2 px-3 border-b border-outline-variant">TARGET %</th>
+<th class="font-label-caps text-label-caps text-on-surface-variant py-2 px-3 border-b border-outline-variant">ACTUAL %</th>
+<th class="font-label-caps text-label-caps text-on-surface-variant py-2 px-3 border-b border-outline-variant text-right">VOLUME ($)</th>
+<th class="font-label-caps text-label-caps text-on-surface-variant py-2 px-3 border-b border-outline-variant text-center">STATUS</th>
+</tr>
+</thead>
+<tbody class="font-mono-data text-mono-data text-on-surface">
+<tr class="border-b border-surface-container hover:bg-surface-container-low transition-colors h-row-height-condensed">
+<td class="py-1 px-3 flex items-center gap-2"><div class="w-2 h-2 bg-error rounded-sm"></div> Housing / Utilities</td>
+<td class="py-1 px-3">30.00%</td>
+<td class="py-1 px-3 text-error">32.50%</td>
+<td class="py-1 px-3 text-right">$5,996.25</td>
+<td class="py-1 px-3 text-center"><span class="px-1.5 py-0.5 bg-error-container text-on-error-container text-[9px] uppercase tracking-wider rounded">OVR</span></td>
+</tr>
+<tr class="border-b border-surface-container hover:bg-surface-container-low transition-colors h-row-height-condensed">
+<td class="py-1 px-3 flex items-center gap-2"><div class="w-2 h-2 bg-primary rounded-sm"></div> Core Equity (S&amp;P)</td>
+<td class="py-1 px-3">20.00%</td>
+<td class="py-1 px-3">20.00%</td>
+<td class="py-1 px-3 text-right">$3,690.00</td>
+<td class="py-1 px-3 text-center"><span class="px-1.5 py-0.5 bg-primary-fixed/20 text-primary text-[9px] uppercase tracking-wider rounded border border-primary/30">NOM</span></td>
+</tr>
+<tr class="border-b border-surface-container hover:bg-surface-container-low transition-colors h-row-height-condensed">
+<td class="py-1 px-3 flex items-center gap-2"><div class="w-2 h-2 bg-primary rounded-sm"></div> Crypto / Alts</td>
+<td class="py-1 px-3">15.00%</td>
+<td class="py-1 px-3">15.00%</td>
+<td class="py-1 px-3 text-right">$2,767.50</td>
+<td class="py-1 px-3 text-center"><span class="px-1.5 py-0.5 bg-primary-fixed/20 text-primary text-[9px] uppercase tracking-wider rounded border border-primary/30">NOM</span></td>
+</tr>
+<tr class="border-b border-surface-container hover:bg-surface-container-low transition-colors h-row-height-condensed">
+<td class="py-1 px-3 flex items-center gap-2"><div class="w-2 h-2 bg-tertiary rounded-sm"></div> Auto Loan (7.2%)</td>
+<td class="py-1 px-3">10.00%</td>
+<td class="py-1 px-3 text-tertiary">12.00%</td>
+<td class="py-1 px-3 text-right">$2,214.00</td>
+<td class="py-1 px-3 text-center"><span class="px-1.5 py-0.5 bg-tertiary-container text-on-tertiary-container text-[9px] uppercase tracking-wider rounded">WRN</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors h-row-height-condensed">
+<td class="py-1 px-3 flex items-center gap-2"><div class="w-2 h-2 bg-error rounded-sm"></div> Groceries / Discr.</td>
+<td class="py-1 px-3">25.00%</td>
+<td class="py-1 px-3">20.50%</td>
+<td class="py-1 px-3 text-right">$3,782.25</td>
+<td class="py-1 px-3 text-center"><span class="px-1.5 py-0.5 bg-surface-container-high border border-outline-variant text-on-surface-variant text-[9px] uppercase tracking-wider rounded">UND</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Right Panel: Manual Allocation -->
+<div class="w-80 bg-surface border border-outline-variant rounded-DEFAULT flex flex-col shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+<div class="p-4 border-b border-outline-variant flex items-center gap-2 bg-surface-container-highest">
+<span class="material-symbols-outlined text-primary text-[18px]">tune</span>
+<h2 class="font-h2 text-h2 text-on-surface">Manual Allocation</h2>
+</div>
+<div class="p-4 flex-1 overflow-y-auto flex flex-col gap-6">
+<p class="font-body text-body text-on-surface-variant text-xs">Adjust target distribution ratios for the next income sync cycle. Changes require secondary authorization.</p>
+<!-- Slider Group 1 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<label class="font-label-caps text-label-caps text-on-surface">FIXED EXPENSES</label>
+<span class="font-mono-data text-mono-data text-error">42%</span>
+</div>
+<input class="w-full h-1 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-error" max="100" min="0" type="range" value="42"/>
+<div class="flex justify-between text-[10px] font-mono-data text-outline">
+<span>0</span>
+<span>$7,749.00</span>
+</div>
+</div>
+<!-- Slider Group 2 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<label class="font-label-caps text-label-caps text-on-surface">INVESTMENTS</label>
+<span class="font-mono-data text-mono-data text-primary">35%</span>
+</div>
+<input class="w-full h-1 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" max="100" min="0" type="range" value="35"/>
+<div class="flex justify-between text-[10px] font-mono-data text-outline">
+<span>0</span>
+<span>$6,457.50</span>
+</div>
+</div>
+<!-- Slider Group 3 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<label class="font-label-caps text-label-caps text-on-surface">DEBT SERVICE</label>
+<span class="font-mono-data text-mono-data text-tertiary">23%</span>
+</div>
+<input class="w-full h-1 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-tertiary" max="100" min="0" type="range" value="23"/>
+<div class="flex justify-between text-[10px] font-mono-data text-outline">
+<span>0</span>
+<span>$4,243.50</span>
+</div>
+</div>
+<!-- Allocation Summary -->
+<div class="mt-auto pt-4 border-t border-outline-variant">
+<div class="flex justify-between items-center mb-4">
+<span class="font-label-caps text-label-caps text-on-surface-variant">TOTAL ALLOCATED</span>
+<span class="font-mono-data text-mono-data text-on-surface">100%</span>
+</div>
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded hover:bg-primary-fixed transition-colors active:shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] shadow-[0_0_10px_rgba(142,213,255,0.2)]">
+                            COMMIT CHANGES
+                        </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Debt &amp; Expense Center | Command Center Protocol</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+        }
+        /* Hide scrollbar for cleaner table look but allow scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Force sharp corners globally for the protocol look */
+        * {
+            border-radius: 0 !important;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "surface": "#0f1418",
+                "surface-dim": "#0f1418",
+                "surface-bright": "#343a3e",
+                "surface-container-lowest": "#0a0f12",
+                "surface-container-low": "#171c20",
+                "surface-container": "#1b2024",
+                "surface-container-high": "#252b2e",
+                "surface-container-highest": "#303539",
+                "on-surface": "#dee3e8",
+                "on-surface-variant": "#bdc8d1",
+                "outline": "#87929a",
+                "outline-variant": "#3e484f",
+                "primary": "#38bdf8",
+                "on-primary": "#001e2c",
+                "primary-container": "#004965",
+                "on-primary-container": "#c4e7ff",
+                "error": "#ffb4ab",
+                "error-container": "#93000a",
+                "background": "#0f1418",
+                "on-background": "#dee3e8"
+              },
+              "spacing": {
+                "gutter": "0.5rem",
+                "unit": "4px",
+                "margin": "1.5rem"
+              },
+              "fontFamily": {
+                "h1": ["Inter", "sans-serif"],
+                "h2": ["Inter", "sans-serif"],
+                "body": ["Inter", "sans-serif"],
+                "mono-data": ["JetBrains Mono", "monospace"]
+              },
+              "fontSize": {
+                "h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                "h2": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "body": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                "mono-data": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-background font-body text-body text-on-surface antialiased flex selection:bg-primary/30">
+<!-- SideNavBar -->
+<nav class="bg-surface-container font-sans text-sm h-screen w-60 border-r border-outline-variant fixed left-0 top-0 flex flex-col z-40">
+<div class="p-4 border-b border-outline-variant">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-7 h-7 bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-size: 18px;">terminal</span>
+</div>
+<div>
+<div class="font-bold text-primary text-base leading-tight uppercase tracking-widest font-mono">WealthMgr</div>
+<div class="text-[9px] text-on-surface-variant uppercase tracking-tighter font-mono-data opacity-70">Protocol v4.2.0</div>
+</div>
+</div>
+</div>
+<div class="flex-1 px-2 py-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-1.5 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all uppercase text-[10px] font-bold tracking-widest" href="#">
+<span class="material-symbols-outlined text-[18px]">dashboard</span>
+            Dashboard
+        </a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-primary bg-primary/10 border-l-2 border-primary transition-all uppercase text-[10px] font-bold tracking-widest" href="#">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+            Expenses
+        </a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all uppercase text-[10px] font-bold tracking-widest" href="#">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+            Portfolio
+        </a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all uppercase text-[10px] font-bold tracking-widest" href="#">
+<span class="material-symbols-outlined text-[18px]">insights</span>
+            Strategy
+        </a>
+</div>
+<div class="px-4 py-4 border-t border-outline-variant">
+<button class="w-full bg-surface-container-high text-on-surface py-2 border border-outline-variant font-bold hover:bg-surface-container-highest transition-colors text-[10px] uppercase tracking-widest border-b-2 border-b-primary/50">
+            Add Transaction
+        </button>
+</div>
+<div class="p-2 border-t border-outline-variant space-y-1">
+<a class="flex items-center gap-3 px-3 py-1.5 text-on-surface-variant hover:text-on-surface uppercase text-[9px] font-bold tracking-widest" href="#">
+<span class="material-symbols-outlined text-[16px]">contact_support</span>
+            Support
+        </a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-on-surface-variant hover:text-on-surface uppercase text-[9px] font-bold tracking-widest" href="#">
+<span class="material-symbols-outlined text-[16px]">logout</span>
+            Sign Out
+        </a>
+</div>
+</nav>
+<!-- Main Workspace Area -->
+<div class="flex-1 ml-60 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface border-b border-outline-variant sticky top-0 z-50 flex items-center justify-between px-6 h-12 w-full">
+<div class="flex items-center gap-4">
+<div class="text-sm font-bold text-on-surface uppercase tracking-[0.2em] font-mono-data">EquiTrack Finance <span class="text-primary/50 mx-2">//</span> <span class="text-on-surface-variant font-medium">Debt_Control_Center</span></div>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1.5 flex items-center justify-center">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1.5 flex items-center justify-center">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-6 w-6 overflow-hidden border border-outline-variant ml-2 bg-surface-container-high">
+<img alt="User" class="h-full w-full object-cover grayscale contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGrFY4vbhv1b4BActd8x4IfBywa2Xlr9GdEN2TPCiBokAUEgH6kDarV4D-h1lOe9yxbRZHxL1UO-RmdeeHo1DHX5Gdn8_CY_6PrwRJTywaaeyk0TLEzGIGEjkXuphntxSiVgP0AOCpap4a8u272HHeLJYP-J1uKxURDo35pMjgy_5ArI9x_06-4FlMTAlhDUIo8_eTXiuQ1SGhAs69MIi4sfzTvL3miYVbOHsAJOgjCTTUDTeHCQtR8T6v3MV4Kva3UCyJR1wK1oNq"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 p-6 flex flex-col gap-6 bg-background">
+<!-- Page Header -->
+<div class="flex items-start justify-between border-b border-outline-variant pb-4">
+<div>
+<h1 class="font-h1 text-h1 text-on-surface uppercase font-mono-data tracking-tight flex items-center gap-3">
+<span class="w-1.5 h-6 bg-primary inline-block"></span>
+                    Debt &amp; Expense Center
+                </h1>
+<p class="text-[11px] text-on-surface-variant uppercase tracking-widest mt-1 opacity-70">Liability Inventory &amp; Capital Cost Monitoring</p>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 border border-outline-variant bg-surface-container-low text-primary hover:bg-surface-container transition-colors font-mono-data text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 14px;">download</span>
+                    Export_CSV
+                </button>
+</div>
+</div>
+<!-- Top Metrics Row -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Total Liabilities -->
+<div class="col-span-12 md:col-span-4 bg-surface-container-low border border-outline-variant p-4">
+<div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.15em] mb-2 flex items-center justify-between">
+<span>Total Outstanding Principal</span>
+<span class="material-symbols-outlined text-outline-variant" style="font-size: 14px;">database</span>
+</div>
+<div class="text-2xl text-primary font-mono-data tracking-tighter font-bold">
+                    $14,250,000.00
+                </div>
+<div class="mt-2 pt-2 border-t border-outline-variant/30 flex items-center justify-between text-[10px] font-mono-data">
+<span class="text-error uppercase">QoQ Δ +1.2%</span>
+<span class="text-on-surface-variant opacity-50">REL: CORE_RESERVE</span>
+</div>
+</div>
+<!-- 30-Day Payables -->
+<div class="col-span-12 md:col-span-4 bg-surface-container-low border border-outline-variant p-4">
+<div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.15em] mb-2 flex items-center justify-between">
+<span>30-Day Projected Cash Drain</span>
+<span class="material-symbols-outlined text-outline-variant" style="font-size: 14px;">schedule</span>
+</div>
+<div class="text-2xl text-primary font-mono-data tracking-tighter font-bold">
+                    $842,150.00
+                </div>
+<div class="mt-2 pt-2 border-t border-outline-variant/30 flex items-center justify-between text-[10px] font-mono-data">
+<span class="text-primary uppercase flex items-center gap-1">
+<span class="w-1 h-1 bg-primary rounded-full"></span> Funded
+                    </span>
+<span class="text-on-surface-variant opacity-50">AUTO_EXEC: ON</span>
+</div>
+</div>
+<!-- Weighted Cost of Capital -->
+<div class="col-span-12 md:col-span-4 bg-error-container/5 border border-error/40 p-4">
+<div class="text-[10px] font-bold text-error uppercase tracking-[0.15em] mb-2 flex items-center justify-between">
+<span>Weighted Avg APR (WACC)</span>
+<span class="material-symbols-outlined text-error" style="font-size: 14px;">warning</span>
+</div>
+<div class="text-2xl text-error font-mono-data tracking-tighter font-bold">
+                    8.45%
+                </div>
+<div class="mt-2 pt-2 border-t border-error/20 flex items-center justify-between text-[10px] font-mono-data">
+<span class="text-error uppercase font-bold">THRESHOLD VIOLATION</span>
+<span class="text-error/50">LIMIT: 6.50%</span>
+</div>
+</div>
+</div>
+<!-- Main Data Section -->
+<div class="grid grid-cols-12 gap-gutter flex-1">
+<!-- Liability Data Table -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container border border-outline-variant flex flex-col overflow-hidden">
+<div class="px-4 py-2 border-b border-outline-variant flex justify-between items-center bg-surface-container-high">
+<h2 class="text-[10px] font-bold text-on-surface uppercase tracking-[0.2em] font-mono-data flex items-center gap-2">
+<span class="w-2 h-2 bg-primary"></span> ACTIVE_LIABILITIES_LIST
+                    </h2>
+<div class="flex gap-2">
+<span class="text-[9px] text-on-surface-variant px-2 py-0.5 bg-surface-container-lowest border border-outline-variant font-mono-data uppercase tracking-widest">FILTER: ALL_STREAMS</span>
+</div>
+</div>
+<div class="flex-1 overflow-auto no-scrollbar bg-surface-container-lowest">
+<table class="w-full text-left border-collapse">
+<thead class="sticky top-0 bg-surface-container-low border-b border-outline-variant z-10">
+<tr class="text-[10px] uppercase font-mono-data tracking-widest text-on-surface-variant">
+<th class="py-2 px-4 font-bold border-r border-outline-variant/30">FACILITY_ID</th>
+<th class="py-2 px-4 font-bold text-right border-r border-outline-variant/30">PRINCIPAL</th>
+<th class="py-2 px-4 font-bold text-right border-r border-outline-variant/30">APR</th>
+<th class="py-2 px-4 font-bold border-r border-outline-variant/30">NEXT_DUE</th>
+<th class="py-2 px-4 font-bold text-center">STATUS</th>
+</tr>
+</thead>
+<tbody class="text-xs font-mono-data text-on-surface divide-y divide-outline-variant/20">
+<!-- Row 1 -->
+<tr class="hover:bg-primary/5 transition-colors group bg-error-container/5">
+<td class="py-3 px-4 border-r border-outline-variant/30">
+<div class="flex items-center gap-3">
+<div class="p-1 border border-error/50 bg-error-container/20 text-error">
+<span class="material-symbols-outlined" style="font-size: 16px;">corporate_fare</span>
+</div>
+<div>
+<div class="font-bold text-on-surface tracking-tight">Series C Mezzanine</div>
+<div class="text-[10px] text-on-surface-variant opacity-60">ID: MZ-44910</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 text-right border-r border-outline-variant/30 font-bold">$5,000,000</td>
+<td class="py-3 px-4 text-right border-r border-outline-variant/30 text-error font-bold">12.50%</td>
+<td class="py-3 px-4 border-r border-outline-variant/30 text-on-surface-variant">2024-10-15</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-block px-2 py-0.5 text-[9px] font-bold bg-error text-on-error uppercase tracking-widest">CRITICAL</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="py-3 px-4 border-r border-outline-variant/30">
+<div class="flex items-center gap-3">
+<div class="p-1 border border-outline-variant bg-surface-container-high text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 16px;">credit_card</span>
+</div>
+<div>
+<div class="font-bold text-on-surface tracking-tight">Revolving Credit</div>
+<div class="text-[10px] text-on-surface-variant opacity-60">ID: RC-88122</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 text-right border-r border-outline-variant/30 font-bold text-primary">$8,500,000</td>
+<td class="py-3 px-4 text-right border-r border-outline-variant/30 text-on-surface-variant">6.25%</td>
+<td class="py-3 px-4 border-r border-outline-variant/30 text-on-surface-variant">2024-10-30</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-block px-2 py-0.5 text-[9px] font-bold border border-primary text-primary uppercase tracking-widest">NOMINAL</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="py-3 px-4 border-r border-outline-variant/30">
+<div class="flex items-center gap-3">
+<div class="p-1 border border-outline-variant bg-surface-container-high text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 16px;">precision_manufacturing</span>
+</div>
+<div>
+<div class="font-bold text-on-surface tracking-tight">Equip Lease Tr. B</div>
+<div class="text-[10px] text-on-surface-variant opacity-60">ID: EL-11003</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 text-right border-r border-outline-variant/30 font-bold text-primary">$750,000</td>
+<td class="py-3 px-4 text-right border-r border-outline-variant/30 text-on-surface-variant">4.10%</td>
+<td class="py-3 px-4 border-r border-outline-variant/30 text-on-surface-variant">2024-11-01</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-block px-2 py-0.5 text-[9px] font-bold border border-primary text-primary uppercase tracking-widest">NOMINAL</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-4 py-2 bg-surface-container-high border-t border-outline-variant text-[9px] text-on-surface-variant font-mono-data uppercase tracking-widest flex justify-between items-center">
+<span>Query Result: 3 Active Facilities</span>
+<span>System Clock: 09:44:12 UTC</span>
+</div>
+</div>
+<!-- Forms Area -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<!-- Registration Form -->
+<div class="bg-surface-container border border-outline-variant">
+<div class="px-4 py-2 border-b border-outline-variant bg-surface-container-high">
+<h2 class="text-[10px] font-bold text-on-surface uppercase tracking-[0.2em] font-mono-data flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-size: 16px;">add_box</span>
+                            REGISTER_RECORD
+                        </h2>
+</div>
+<form class="p-4 space-y-4">
+<div class="space-y-1">
+<label class="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest">Facility_Creditor_Identity</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant p-2 font-mono-data text-xs text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:opacity-30" placeholder="NULL_ENTRY" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest">Liability_Category</label>
+<div class="relative">
+<select class="w-full bg-surface-container-lowest border border-outline-variant p-2 font-mono-data text-xs text-on-surface focus:border-primary focus:ring-0 outline-none appearance-none">
+<option>SENIOR_SECURED_DEBT</option>
+<option>SUBORDINATED_NOTE</option>
+<option>REVOLVING_CREDIT</option>
+<option>CAPITAL_LEASE</option>
+<option>VENDOR_PAYABLE</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none" style="font-size: 16px;">keyboard_arrow_down</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="space-y-1">
+<label class="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest">Principal_USD</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant p-2 font-mono-data text-xs text-primary focus:border-primary focus:ring-0 outline-none text-right" placeholder="0.00" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest">Rate_APR_%</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant p-2 font-mono-data text-xs text-primary focus:border-primary focus:ring-0 outline-none text-right" placeholder="0.00" type="text"/>
+</div>
+</div>
+<div class="pt-2 flex flex-col gap-2">
+<button class="w-full py-2 bg-primary text-on-primary font-bold uppercase text-[10px] tracking-[0.2em] hover:brightness-110 transition-all border-b-4 border-primary-container" type="button">COMMIT_RECORD</button>
+<button class="w-full py-2 text-on-surface-variant hover:text-on-surface border border-outline-variant font-bold uppercase text-[10px] tracking-[0.2em] transition-all" type="button">CANCEL_PROCESS</button>
+</div>
+</form>
+</div>
+<!-- Recurring Drafts -->
+<div class="bg-surface-container-low border border-outline-variant p-4 flex-1">
+<div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-4 border-b border-outline-variant pb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-size: 14px;">sync</span>
+                        AUTOMATED_DRAFTS_QUEUE
+                    </div>
+<div class="space-y-2">
+<div class="flex justify-between items-center bg-surface-container-lowest p-2 border-l-2 border-primary border border-outline-variant/30">
+<div class="flex flex-col">
+<span class="font-mono-data text-[11px] text-on-surface font-bold uppercase">AWS_CLOUD_SERVICES</span>
+<span class="font-mono-data text-[9px] text-on-surface-variant opacity-60">NEXT: 2024-10-12</span>
+</div>
+<div class="font-mono-data text-xs text-primary font-bold">$12,450.00</div>
+</div>
+<div class="flex justify-between items-center bg-surface-container-lowest p-2 border-l-2 border-primary border border-outline-variant/30">
+<div class="flex flex-col">
+<span class="font-mono-data text-[11px] text-on-surface font-bold uppercase">WEWORK_LEASE_OFFICE</span>
+<span class="font-mono-data text-[9px] text-on-surface-variant opacity-60">NEXT: 2024-10-14</span>
+</div>
+<div class="font-mono-data text-xs text-primary font-bold">$45,000.00</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

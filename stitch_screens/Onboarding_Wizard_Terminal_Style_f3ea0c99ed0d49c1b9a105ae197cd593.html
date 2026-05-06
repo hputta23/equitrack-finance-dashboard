@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Onboarding - EquiTrack Finance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#0a0f12",
+                        "surface-container-low": "#171c20",
+                        "on-tertiary": "#00363d",
+                        "primary-container": "#004c6a",
+                        "secondary-fixed-dim": "#b5c9d6",
+                        "outline-variant": "#41484d",
+                        "surface-container-high": "#272a2e",
+                        "surface-tint": "#77d1fc",
+                        "secondary-fixed": "#d1e5f3",
+                        "on-secondary-fixed": "#091e28",
+                        "surface-bright": "#343a3e",
+                        "on-error": "#690005",
+                        "on-tertiary-container": "#9ef0fb",
+                        "error": "#ffb4ab",
+                        "outline": "#8a9297",
+                        "primary": "#77d1fc",
+                        "tertiary": "#4fd8e6",
+                        "surface-container-highest": "#323539",
+                        "on-secondary-fixed-variant": "#384a55",
+                        "tertiary-fixed-dim": "#4fd8e6",
+                        "on-background": "#dfe3e7",
+                        "primary-fixed-dim": "#77d1fc",
+                        "on-primary-container": "#c3e8ff",
+                        "on-primary": "#00354b",
+                        "on-surface": "#dfe3e7",
+                        "surface-container": "#1d2024",
+                        "primary-fixed": "#c3e8ff",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#004f58",
+                        "background": "#0f1418",
+                        "surface": "#0f1418",
+                        "surface-variant": "#41484d",
+                        "on-secondary-container": "#cfdfec",
+                        "inverse-primary": "#00658a",
+                        "inverse-on-surface": "#2e3135",
+                        "tertiary-fixed": "#9ef0fb",
+                        "on-tertiary-fixed": "#001f24",
+                        "surface-dim": "#0f1418",
+                        "on-primary-fixed-variant": "#004c6a",
+                        "tertiary-container": "#004f58",
+                        "on-surface-variant": "#c0c7cd",
+                        "on-primary-fixed": "#001e2c",
+                        "secondary-container": "#374954",
+                        "secondary": "#b6c8d5",
+                        "inverse-surface": "#dfe3e7",
+                        "on-secondary": "#21323c",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0rem",
+                        "lg": "0rem",
+                        "xl": "0rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "md": "16px",
+                        "unit": "4px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "margin": "16px",
+                        "sm": "8px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Inter"],
+                        "monospace-data": ["ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"],
+                        "body-base": ["Inter"],
+                        "h2": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-small": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h3": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "monospace-data": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-base": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "h2": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-small": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "h1": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Hide scrollbar for clean internal panels */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center p-margin">
+<!-- SUPPRESSION RULE ACTIVATED: Navigation (Top/Side) is omitted due to Linear/Transactional intent of an Onboarding flow. Canvas prioritization active. -->
+<!-- Main Wizard Card (Level 1 Surface with Level 3 Shadow for modal feel) -->
+<main class="w-full max-w-5xl bg-surface-container-lowest border border-outline-variant flex flex-col h-[870px] min-h-[650px] overflow-hidden">
+<!-- Header & Progress Indicator -->
+<header class="px-margin py-md border-b border-surface-variant flex flex-col sm:flex-row sm:items-center justify-between gap-md shrink-0 bg-surface-container-low z-10 relative">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+<h1 class="font-h3 text-h3 text-on-surface tracking-tight uppercase">EquiTrack Setup</h1>
+</div>
+<!-- Blueprint Stepped Progress Indicator -->
+<nav aria-label="Progress">
+<ol class="flex items-center" role="list">
+<!-- Completed Step -->
+<li class="relative pr-sm sm:pr-margin">
+<div aria-hidden="true" class="absolute inset-0 flex items-center">
+<div class="h-[2px] w-full bg-primary"></div>
+</div>
+<div class="relative flex items-center justify-center w-6 h-6 rounded-full bg-primary hover:bg-on-primary-fixed-variant transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-[14px] text-on-primary">check</span>
+<span class="absolute -bottom-6 w-max font-label-caps text-label-caps text-primary opacity-0 group-hover:opacity-100 transition-opacity uppercase">Profile</span>
+</div>
+</li>
+<!-- Active Step -->
+<li class="relative pr-sm sm:pr-margin">
+<div aria-hidden="true" class="absolute inset-0 flex items-center">
+<div class="h-[2px] w-full bg-surface-variant"></div>
+</div>
+<div aria-current="step" class="relative flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-lowest border-2 border-primary">
+<div class="w-2 h-2 bg-primary rounded-full"></div>
+</div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 w-max font-label-caps text-label-caps text-primary uppercase">Financials</span>
+</li>
+<!-- Upcoming Step -->
+<li class="relative pr-sm sm:pr-margin">
+<div aria-hidden="true" class="absolute inset-0 flex items-center">
+<div class="h-[2px] w-full bg-surface-variant"></div>
+</div>
+<div class="relative flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-lowest border-2 border-outline-variant">
+<span class="sr-only">Step 3</span>
+</div>
+</li>
+<!-- Final Step -->
+<li class="relative">
+<div class="relative flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-lowest border-2 border-outline-variant">
+<span class="material-symbols-outlined text-[14px] text-outline">flag</span>
+</div>
+</li>
+</ol>
+</nav>
+</header>
+<!-- Content Split Layout -->
+<div class="flex flex-col md:flex-row flex-1 overflow-hidden">
+<!-- Left Pane: Data Entry Form -->
+<section class="w-full md:w-[65%] p-margin overflow-y-auto no-scrollbar bg-surface flex flex-col gap-xl border-r border-surface-variant">
+<div>
+<h2 class="font-h2 text-h2 text-on-surface mb-xs">Establish Baseline Financials</h2>
+<p class="font-body-base text-body-base text-on-surface-variant">Enter your current credit standing and outstanding liabilities to generate accurate forecasting models.</p>
+</div>
+<!-- Form Group: Credit Score -->
+<div class="space-y-sm">
+<label class="font-label-caps text-label-caps text-secondary uppercase block" for="credit-score">Manual Credit Score Entry</label>
+<div class="relative rounded-none border border-outline-variant bg-surface-container-lowest focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all max-w-xs">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-sm">
+<span class="material-symbols-outlined text-outline text-[18px]">speed</span>
+</div>
+<input class="block w-full border-0 bg-transparent py-sm pl-xl pr-sm text-on-surface font-monospace-data text-monospace-data placeholder:text-outline focus:ring-0 sm:text-sm" id="credit-score" name="credit-score" placeholder="e.g. 720" type="number"/>
+</div>
+</div>
+<!-- Form Group: Debt Details (Blueprint HTMLTable paradigm mapped to form rows) -->
+<div>
+<div class="flex items-center justify-between mb-sm border-b border-surface-variant pb-xs">
+<h3 class="font-h3 text-h3 text-on-surface">Liabilities &amp; Debt</h3>
+<button class="font-label-caps text-label-caps text-primary hover:text-on-primary-fixed-variant flex items-center gap-xs transition-colors uppercase">
+<span class="material-symbols-outlined text-[16px]">add</span> Add Row
+                        </button>
+</div>
+<!-- Table Headers conceptually -->
+<div class="hidden sm:grid sm:grid-cols-12 gap-md px-sm mb-xs">
+<div class="col-span-5 font-label-caps text-label-caps text-secondary uppercase">Facility Type</div>
+<div class="col-span-4 font-label-caps text-label-caps text-secondary uppercase text-right">Principal Balance</div>
+<div class="col-span-3 font-label-caps text-label-caps text-secondary uppercase text-right">Interest (APR)</div>
+</div>
+<!-- Row 1 -->
+<div class="grid grid-cols-1 sm:grid-cols-12 gap-sm sm:gap-md items-center mb-sm bg-surface-container p-sm sm:p-0 sm:bg-transparent rounded-none sm:rounded-none border border-outline-variant sm:border-none">
+<div class="col-span-1 sm:col-span-5">
+<div class="relative rounded-none border border-outline-variant bg-surface-container-lowest focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+<select class="block w-full border-0 bg-transparent py-xs pl-sm pr-lg text-on-surface font-body-base text-body-base focus:ring-0">
+<option>Credit Card (Revolving)</option>
+<option>Student Loan</option>
+<option>Auto Loan</option>
+<option>Mortgage</option>
+</select>
+</div>
+</div>
+<div class="col-span-1 sm:col-span-4">
+<div class="relative rounded-none border border-outline-variant bg-surface-container-lowest focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-sm">
+<span class="font-monospace-data text-outline text-[14px]">$</span>
+</div>
+<input class="block w-full border-0 bg-transparent py-xs pl-lg pr-sm text-on-surface font-monospace-data text-monospace-data text-right focus:ring-0" placeholder="0.00" type="number" value="12500.00"/>
+</div>
+</div>
+<div class="col-span-1 sm:col-span-3 flex items-center gap-sm">
+<div class="relative rounded-none border border-outline-variant bg-surface-container-lowest focus-within:border-primary focus-within:ring-1 focus-within:ring-primary flex-1">
+<input class="block w-full border-0 bg-transparent py-xs pl-sm pr-lg text-on-surface font-monospace-data text-monospace-data text-right focus:ring-0" placeholder="0.00" step="0.01" type="number" value="18.99"/>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-sm">
+<span class="font-monospace-data text-outline text-[14px]">%</span>
+</div>
+</div>
+<button class="text-error hover:text-on-error-container transition-colors shrink-0" title="Remove row">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-1 sm:grid-cols-12 gap-sm sm:gap-md items-center bg-surface-container p-sm sm:p-0 sm:bg-transparent rounded-none sm:rounded-none border border-outline-variant sm:border-none">
+<div class="col-span-1 sm:col-span-5">
+<div class="relative rounded-none border border-outline-variant bg-surface-container-lowest focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+<select class="block w-full border-0 bg-transparent py-xs pl-sm pr-lg text-on-surface font-body-base text-body-base focus:ring-0">
+<option>Student Loan</option>
+<option>Credit Card (Revolving)</option>
+<option selected="">Auto Loan</option>
+<option>Mortgage</option>
+</select>
+</div>
+</div>
+<div class="col-span-1 sm:col-span-4">
+<div class="relative rounded-none border border-outline-variant bg-surface-container-lowest focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-sm">
+<span class="font-monospace-data text-outline text-[14px]">$</span>
+</div>
+<input class="block w-full border-0 bg-transparent py-xs pl-lg pr-sm text-on-surface font-monospace-data text-monospace-data text-right focus:ring-0" placeholder="0.00" type="number" value="24100.50"/>
+</div>
+</div>
+<div class="col-span-1 sm:col-span-3 flex items-center gap-sm">
+<div class="relative rounded-none border border-outline-variant bg-surface-container-lowest focus-within:border-primary focus-within:ring-1 focus-within:ring-primary flex-1">
+<input class="block w-full border-0 bg-transparent py-xs pl-sm pr-lg text-on-surface font-monospace-data text-monospace-data text-right focus:ring-0" placeholder="0.00" step="0.01" type="number" value="4.50"/>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-sm">
+<span class="font-monospace-data text-outline text-[14px]">%</span>
+</div>
+</div>
+<button class="text-error hover:text-on-error-container transition-colors shrink-0" title="Remove row">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Form Group: Monthly Expenses (Simplified Block) -->
+<div>
+<label class="font-label-caps text-label-caps text-secondary uppercase block mb-xs" for="monthly-expenses">Estimated Monthly Expenses</label>
+<div class="relative rounded-none border border-outline-variant bg-surface-container-lowest focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all max-w-xs">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-sm">
+<span class="font-monospace-data text-outline text-[14px]">$</span>
+</div>
+<input class="block w-full border-0 bg-transparent py-sm pl-lg pr-sm text-on-surface font-monospace-data text-monospace-data placeholder:text-outline focus:ring-0 sm:text-sm" id="monthly-expenses" name="monthly-expenses" placeholder="e.g. 3500.00" type="number"/>
+</div>
+<p class="font-body-small text-body-small text-outline mt-xs">Exclude debt payments entered above to avoid double counting.</p>
+</div>
+</section>
+<!-- Right Pane: Context/Summary (Level 0 Background conceptual mapping) -->
+<aside class="w-full md:w-[35%] bg-surface-container-lowest p-margin overflow-y-auto no-scrollbar border-t md:border-t-0 md:border-l border-surface-variant flex flex-col">
+<div class="bg-surface-container border border-outline-variant rounded-none p-md mb-lg">
+<h3 class="font-h3 text-h3 text-on-surface mb-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">pie_chart</span> Profile Context
+                    </h3>
+<p class="font-body-small text-body-small text-on-surface-variant mb-md leading-relaxed">
+                        Data entered here is used strictly for generating your initial portfolio allocation strategy and liquidity forecasts.
+                    </p>
+<!-- Blueprint Data List -->
+<dl class="space-y-sm">
+<div class="flex justify-between py-xs border-b border-surface-variant border-dashed">
+<dt class="font-label-caps text-label-caps text-secondary uppercase">Base Currency</dt>
+<dd class="font-monospace-data text-monospace-data text-on-surface">USD ($)</dd>
+</div>
+<div class="flex justify-between py-xs border-b border-surface-variant border-dashed">
+<dt class="font-label-caps text-label-caps text-secondary uppercase">Data Sync</dt>
+<dd class="font-body-small text-body-small text-on-surface flex items-center gap-xs">
+<span class="w-2 h-2 rounded-none bg-error inline-block"></span> Manual
+                            </dd>
+</div>
+<div class="flex justify-between py-xs">
+<dt class="font-label-caps text-label-caps text-secondary uppercase">Total Liabilities</dt>
+<dd class="font-monospace-data text-monospace-data text-error font-bold">$36,600.50</dd>
+</div>
+</dl>
+</div>
+<div class="mt-auto rounded-none bg-primary-container/20 p-md border border-primary">
+<div class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary mt-xs" style="font-variation-settings: 'FILL' 1;">info</span>
+<div>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface mb-xs">Next Step: Assets &amp; Portfolio</h4>
+<p class="font-body-small text-body-small text-on-surface-variant">In the final step, you will link external brokerage accounts or manually enter existing holdings.</p>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<!-- Footer Actions (Intent-based buttons) -->
+<footer class="p-margin border-t border-surface-variant bg-surface-container-low flex items-center justify-between shrink-0">
+<button class="px-md py-sm rounded-none border border-outline-variant font-label-caps text-label-caps text-on-surface hover:bg-surface-container hover:border-outline transition-all active:bg-surface-container-highest uppercase">
+                Previous Step
+            </button>
+<div class="flex gap-sm">
+<button class="px-md py-sm rounded-none font-label-caps text-label-caps text-secondary hover:bg-surface-container transition-all uppercase">
+                    Save Draft
+                </button>
+<button class="px-md py-sm rounded-none bg-primary text-on-primary font-label-caps text-label-caps flex items-center gap-xs hover:bg-on-primary-fixed-variant transition-all active:translate-y-[1px] uppercase">
+                    Continue to Goals <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</footer>
+</main>
+</body></html>

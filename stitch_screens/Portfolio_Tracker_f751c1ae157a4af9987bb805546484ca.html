@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Portfolio Tracker - EquiTrack Finance</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#006399",
+                    "surface-container-lowest": "#ffffff",
+                    "background": "#f7f9fe",
+                    "error-container": "#ffdad6",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#2d3135",
+                    "surface-container": "#eceef3",
+                    "outline": "#717881",
+                    "surface-container-high": "#e6e8ed",
+                    "inverse-on-surface": "#eff1f6",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#d0e5f8",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed": "#001d32",
+                    "surface-bright": "#f7f9fe",
+                    "on-tertiary-fixed-variant": "#6a3c00",
+                    "on-background": "#191c20",
+                    "on-surface-variant": "#40474f",
+                    "on-secondary-container": "#536777",
+                    "on-secondary-fixed": "#081d2b",
+                    "surface-dim": "#d8dadf",
+                    "tertiary-container": "#965700",
+                    "tertiary-fixed-dim": "#ffb871",
+                    "primary-fixed-dim": "#95ccff",
+                    "tertiary-fixed": "#ffdcbe",
+                    "outline-variant": "#c0c7d1",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#4d6170",
+                    "primary-container": "#106ba3",
+                    "on-surface": "#191c20",
+                    "on-primary-container": "#d2e7ff",
+                    "surface-container-highest": "#e0e2e8",
+                    "primary-fixed": "#cde5ff",
+                    "surface-container-low": "#f2f3f9",
+                    "on-secondary-fixed-variant": "#354958",
+                    "tertiary": "#744200",
+                    "on-tertiary-fixed": "#2d1600",
+                    "secondary-container": "#d0e5f8",
+                    "secondary-fixed-dim": "#b4c9db",
+                    "surface": "#f7f9fe",
+                    "inverse-primary": "#95ccff",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#e0e2e8",
+                    "primary": "#005280",
+                    "on-tertiary-container": "#ffdfc4",
+                    "on-primary-fixed-variant": "#004a75"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "20px",
+                    "md": "16px",
+                    "unit": "4px",
+                    "xs": "4px",
+                    "xl": "40px",
+                    "margin": "24px",
+                    "sm": "8px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "h3": ["Inter"],
+                    "monospace-data": ["ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"],
+                    "body-base": ["Inter"],
+                    "h2": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-small": ["Inter"],
+                    "h1": ["Inter"]
+            },
+            "fontSize": {
+                    "h3": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "monospace-data": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-base": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "h2": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-small": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "h1": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { background-color: #f7f9fe; }
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            font-feature-settings: 'liga';
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Simulated Chart Styles using theme colors conceptually */
+        .pie-chart {
+            background: conic-gradient(
+                #005280 0% 45%,    /* primary */
+                #106ba3 45% 75%,   /* primary-container */
+                #4d6170 75% 90%,   /* secondary */
+                #744200 90% 100%   /* tertiary */
+            );
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-base text-body-base antialiased">
+<!-- SideNavBar (Shared Component) -->
+<nav class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 border-r border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-sky-700 dark:text-sky-400 font-sans text-sm tracking-tight flat no shadows z-40">
+<!-- Header -->
+<div class="flex items-center gap-3 px-6 py-8 border-b border-surface-variant mb-4">
+<div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-size: 18px;">domain</span>
+</div>
+<div>
+<h1 class="font-black text-sky-900 dark:text-sky-100 text-base leading-tight">WealthManager</h1>
+<p class="text-xs text-slate-500">Institutional Grade</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 flex flex-col gap-1 px-2">
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all active:translate-x-1 duration-150 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all active:translate-x-1 duration-150 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">payments</span>
+                Expenses
+            </a>
+<!-- Active State: Portfolio -->
+<a class="flex items-center gap-3 px-4 py-2 text-sky-700 dark:text-sky-400 border-l-4 border-sky-700 bg-sky-50 dark:bg-sky-900/20 font-bold active:translate-x-1 duration-150 rounded-r-DEFAULT" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+                Portfolio
+            </a>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all active:translate-x-1 duration-150 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">insights</span>
+                Strategy
+            </a>
+</div>
+<!-- CTA -->
+<div class="px-4 py-6">
+<button class="w-full bg-primary text-on-primary py-2 px-4 rounded-DEFAULT font-body-small text-body-small hover:bg-primary-fixed-variant transition-colors shadow-sm">
+                Add Transaction
+            </button>
+</div>
+<!-- Footer Links -->
+<div class="border-t border-surface-variant p-2 pb-6">
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all active:translate-x-1 duration-150 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+                Support
+            </a>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all active:translate-x-1 duration-150 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Sign Out
+            </a>
+</div>
+</nav>
+<!-- Main Content Wrapper (offset by sidebar) -->
+<div class="ml-64 min-h-screen flex flex-col">
+<!-- TopNavBar (Shared Component) -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-6 h-14 w-full bg-white dark:bg-slate-900 font-sans antialiased text-sm docked full-width top-0 border-b border-b border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center gap-4">
+<span class="text-lg font-bold text-sky-800 dark:text-sky-300">EquiTrack Finance</span>
+</div>
+<div class="flex items-center gap-4">
+<!-- Search Bar -->
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" style="font-size: 18px;">search</span>
+<input class="pl-9 pr-4 py-1.5 bg-surface-container-low border border-slate-200 rounded-DEFAULT text-sm focus:outline-none focus:border-sky-500 w-64 text-on-surface" placeholder="Search assets..." type="text"/>
+</div>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-1">
+<button class="p-2 text-slate-600 dark:text-slate-400 hover:text-sky-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer active:opacity-70 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size: 20px;">notifications</span>
+</button>
+<button class="p-2 text-slate-600 dark:text-slate-400 hover:text-sky-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer active:opacity-70 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size: 20px;">help</span>
+</button>
+<button class="p-2 text-slate-600 dark:text-slate-400 hover:text-sky-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer active:opacity-70 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size: 20px;">settings</span>
+</button>
+</div>
+<!-- Profile -->
+<div class="h-8 w-8 rounded-full bg-surface-variant border border-outline-variant overflow-hidden flex-shrink-0 cursor-pointer">
+<img alt="User profile" class="h-full w-full object-cover" data-alt="A professional headshot of a corporate financial analyst in a modern office setting. The lighting is soft and natural, creating a clean, trustworthy aesthetic. The individual wears a tailored dark suit, complementing the institutional and sophisticated mood of the surrounding design system. The background is slightly blurred, emphasizing focus and clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDutlohTwuTG6MzU2WQSi5_EQsTnOE-FDhErU-4rAEX59ltUn0SExanwoPFnj0sVHy2pBcqm7VVDZWmwv8kfH8d47uxEJ2w7xxZStk_IWcbwf_kOAM8hF8tLconrWhnNeQBpIUCU_Tn08PvRdUTa-E6E-QrrJHH_hZvTI680N3TKg7sPgl3-4W64stDyhON2eQvCTTWrPDD0Ea1hZqUBmonHJjWBNfD_MZRuZIpAhMx6PcaBrb4ZA4Gah2z1jLYG8KKJFCB5uZjYKyu"/>
+</div>
+</div>
+</header>
+<!-- Main Workspace (Blueprint style Fixed Grid) -->
+<main class="flex-1 p-margin">
+<!-- Page Header -->
+<div class="mb-lg">
+<h2 class="font-h2 text-h2 text-on-background mb-1">Portfolio Tracker</h2>
+<p class="font-body-base text-body-base text-on-surface-variant">Real-time visualization and management of investment assets.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Charting Canvas (Left side, wider) -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-gutter">
+<!-- KPI & Summary Card -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-DEFAULT p-[24px] shadow-sm">
+<div class="flex items-end justify-between mb-6">
+<div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-2">Total Asset Value</div>
+<div class="font-h1 text-h1 text-on-background font-monospace-data tracking-tight">$14,285,400.00</div>
+</div>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-size: 20px;">trending_up</span>
+<span class="font-body-base text-body-base font-semibold">+2.4% YTD</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md border-t border-surface-variant pt-6">
+<!-- Visual Chart 1: Recharts Pie Placeholder -->
+<div class="flex flex-col items-center">
+<div class="font-h3 text-h3 text-on-background mb-6 self-start w-full text-center">Asset Allocation</div>
+<div class="relative w-40 h-40">
+<div class="w-full h-full rounded-full pie-chart shadow-sm border border-surface-variant"></div>
+<!-- Donut hole -->
+<div class="absolute inset-0 m-auto w-24 h-24 bg-surface-container-lowest rounded-full border border-surface-variant"></div>
+</div>
+<div class="mt-6 flex flex-wrap justify-center gap-4 font-body-small text-body-small text-on-surface-variant">
+<div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-primary"></div> Stocks (45%)</div>
+<div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-primary-container"></div> Crypto (30%)</div>
+<div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-secondary"></div> Real Estate (15%)</div>
+<div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-tertiary"></div> Cash (10%)</div>
+</div>
+</div>
+<!-- Visual Chart 2: Bar Chart Placeholder -->
+<div class="flex flex-col h-full pl-6 border-l border-surface-variant">
+<div class="font-h3 text-h3 text-on-background mb-6">Value Over Time</div>
+<div class="flex-1 flex items-end gap-2 h-40 pb-4 border-b border-surface-variant px-2">
+<div class="w-full bg-surface-variant rounded-t-sm h-[40%] hover:bg-primary-fixed transition-colors"></div>
+<div class="w-full bg-surface-variant rounded-t-sm h-[55%] hover:bg-primary-fixed transition-colors"></div>
+<div class="w-full bg-surface-variant rounded-t-sm h-[45%] hover:bg-primary-fixed transition-colors"></div>
+<div class="w-full bg-surface-variant rounded-t-sm h-[70%] hover:bg-primary-fixed transition-colors"></div>
+<div class="w-full bg-primary rounded-t-sm h-[85%] shadow-sm"></div>
+</div>
+<div class="flex justify-between mt-2 font-monospace-data text-monospace-data text-on-surface-variant text-[10px]">
+<span>Q1</span><span>Q2</span><span>Q3</span><span>Q4</span><span>YTD</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Form Sidebar (Right side, narrower) -->
+<div class="col-span-12 lg:col-span-4">
+<div class="bg-surface-container-lowest border border-surface-variant rounded-DEFAULT p-[24px] shadow-sm h-full">
+<div class="flex items-center gap-2 mb-6 border-b border-surface-variant pb-4">
+<span class="material-symbols-outlined text-primary">edit_square</span>
+<h3 class="font-h3 text-h3 text-on-background">Manual Adjustment</h3>
+</div>
+<form class="flex flex-col gap-md">
+<!-- FormGroup -->
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Asset Class</label>
+<select class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-3 py-1.5 font-body-base text-body-base text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<option>Equities (Stocks)</option>
+<option>Cryptocurrency</option>
+<option>Real Estate</option>
+<option>Cash Equivalents</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Ticker / Identifier</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline" style="font-size: 16px;">tag</span>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-8 pr-3 py-1.5 font-monospace-data text-monospace-data text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none uppercase" type="text" value="AAPL"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Quantity</label>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-3 py-1.5 font-monospace-data text-monospace-data text-on-surface focus:border-primary outline-none text-right" type="number" value="1500"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Unit Price</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-monospace-data text-outline">$</span>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-7 pr-3 py-1.5 font-monospace-data text-monospace-data text-on-surface focus:border-primary outline-none text-right" type="number" value="175.50"/>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-1 mt-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Adjustment Notes</label>
+<textarea class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-3 py-1.5 font-body-small text-body-small text-on-surface focus:border-primary outline-none resize-none" placeholder="Reason for manual override..." rows="2"></textarea>
+</div>
+<div class="mt-4 flex gap-2 justify-end pt-4 border-t border-surface-variant">
+<button class="px-4 py-1.5 border border-outline-variant text-on-surface-variant rounded-DEFAULT font-body-small text-body-small hover:bg-surface-container transition-colors" type="button">Reset</button>
+<button class="px-4 py-1.5 bg-primary text-on-primary rounded-DEFAULT font-body-small text-body-small hover:bg-primary-fixed-variant transition-colors shadow-sm flex items-center gap-1" type="button">
+<span class="material-symbols-outlined" style="font-size: 16px;">save</span> Save
+                                </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Asset Class Detail Cards (Bottom Row) -->
+<div class="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-gutter mt-2">
+<!-- Stocks Card -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-DEFAULT shadow-sm flex flex-col h-[300px]">
+<div class="px-[16px] py-[12px] border-b border-surface-variant flex justify-between items-center bg-surface-container-low rounded-t-DEFAULT">
+<h4 class="font-h3 text-h3 text-on-background flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-size: 18px;">candlestick_chart</span> Equities
+                            </h4>
+<span class="font-monospace-data text-monospace-data font-semibold text-on-background">$6,428,430</span>
+</div>
+<div class="flex-1 overflow-auto p-0">
+<table class="w-full text-left font-body-small text-body-small text-on-surface whitespace-nowrap">
+<thead class="sticky top-0 bg-surface-container-lowest border-b border-surface-variant font-label-caps text-label-caps text-on-surface-variant z-10">
+<tr>
+<th class="px-4 py-2 font-normal">Ticker</th>
+<th class="px-4 py-2 font-normal text-right">Shares</th>
+<th class="px-4 py-2 font-normal text-right">Price</th>
+<th class="px-4 py-2 font-normal text-right">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-surface-container hover:bg-surface transition-colors">
+<td class="px-4 py-2 font-semibold">AAPL</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">15,000</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">$175.50</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">$2,632,500</td>
+</tr>
+<tr class="border-b border-surface-container hover:bg-surface transition-colors">
+<td class="px-4 py-2 font-semibold">MSFT</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">8,500</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">$330.20</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">$2,806,700</td>
+</tr>
+<tr class="hover:bg-surface transition-colors">
+<td class="px-4 py-2 font-semibold">GOOGL</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">7,200</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">$137.40</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">$989,280</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Crypto Card -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-DEFAULT shadow-sm flex flex-col h-[300px]">
+<div class="px-[16px] py-[12px] border-b border-surface-variant flex justify-between items-center bg-surface-container-low rounded-t-DEFAULT">
+<h4 class="font-h3 text-h3 text-on-background flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" style="font-size: 18px;">currency_bitcoin</span> Crypto
+                            </h4>
+<span class="font-monospace-data text-monospace-data font-semibold text-on-background">$4,285,620</span>
+</div>
+<div class="flex-1 overflow-auto p-0">
+<table class="w-full text-left font-body-small text-body-small text-on-surface whitespace-nowrap">
+<thead class="sticky top-0 bg-surface-container-lowest border-b border-surface-variant font-label-caps text-label-caps text-on-surface-variant z-10">
+<tr>
+<th class="px-4 py-2 font-normal">Asset</th>
+<th class="px-4 py-2 font-normal text-right">Holdings</th>
+<th class="px-4 py-2 font-normal text-right">Price</th>
+<th class="px-4 py-2 font-normal text-right">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-surface-container hover:bg-surface transition-colors">
+<td class="px-4 py-2 font-semibold">BTC</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">45.2</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">$62,400</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">$2,820,480</td>
+</tr>
+<tr class="hover:bg-surface transition-colors">
+<td class="px-4 py-2 font-semibold">ETH</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">425.0</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">$3,447</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">$1,465,140</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Real Estate Card -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-DEFAULT shadow-sm flex flex-col h-[300px]">
+<div class="px-[16px] py-[12px] border-b border-surface-variant flex justify-between items-center bg-surface-container-low rounded-t-DEFAULT">
+<h4 class="font-h3 text-h3 text-on-background flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" style="font-size: 18px;">real_estate_agent</span> Real Estate
+                            </h4>
+<span class="font-monospace-data text-monospace-data font-semibold text-on-background">$2,142,810</span>
+</div>
+<div class="flex-1 overflow-auto p-0">
+<table class="w-full text-left font-body-small text-body-small text-on-surface whitespace-nowrap">
+<thead class="sticky top-0 bg-surface-container-lowest border-b border-surface-variant font-label-caps text-label-caps text-on-surface-variant z-10">
+<tr>
+<th class="px-4 py-2 font-normal">Property ID</th>
+<th class="px-4 py-2 font-normal text-right">Yield</th>
+<th class="px-4 py-2 font-normal text-right">Est. Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-surface-container hover:bg-surface transition-colors">
+<td class="px-4 py-2 font-semibold">RE-NY-01</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data text-primary">4.2%</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">$1,250,000</td>
+</tr>
+<tr class="hover:bg-surface transition-colors">
+<td class="px-4 py-2 font-semibold">RE-FL-04</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data text-primary">5.8%</td>
+<td class="px-4 py-2 text-right font-monospace-data text-monospace-data">$892,810</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

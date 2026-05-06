@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Onboarding - EquiTrack Finance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#2a1700",
+                        "on-tertiary": "#472a00",
+                        "surface-container": "#1b2024",
+                        "on-background": "#dee3e8",
+                        "on-primary-fixed": "#001e2c",
+                        "on-primary-container": "#004965",
+                        "on-secondary-fixed": "#0d1c2d",
+                        "primary-fixed": "#c4e7ff",
+                        "on-surface": "#dee3e8",
+                        "tertiary": "#ffc176",
+                        "surface-container-low": "#171c20",
+                        "error-container": "#93000a",
+                        "outline-variant": "#3e484f",
+                        "tertiary-container": "#f1a02b",
+                        "surface-tint": "#7bd0ff",
+                        "surface-container-high": "#252b2e",
+                        "surface-container-highest": "#303539",
+                        "on-tertiary-container": "#613b00",
+                        "surface-variant": "#303539",
+                        "primary-fixed-dim": "#7bd0ff",
+                        "surface-dim": "#0f1418",
+                        "surface-bright": "#343a3e",
+                        "secondary-container": "#39485a",
+                        "error": "#ffb4ab",
+                        "on-secondary-fixed-variant": "#39485a",
+                        "inverse-on-surface": "#2c3135",
+                        "on-primary": "#00354a",
+                        "background": "#0f1418",
+                        "surface": "#0f1418",
+                        "secondary": "#b9c8de",
+                        "on-secondary-container": "#a7b6cc",
+                        "inverse-primary": "#00668a",
+                        "on-error-container": "#ffdad6",
+                        "outline": "#87929a",
+                        "primary": "#38bdf8",
+                        "surface-container-lowest": "#0a0f12",
+                        "secondary-fixed-dim": "#b9c8de",
+                        "tertiary-fixed-dim": "#ffb960",
+                        "primary-container": "#38bdf8",
+                        "inverse-surface": "#dee3e8",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-surface-variant": "#bdc8d1",
+                        "tertiary-fixed": "#ffddb8",
+                        "secondary-fixed": "#d4e4fa",
+                        "on-primary-fixed-variant": "#004c69",
+                        "on-secondary": "#233143",
+                        "on-error": "#690005"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "0.5rem",
+                        "row-height-standard": "36px",
+                        "row-height-condensed": "28px",
+                        "container-padding": "1rem",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "mono-data": ["JetBrains Mono", "monospace"],
+                        "body": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h2": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "mono-data": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "body": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "h2": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* High density tactical borders */
+        .tactical-border {
+            border: 1px solid theme('colors.outline-variant');
+        }
+        
+        /* Monospace input styling */
+        input::placeholder {
+            color: theme('colors.outline');
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-lowest min-h-screen flex items-center justify-center p-gutter">
+<main class="w-full max-w-6xl bg-surface border tactical-border flex flex-col h-[800px] overflow-hidden shadow-2xl">
+<!-- Header: Mission Brief Style -->
+<header class="px-container-padding py-2 border-b tactical-border flex flex-col sm:flex-row sm:items-center justify-between gap-gutter shrink-0 bg-surface-container-low z-10 relative">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+<div class="flex flex-col">
+<h1 class="font-label-caps text-label-caps text-on-surface tracking-[0.15em] uppercase leading-none">EquiTrack / Protocol</h1>
+<span class="font-mono-data text-[10px] text-outline uppercase tracking-wider">Session ID: CC-772-BASE</span>
+</div>
+</div>
+<!-- Progress Terminal -->
+<nav aria-label="Progress" class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 bg-primary"></div>
+<span class="font-mono-data text-[10px] text-primary uppercase">Profile.config</span>
+</div>
+<div class="w-8 h-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 border border-primary animate-pulse"></div>
+<span class="font-mono-data text-[10px] text-primary uppercase underline underline-offset-4">Financials.dat</span>
+</div>
+<div class="w-8 h-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 border border-outline-variant"></div>
+<span class="font-mono-data text-[10px] text-outline-variant uppercase">Objectives.obj</span>
+</div>
+</nav>
+</header>
+<!-- Main Content -->
+<div class="flex flex-col md:flex-row flex-1 overflow-hidden">
+<!-- Left Pane: Data Input Terminal -->
+<section class="w-full md:w-[68%] p-container-padding overflow-y-auto no-scrollbar bg-surface flex flex-col gap-6 border-r tactical-border">
+<div class="border-l-2 border-primary pl-4">
+<h2 class="font-h1 text-h2 text-on-surface mb-1 uppercase tracking-tight">Financial Baseline Calibration</h2>
+<p class="font-body text-body text-on-surface-variant max-w-2xl">Input current liquidity metrics and outstanding obligations to initialize projection algorithms.</p>
+</div>
+<!-- Input Group: Credit Metric -->
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-outline uppercase flex items-center gap-2" for="credit-score">
+<span class="w-1 h-3 bg-primary"></span> Manual Credit Index
+                    </label>
+<div class="relative tactical-border bg-surface-container-lowest focus-within:border-primary transition-colors max-w-[200px]">
+<input class="block w-full border-0 bg-transparent py-2 pl-3 pr-3 text-primary font-mono-data text-mono-data focus:ring-0" id="credit-score" name="credit-score" placeholder="VALUE_000" type="number"/>
+</div>
+</div>
+<!-- Section: Liabilities Ledger -->
+<div class="space-y-4">
+<div class="flex items-center justify-between border-b tactical-border pb-2">
+<h3 class="font-label-caps text-label-caps text-on-surface uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">list_alt</span> Obligations Ledger
+                        </h3>
+<button class="font-mono-data text-[11px] text-primary hover:text-white flex items-center gap-1 transition-colors uppercase border border-primary/30 px-2 py-0.5 bg-primary/5">
+<span class="material-symbols-outlined text-[14px]">add</span> Insert Entry
+                        </button>
+</div>
+<!-- Density Focused Table -->
+<div class="w-full">
+<div class="grid grid-cols-12 gap-2 px-2 mb-2">
+<div class="col-span-5 font-mono-data text-[10px] text-outline uppercase">Facility Designation</div>
+<div class="col-span-4 font-mono-data text-[10px] text-outline uppercase text-right">Balance (USD)</div>
+<div class="col-span-3 font-mono-data text-[10px] text-outline uppercase text-right">Rate %</div>
+</div>
+<div class="space-y-1">
+<!-- Row 01 -->
+<div class="grid grid-cols-12 gap-2 items-center tactical-border bg-surface-container-low p-1 group hover:bg-surface-container-high transition-colors">
+<div class="col-span-5">
+<select class="block w-full border-0 bg-transparent py-1 px-2 text-on-surface font-mono-data text-[12px] focus:ring-0 cursor-pointer">
+<option class="bg-surface">REVOLVING_CREDIT_01</option>
+<option class="bg-surface">STUDENT_LOAN_FED</option>
+<option class="bg-surface">AUTO_LEASE_V01</option>
+<option class="bg-surface">MORTGAGE_FIXED</option>
+</select>
+</div>
+<div class="col-span-4">
+<div class="relative bg-surface-container-lowest border border-outline-variant/50">
+<input class="block w-full border-0 bg-transparent py-1 px-2 text-primary font-mono-data text-mono-data text-right focus:ring-0" type="number" value="12500.00"/>
+</div>
+</div>
+<div class="col-span-3 flex items-center gap-2">
+<div class="relative bg-surface-container-lowest border border-outline-variant/50 flex-1">
+<input class="block w-full border-0 bg-transparent py-1 px-2 text-on-surface font-mono-data text-mono-data text-right focus:ring-0" type="number" value="18.99"/>
+</div>
+<button class="text-outline-variant hover:text-error transition-colors px-1">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- Row 02 -->
+<div class="grid grid-cols-12 gap-2 items-center tactical-border bg-surface-container-low p-1 group hover:bg-surface-container-high transition-colors">
+<div class="col-span-5">
+<select class="block w-full border-0 bg-transparent py-1 px-2 text-on-surface font-mono-data text-[12px] focus:ring-0 cursor-pointer">
+<option class="bg-surface">AUTO_LEASE_V01</option>
+<option class="bg-surface">REVOLVING_CREDIT_01</option>
+<option class="bg-surface">STUDENT_LOAN_FED</option>
+<option class="bg-surface">MORTGAGE_FIXED</option>
+</select>
+</div>
+<div class="col-span-4">
+<div class="relative bg-surface-container-lowest border border-outline-variant/50">
+<input class="block w-full border-0 bg-transparent py-1 px-2 text-primary font-mono-data text-mono-data text-right focus:ring-0" type="number" value="24100.50"/>
+</div>
+</div>
+<div class="col-span-3 flex items-center gap-2">
+<div class="relative bg-surface-container-lowest border border-outline-variant/50 flex-1">
+<input class="block w-full border-0 bg-transparent py-1 px-2 text-on-surface font-mono-data text-mono-data text-right focus:ring-0" type="number" value="4.50"/>
+</div>
+<button class="text-outline-variant hover:text-error transition-colors px-1">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Group: Operational Overhead -->
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-outline uppercase flex items-center gap-2" for="monthly-expenses">
+<span class="w-1 h-3 bg-primary"></span> Operational Overhead (Monthly)
+                    </label>
+<div class="relative tactical-border bg-surface-container-lowest focus-within:border-primary transition-colors max-w-[200px]">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3">
+<span class="font-mono-data text-outline text-[12px]">$</span>
+</div>
+<input class="block w-full border-0 bg-transparent py-2 pl-7 pr-3 text-on-surface font-mono-data text-mono-data focus:ring-0" id="monthly-expenses" name="monthly-expenses" placeholder="0.00" type="number"/>
+</div>
+<p class="font-mono-data text-[10px] text-outline-variant uppercase">Excluding debt service components listed above.</p>
+</div>
+</section>
+<!-- Right Pane: Analysis Sidebar -->
+<aside class="w-full md:w-[32%] bg-surface-container-lowest p-container-padding overflow-y-auto no-scrollbar border-t md:border-t-0 md:border-l tactical-border flex flex-col gap-6">
+<!-- Summary Card -->
+<div class="tactical-border bg-surface p-4 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-1">
+<span class="font-mono-data text-[9px] text-outline-variant uppercase">Module: Context_View</span>
+</div>
+<h3 class="font-label-caps text-label-caps text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">analytics</span> Analysis Context
+                    </h3>
+<div class="space-y-4">
+<div class="flex justify-between items-end border-b tactical-border border-dashed pb-1">
+<span class="font-mono-data text-[10px] text-outline uppercase">Currency_Iso</span>
+<span class="font-mono-data text-mono-data text-on-surface">USD</span>
+</div>
+<div class="flex justify-between items-end border-b tactical-border border-dashed pb-1">
+<span class="font-mono-data text-[10px] text-outline uppercase">Sync_Status</span>
+<span class="font-mono-data text-[10px] text-error flex items-center gap-1 uppercase">
+<span class="w-1.5 h-1.5 bg-error"></span> Offline_Manual
+                            </span>
+</div>
+<div class="pt-2">
+<span class="font-mono-data text-[10px] text-outline uppercase block mb-1">Total_Liabilities_Agg</span>
+<span class="font-mono-data text-[24px] text-primary font-bold tracking-tight">$36,600.50</span>
+</div>
+</div>
+</div>
+<!-- Tactical Alert -->
+<div class="mt-auto tactical-border bg-primary/5 p-4 border-l-4 border-l-primary">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<div>
+<h4 class="font-label-caps text-label-caps text-on-surface mb-1">Queue: Asset_Integration</h4>
+<p class="font-mono-data text-[10px] text-on-surface-variant uppercase leading-relaxed">
+                                System ready for Step 03: External brokerage account linking and manual asset class allocation.
+                            </p>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<!-- Terminal Footer -->
+<footer class="px-container-padding py-3 border-t tactical-border bg-surface-container-low flex items-center justify-between shrink-0">
+<button class="px-4 py-1.5 border tactical-border font-mono-data text-[11px] text-on-surface hover:bg-surface-container-highest transition-all uppercase tracking-widest">
+                [ Return ]
+            </button>
+<div class="flex gap-4">
+<button class="font-mono-data text-[11px] text-outline hover:text-on-surface transition-all uppercase tracking-widest">
+                    Save_State.tmp
+                </button>
+<button class="px-6 py-1.5 bg-primary text-surface-container-lowest font-mono-data text-[11px] font-bold flex items-center gap-2 hover:bg-white transition-all active:translate-y-[1px] uppercase tracking-widest">
+                    Execute Next Module <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</footer>
+</main>
+</body></html>
