@@ -71,10 +71,13 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
   };
 
   const handleAddDebt = () => {
-    if (!newLiability.name || !newLiability.principal) return;
+    if (!newLiability.name) return;
+    if (newLiability.category === 'Rent' && !newLiability.minPayment) return;
+    if (newLiability.category !== 'Rent' && !newLiability.principal) return;
+    
     addLiability({
       name: newLiability.name!, category: newLiability.category || 'Credit Card',
-      principal: newLiability.principal!, apr: newLiability.apr || 0,
+      principal: newLiability.principal || 0, apr: newLiability.apr || 0,
       nextPayment: 'Monthly', status: 'Active',
       maxLimit: newLiability.category === 'Credit Card' ? (newLiability.maxLimit || 0) : undefined,
       isIntroApr: newLiability.category === 'Credit Card' ? (newLiability.isIntroApr || false) : undefined,
