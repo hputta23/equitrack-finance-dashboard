@@ -22,6 +22,7 @@ export default function IncomeStrategyFlow() {
   const actualDebtVolume = state.liabilities
     .filter(l => ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'].includes(l.category))
     .reduce((s, l) => {
+      // Use user-defined minPayment if available, otherwise estimate
       const minPayment = l.minPayment || (l.apr > 0 ? (l.principal * (l.apr / 100) / 12) : (l.principal * 0.01));
       return s + minPayment;
     }, 0);

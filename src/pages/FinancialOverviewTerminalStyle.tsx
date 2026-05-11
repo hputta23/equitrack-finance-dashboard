@@ -13,11 +13,8 @@ export default function FinancialOverviewTerminalStyle() {
   const tradeWins = (state.trades || []).filter(t => t.pnl > 0).length;
   const tradeTotal = (state.trades || []).length;
   const winRate = tradeTotal > 0 ? ((tradeWins / tradeTotal) * 100).toFixed(1) : '—';
+  const totalMinPayment = (state.liabilities || []).reduce((s, l) => s + (l.minPayment || 0), 0);
   const targetProgress = state.userProfile.targetNetWorth > 0 ? Math.min(Math.max((netWorth / state.userProfile.targetNetWorth) * 100, 0), 100) : 0;
-  
-  const totalMinPayments = state.liabilities
-    .filter(l => ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'].includes(l.category))
-    .reduce((s, l) => s + (l.minPayment || 0), 0);
 
   // Recent changelog entries
   const recentChanges = useMemo(() => (state.changelog || []).slice(0, 8), [state.changelog]);
@@ -43,12 +40,12 @@ export default function FinancialOverviewTerminalStyle() {
       </header>
 
       {/* Row 1: Key Metrics Strip */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-[2px] bg-outline-variant/20 mb-4 border border-outline-variant/30">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-[2px] bg-outline-variant/20 mb-4 border border-outline-variant/30">
         {[
           { label: 'NET WORTH', value: fmt(netWorth), delta: netWorth >= 0 ? '▲' : '▼', color: netWorth >= 0 ? 'text-[#4ade80]' : 'text-[#f87171]' },
           { label: 'MONTHLY SAVINGS', value: fmt(monthlySavings), delta: `${savingsRate}% saved`, color: monthlySavings >= 0 ? 'text-[#4ade80]' : 'text-[#f87171]' },
           { label: 'TRADE PROFITS', value: `${tradePnl >= 0 ? '+' : ''}${fmt(tradePnl)}`, delta: `${winRate}% win rate`, color: tradePnl >= 0 ? 'text-[#4ade80]' : 'text-[#f87171]' },
-          { label: 'DEBT MINIMUMS', value: fmt(totalMinPayments), delta: '/ month', color: 'text-[#fbbf24]' },
+          { label: 'MIN PAYMENTS', value: fmt(totalMinPayment), delta: 'per month', color: totalMinPayment > 0 ? 'text-[#fbbf24]' : 'text-[#4ade80]' },
           { label: 'CREDIT SCORE', value: state.creditScore.toString(), delta: `/ 850`, color: 'text-on-surface' },
           { label: 'DEBT RATIO', value: `${debtRatio}%`, delta: 'of net worth', color: Number(debtRatio) > 60 ? 'text-[#f87171]' : 'text-[#4ade80]' },
         ].map(m => (
