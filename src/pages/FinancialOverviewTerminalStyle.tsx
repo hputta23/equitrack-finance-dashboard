@@ -13,11 +13,16 @@ export default function FinancialOverviewTerminalStyle() {
   const tradeWins = (state.trades || []).filter(t => t.pnl > 0).length;
   const tradeTotal = (state.trades || []).length;
   const winRate = tradeTotal > 0 ? ((tradeWins / tradeTotal) * 100).toFixed(1) : '—';
-  const totalMinPayment = (state.liabilities || []).reduce((s, l) => s + (l.minPayment || 0), 0);
   const targetProgress = state.userProfile.targetNetWorth > 0 ? Math.min(Math.max((netWorth / state.userProfile.targetNetWorth) * 100, 0), 100) : 0;
 
   // Recent changelog entries
   const recentChanges = useMemo(() => (state.changelog || []).slice(0, 8), [state.changelog]);
+
+  // Debt obligations
+  const DEBT_CATEGORIES = ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'];
+  const debts = useMemo(() => (state.liabilities || []).filter(l => DEBT_CATEGORIES.includes(l.category)), [state.liabilities]);
+  const totalMinPayments = useMemo(() => debts.reduce((s, d) => s + (d.minPayment || 0), 0), [debts]);
+  const obligationPct = state.monthlyIncome > 0 ? (totalMinPayments / state.monthlyIncome) * 100 : 0;
 
   // Data flow nodes for the workflow visualization
   const flowNodes = [
@@ -40,12 +45,11 @@ export default function FinancialOverviewTerminalStyle() {
       </header>
 
       {/* Row 1: Key Metrics Strip */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-[2px] bg-outline-variant/20 mb-4 border border-outline-variant/30">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-[2px] bg-outline-variant/20 mb-4 border border-outline-variant/30">
         {[
           { label: 'NET WORTH', value: fmt(netWorth), delta: netWorth >= 0 ? '▲' : '▼', color: netWorth >= 0 ? 'text-[#4ade80]' : 'text-[#f87171]' },
           { label: 'MONTHLY SAVINGS', value: fmt(monthlySavings), delta: `${savingsRate}% saved`, color: monthlySavings >= 0 ? 'text-[#4ade80]' : 'text-[#f87171]' },
           { label: 'TRADE PROFITS', value: `${tradePnl >= 0 ? '+' : ''}${fmt(tradePnl)}`, delta: `${winRate}% win rate`, color: tradePnl >= 0 ? 'text-[#4ade80]' : 'text-[#f87171]' },
-          { label: 'MIN PAYMENTS', value: fmt(totalMinPayment), delta: 'per month', color: totalMinPayment > 0 ? 'text-[#fbbf24]' : 'text-[#4ade80]' },
           { label: 'CREDIT SCORE', value: state.creditScore.toString(), delta: `/ 850`, color: 'text-on-surface' },
           { label: 'DEBT RATIO', value: `${debtRatio}%`, delta: 'of net worth', color: Number(debtRatio) > 60 ? 'text-[#f87171]' : 'text-[#4ade80]' },
         ].map(m => (
@@ -150,7 +154,83 @@ export default function FinancialOverviewTerminalStyle() {
         </div>
       </div>
 
-      {/* Row 3: Version History (Audit Log) */}
+      {/* Row 3: Monthly Debt Obligations */}
+      {debts.length > 0 && (
+        <div className="mb-4 bg-surface-container border border-outline-variant rounded overflow-hidden">
+          <div className="px-3 py-2 border-b border-outline-variant bg-surface-container-high flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-tertiary text-fluid-14">event_repeat</span>
+              <span className="text-fluid-10 text-on-surface-variant uppercase tracking-widest font-bold">Monthly Debt Obligations</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className={`font-mono-data text-sm font-bold ${
+                obligationPct > 35 ? 'text-error' : obligationPct > 20 ? 'text-tertiary' : 'text-[#4ade80]'
+              }`}>{fmt(totalMinPayments)}/mo</span>
+              {obligationPct > 20 && (
+                <span className={`text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded border ${
+                  obligationPct > 35
+                    ? 'bg-error/15 text-error border-error/30'
+                    : 'bg-tertiary-container/30 text-tertiary border-tertiary/30'
+                }`}>
+                  {obligationPct > 35 ? '⚠ HIGH RISK' : '⚡ WARNING'}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {debts.filter(d => d.status !== 'Paid Off').map(d => {
+              const pct = totalMinPayments > 0 ? ((d.minPayment || 0) / totalMinPayments) * 100 : 0;
+              const barColor = d.category === 'Credit Card' ? 'bg-primary' : d.category === 'Mortgage' ? 'bg-[#4ade80]' : d.category === 'Student Loan' ? 'bg-[#a78bfa]' : 'bg-tertiary';
+              return (
+                <div key={d.id} className="bg-surface border border-outline-variant/50 rounded p-2.5 flex flex-col gap-1.5">
+                  <div className="flex items-start justify-between gap-1">
+                    <div className="min-w-0">
+                      <div className="text-on-surface text-xs font-semibold truncate">{d.name}</div>
+                      <div className="text-on-surface-variant text-[10px]">{d.category} • {d.apr > 0 ? `${d.apr}% APR` : '0% APR'}{d.isIntroApr ? ' (intro)' : ''}</div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      {d.minPayment ? (
+                        <span className="font-mono-data text-xs font-bold text-tertiary">{fmt(d.minPayment)}</span>
+                      ) : (
+                        <span className="text-[10px] text-on-surface-variant italic">No min set</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="h-1 bg-surface-container-high rounded-full overflow-hidden">
+                    <div className={`h-full ${barColor} rounded-full transition-all duration-500`} style={{ width: `${pct}%` }} />
+                  </div>
+                  <div className="text-[9px] text-on-surface-variant flex justify-between">
+                    <span>Balance: {fmt(d.principal)}</span>
+                    {d.maxLimit ? <span>Limit: {fmt(d.maxLimit)}</span> : null}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {/* Summary bar */}
+          <div className="mx-3 mb-3 p-2 bg-surface-container-high border border-outline-variant/50 rounded flex flex-col sm:flex-row sm:items-center gap-2">
+            <div className="flex-1">
+              <div className="text-[10px] text-on-surface-variant uppercase tracking-wider mb-1">Obligations vs Income</div>
+              <div className="h-2 bg-surface rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-700 ${
+                    obligationPct > 35 ? 'bg-error' : obligationPct > 20 ? 'bg-tertiary' : 'bg-[#4ade80]'
+                  }`}
+                  style={{ width: `${Math.min(obligationPct, 100)}%` }}
+                />
+              </div>
+            </div>
+            <div className="text-right">
+              <span className={`font-mono-data text-xs font-bold ${
+                obligationPct > 35 ? 'text-error' : obligationPct > 20 ? 'text-tertiary' : 'text-[#4ade80]'
+              }`}>{obligationPct.toFixed(1)}% of income</span>
+              <div className="text-[9px] text-on-surface-variant">{fmt(state.monthlyIncome - totalMinPayments)} left after payments</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Row 4: Version History (Audit Log) */}
       <div className="bg-surface-container border border-outline-variant rounded overflow-hidden">
         <div className="px-3 py-2 border-b border-outline-variant bg-surface-container-high flex items-center justify-between">
           <div className="flex items-center gap-2">

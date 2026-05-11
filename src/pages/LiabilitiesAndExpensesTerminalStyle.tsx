@@ -31,7 +31,6 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
   const [selectedQuickCat, setSelectedQuickCat] = useState<string | null>(null);
 
   // Debt form
-  // Debt form
   const [newLiability, setNewLiability] = useState<Partial<Liability>>({ name: '', category: 'Credit Card', principal: 0, apr: 0, maxLimit: 0, isIntroApr: false, minPayment: 0 });
 
   // Edit state
@@ -82,7 +81,7 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
     setNewLiability({ name: '', category: 'Credit Card', principal: 0, apr: 0, maxLimit: 0, isIntroApr: false, minPayment: 0 });
   };
 
-  const startEdit = (l: Liability) => { setEditingId(l.id); setEditValues({ principal: l.principal, apr: l.apr, status: l.status, minPayment: l.minPayment }); };
+  const startEdit = (l: Liability) => { setEditingId(l.id); setEditValues({ principal: l.principal, apr: l.apr, status: l.status, minPayment: l.minPayment || 0 }); };
   const saveEdit = (id: string) => { updateLiability(id, editValues); setEditingId(null); };
   const cancelEdit = () => { setEditingId(null); setEditValues({}); };
 
@@ -200,7 +199,7 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                     <th className="px-4 py-2">Name</th>
                     <th className="px-4 py-2 text-right">Balance</th>
                     <th className="px-4 py-2 text-right">Interest</th>
-                    <th className="px-4 py-2 text-right">Min Payment</th>
+                    <th className="px-4 py-2 text-right">Min/Mo</th>
                     <th className="px-4 py-2">Payment</th>
                     <th className="px-4 py-2 text-center">Status</th>
                     <th className="px-4 py-2 text-center">Actions</th>
@@ -238,8 +237,15 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                       </td>
                       <td className="px-4 py-2 text-right">
                         {editingId === l.id ? (
-                          <input type="number" className="w-20 bg-surface border border-primary p-1 text-xs font-mono text-on-surface text-right outline-none" value={editValues.minPayment} onChange={e => setEditValues(v => ({ ...v, minPayment: Number(e.target.value) }))} />
-                        ) : <span className="text-on-surface">${(l.minPayment || 0).toLocaleString()}</span>}
+                          <div className="relative">
+                            <span className="absolute left-1.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[10px]">$</span>
+                            <input type="number" className="w-20 bg-surface border border-primary p-1 pl-4 text-xs font-mono text-on-surface text-right outline-none" value={editValues.minPayment ?? ''} onChange={e => setEditValues(v => ({ ...v, minPayment: Number(e.target.value) }))} placeholder="0" />
+                          </div>
+                        ) : (
+                          <span className={l.minPayment ? 'text-tertiary font-semibold' : 'text-on-surface-variant italic text-[11px]'}>
+                            {l.minPayment ? `$${l.minPayment.toLocaleString()}` : '—'}
+                          </span>
+                        )}
                       </td>
                       <td className="px-4 py-2 text-on-surface-variant">{l.nextPayment}</td>
                       <td className="px-4 py-2 text-center">
@@ -374,14 +380,6 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                   </div>
                 </div>
               </div>
-
-              <div>
-                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Monthly Minimum Payment</label>
-                <div className="relative">
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
-                  <input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.minPayment || ''} onChange={e => setNewLiability(v => ({ ...v, minPayment: Number(e.target.value) }))} placeholder="0.00" />
-                </div>
-              </div>
               
               {newLiability.category === 'Credit Card' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-outline-variant/30 mt-2">
@@ -402,6 +400,18 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                   </div>
                 </div>
               )}
+              {/* Min Monthly Payment — all debt types */}
+              <div className="pt-2 border-t border-outline-variant/30 mt-1">
+                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block flex items-center gap-1">
+                  <span className="material-symbols-outlined text-fluid-12 text-tertiary">event_repeat</span>
+                  Min Monthly Payment
+                </label>
+                <div className="relative">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
+                  <input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-tertiary outline-none" value={newLiability.minPayment || ''} onChange={e => setNewLiability(v => ({ ...v, minPayment: Number(e.target.value) }))} placeholder="e.g. 25.00" />
+                </div>
+                <p className="text-[10px] text-on-surface-variant mt-1">Shown on dashboard as your monthly obligation.</p>
+              </div>
             </div>
             <button onClick={handleAddDebt} disabled={!newLiability.name || !newLiability.principal}
               className="mt-3 w-full bg-primary text-on-primary font-bold py-3 uppercase tracking-tighter text-sm flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded">
