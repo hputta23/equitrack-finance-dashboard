@@ -59,75 +59,119 @@
   }
 
   .light {
-    --error-container: #ffdad6;
-    --surface-container-low: #f7f9fc;
-    --surface-container: #f1f4f9;
-    --primary-fixed-dim: #00668a;
-    --secondary-container: #dce3e9;
-    --surface: #fdfcff;
-    --surface-variant: #dee3e5;
-    --secondary: #535f70;
-    --on-background: #191c1e;
-    --surface-bright: #fdfcff;
+    --error-container: #fee2e2;
+    --surface-container-low: #f8fafc;
+    --surface-container: #f1f5f9;
+    --primary-fixed-dim: #0284c7;
+    --secondary-container: #e2e8f0;
+    --surface: #ffffff;
+    --surface-variant: #f1f5f9;
+    --secondary: #64748b;
+    --on-background: #0f172a;
+    --surface-bright: #ffffff;
     --on-primary: #ffffff;
-    --tertiary-container: #ffddb8;
-    --on-surface: #191c1e;
-    --surface-container-high: #e9eef2;
+    --tertiary-container: #fef3c7;
+    --on-surface: #0f172a;
+    --surface-container-high: #e2e8f0;
     --on-error: #ffffff;
-    --on-secondary-fixed-variant: #39485a;
-    --tertiary: #8b5000;
-    --outline: #70787d;
+    --on-secondary-fixed-variant: #334155;
+    --tertiary: #d97706;
+    --outline: #94a3b8;
     --on-tertiary: #ffffff;
-    --secondary-fixed-dim: #535f70;
-    --secondary-fixed: #d4e4fa;
-    --inverse-primary: #7bd0ff;
-    --error: #ba1a1a;
-    --on-error-container: #410002;
-    --on-secondary-container: #101c2b;
-    --on-surface-variant: #40484c;
-    --tertiary-fixed-dim: #8b5000;
-    --on-tertiary-fixed: #2a1700;
-    --inverse-on-surface: #f1f0f4;
+    --secondary-fixed-dim: #64748b;
+    --secondary-fixed: #e2e8f0;
+    --inverse-primary: #38bdf8;
+    --error: #dc2626;
+    --on-error-container: #7f1d1d;
+    --on-secondary-container: #0f172a;
+    --on-surface-variant: #475569;
+    --tertiary-fixed-dim: #d97706;
+    --on-tertiary-fixed: #451a03;
+    --inverse-on-surface: #f8fafc;
     --surface-container-lowest: #ffffff;
-    --surface-dim: #d9dbde;
-    --on-tertiary-fixed-variant: #653e00;
-    --on-primary-container: #001e2c;
-    --surface-container-highest: #e1e2e5;
-    --primary-fixed: #c4e7ff;
+    --surface-dim: #e2e8f0;
+    --on-tertiary-fixed-variant: #78350f;
+    --on-primary-container: #082f49;
+    --surface-container-highest: #cbd5e1;
+    --primary-fixed: #bae6fd;
     --on-secondary: #ffffff;
-    --on-primary-fixed: #001e2c;
-    --tertiary-fixed: #ffddb8;
-    --surface-tint: #00668a;
-    --primary-container: #c4e7ff;
-    --primary: #00668a;
-    --background: #fdfcff;
-    --on-secondary-fixed: #101c2b;
-    --outline-variant: #c0c7cd;
-    --inverse-surface: #2e3133;
-    --on-primary-fixed-variant: #004c69;
-    --on-tertiary-container: #2a1700;
-    --scrollbar-track: #f1f4f9;
-    --scrollbar-thumb: #c0c7cd;
+    --on-primary-fixed: #082f49;
+    --tertiary-fixed: #fde68a;
+    --surface-tint: #0ea5e9;
+    --primary-container: #e0f2fe;
+    --primary: #0284c7;
+    --background: #f8fafc;
+    --on-secondary-fixed: #0f172a;
+    --outline-variant: #cbd5e1;
+    --inverse-surface: #1e293b;
+    --on-primary-fixed-variant: #0369a1;
+    --on-tertiary-container: #451a03;
+    --scrollbar-track: #f1f5f9;
+    --scrollbar-thumb: #cbd5e1;
+  }
+
+  /* Monochrome (High-Contrast Black & White) Theme */
+  .monochrome {
+    --error-container: #e5e5e5;
+    --surface-container-low: #111111;
+    --surface-container: #1a1a1a;
+    --primary-fixed-dim: #e5e5e5;
+    --secondary-container: #333333;
+    --surface: #000000;
+    --surface-variant: #222222;
+    --secondary: #a3a3a3;
+    --on-background: #ffffff;
+    --surface-bright: #222222;
+    --on-primary: #000000;
+    --tertiary-container: #444444;
+    --on-surface: #ffffff;
+    --surface-container-high: #2a2a2a;
+    --on-error: #000000;
+    --on-secondary-fixed-variant: #888888;
+    --tertiary: #d4d4d4;
+    --outline: #737373;
+    --on-tertiary: #000000;
+    --secondary-fixed-dim: #a3a3a3;
+    --secondary-fixed: #e5e5e5;
+    --inverse-primary: #555555;
+    --error: #ffffff;
+    --on-error-container: #000000;
+    --on-secondary-container: #ffffff;
+    --on-surface-variant: #a3a3a3;
+    --tertiary-fixed-dim: #d4d4d4;
+    --on-tertiary-fixed: #000000;
+    --inverse-on-surface: #000000;
+    --surface-container-lowest: #050505;
+    --surface-dim: #1a1a1a;
+    --on-tertiary-fixed-variant: #d4d4d4;
+    --on-primary-container: #ffffff;
+    --surface-container-highest: #333333;
+    --primary-fixed: #ffffff;
+    --on-secondary: #000000;
+    --on-primary-fixed: #000000;
+    --tertiary-fixed: #ffffff;
+    --surface-tint: #ffffff;
+    --primary-container: #333333;
+    --primary: #ffffff;
+    --background: #000000;
+    --on-secondary-fixed: #000000;
+    --outline-variant: #404040;
+    --inverse-surface: #ffffff;
+    --on-primary-fixed-variant: #e5e5e5;
+    --on-tertiary-container: #ffffff;
+    --scrollbar-track: #111111;
+    --scrollbar-thumb: #404040;
   }
 
   body {
-    @apply bg-surface text-on-surface font-body overflow-hidden transition-colors duration-300;
+    @apply bg-surface text-on-surface font-body overflow-hidden;
   }
 
-  /* Monochrome (Black & White) Theme */
-  html.monochrome {
-    filter: grayscale(100%);
-  }
-  html.monochrome .text-primary,
-  html.monochrome .text-primary-container {
-    color: #ffffff !important;
-  }
-  html.monochrome .bg-primary {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-  }
-  html.monochrome .border-primary {
-    border-color: #888888 !important;
+  /* Global smooth transition for theme switching */
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 400ms;
   }
 }
 
