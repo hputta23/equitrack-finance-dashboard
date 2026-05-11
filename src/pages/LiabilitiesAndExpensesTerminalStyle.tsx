@@ -23,6 +23,7 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
   const { state, addLiability, removeLiability, updateLiability, totalDebt, exportCSV } = useFinancial();
 
   const [viewMode, setViewMode] = useState<ViewMode>('daily');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Quick expense form
   const [expName, setExpName] = useState('');
@@ -40,14 +41,15 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
   // Filter
   const [filter, setFilter] = useState<'all' | 'Active' | 'Paid Off'>('all');
 
+  const DEBT_CATS = ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical', 'Rent'];
   // Separate daily expenses from debts
   const dailyExpenses = useMemo(() =>
-    state.liabilities.filter(l => !['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'].includes(l.category))
+    state.liabilities.filter(l => !DEBT_CATS.includes(l.category))
       .sort((a, b) => b.id.localeCompare(a.id)),
     [state.liabilities]
   );
   const debts = useMemo(() =>
-    state.liabilities.filter(l => ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'].includes(l.category)),
+    state.liabilities.filter(l => DEBT_CATS.includes(l.category)),
     [state.liabilities]
   );
 
@@ -89,15 +91,20 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
 
   return (
     <div className="flex-1 flex flex-col md:flex-row overflow-hidden h-full">
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4">
         <header className="mb-4 flex justify-between items-end">
           <div>
             <h1 className="font-h1 text-primary uppercase tracking-tight">My Expenses</h1>
             <p className="text-on-surface-variant font-body-base text-xs mt-1">Track daily spending and manage your debts in one place.</p>
           </div>
-          <button onClick={exportCSV} className="px-3 py-1 bg-surface-container border border-outline-variant text-on-surface text-xs font-mono-data rounded hover:bg-surface-container-high transition-colors flex items-center gap-1">
-            <span className="material-symbols-outlined text-fluid-14">download</span> EXPORT
-          </button>
+          <div className="flex gap-2">
+            <button onClick={() => setSidebarOpen(true)} className="md:hidden px-3 py-1 bg-primary/10 border border-primary/30 text-primary text-xs font-mono-data rounded flex items-center gap-1">
+              <span className="material-symbols-outlined text-fluid-14">add</span> Add
+            </button>
+            <button onClick={exportCSV} className="px-3 py-1 bg-surface-container border border-outline-variant text-on-surface text-xs font-mono-data rounded hover:bg-surface-container-high transition-colors flex items-center gap-1">
+              <span className="material-symbols-outlined text-fluid-14">download</span> EXPORT
+            </button>
+          </div>
         </header>
 
         {/* View Toggle */}
@@ -249,8 +256,9 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
         )}
       </div>
 
-      {/* Sidebar — context-aware add form */}
-      <aside className="w-full md:w-80 bg-surface-container border-t md:border-t-0 md:border-l border-outline-variant flex flex-col p-4 overflow-y-auto shrink-0">
+      {/* Sidebar — slide-over on mobile, fixed panel on desktop */}
+      {sidebarOpen && <div className="md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />}
+      <aside className={`fixed md:relative right-0 top-0 z-50 md:z-auto w-80 h-full bg-surface-container border-l border-outline-variant flex flex-col p-4 overflow-y-auto shrink-0 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}`}>
         {viewMode === 'daily' ? (
           <>
             <div className="flex items-center gap-2 mb-4">
@@ -367,7 +375,7 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
               <div>
                 <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Type</label>
                 <select className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.category} onChange={e => setNewLiability(v => ({ ...v, category: e.target.value }))}>
-                  <option value="Credit Card">Credit Card</option><option value="Personal">Personal Loan</option><option value="Mortgage">Mortgage</option><option value="Student Loan">Student Loan</option><option value="Auto Loan">Auto / Car Loan</option><option value="Medical">Medical Bill</option>
+                  <option value="Credit Card">Credit Card</option><option value="Personal">Personal Loan</option><option value="Mortgage">Mortgage</option><option value="Student Loan">Student Loan</option><option value="Auto Loan">Auto / Car Loan</option><option value="Medical">Medical Bill</option><option value="Rent">Rent Payment</option>
                 </select>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">

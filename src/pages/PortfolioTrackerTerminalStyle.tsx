@@ -13,6 +13,7 @@ export default function PortfolioTrackerTerminalStyle() {
   // Edit State
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<Partial<Asset>>({});
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleAddAsset = () => {
     if (!newAsset.name || !newAsset.quantity || !newAsset.unitPrice) return;
@@ -50,15 +51,20 @@ export default function PortfolioTrackerTerminalStyle() {
 
   return (
     <div className="flex-1 flex flex-col md:flex-row overflow-hidden h-full">
-      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4 custom-scrollbar">
         <header className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
-            <h1 className="font-h1 text-primary uppercase tracking-tight">PORTFOLIO.SYS</h1>
+            <h1 className="font-h1 text-primary uppercase tracking-tight">My Assets</h1>
             <p className="text-on-surface-variant font-body-base text-xs mt-1">Real-time asset telemetry and allocation mapping</p>
           </div>
-          <button onClick={exportCSV} className="px-3 py-1 bg-surface-container border border-outline-variant text-on-surface text-xs font-mono-data rounded hover:bg-surface-container-high transition-colors flex items-center gap-1">
-            <span className="material-symbols-outlined text-fluid-14">download</span> EXPORT DATA
-          </button>
+          <div className="flex gap-2">
+            <button onClick={() => setSidebarOpen(true)} className="md:hidden px-3 py-1 bg-primary/10 border border-primary/30 text-primary text-xs font-mono-data rounded flex items-center gap-1">
+              <span className="material-symbols-outlined text-fluid-14">add</span> Add
+            </button>
+            <button onClick={exportCSV} className="px-3 py-1 bg-surface-container border border-outline-variant text-on-surface text-xs font-mono-data rounded hover:bg-surface-container-high transition-colors flex items-center gap-1">
+              <span className="material-symbols-outlined text-fluid-14">download</span> EXPORT
+            </button>
+          </div>
         </header>
 
         {/* Summary Cards */}
@@ -143,8 +149,9 @@ export default function PortfolioTrackerTerminalStyle() {
         </div>
       </div>
 
-      {/* Add Asset Sidebar */}
-      <aside className="w-full md:w-80 bg-surface-container border-t md:border-t-0 md:border-l border-outline-variant flex flex-col p-4 overflow-y-auto shrink-0">
+      {/* Sidebar — slide-over on mobile */}
+      {sidebarOpen && <div className="md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />}
+      <aside className={`fixed md:relative right-0 top-0 z-50 md:z-auto w-80 h-full bg-surface-container border-l border-outline-variant flex flex-col p-4 overflow-y-auto shrink-0 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}`}>
         <div className="flex items-center gap-2 mb-4">
           <span className="material-symbols-outlined text-primary">add_circle</span>
           <h2 className="font-h3 text-h3 text-on-surface uppercase">Add Asset</h2>

@@ -53,7 +53,7 @@ export default function IncomeStrategyFlow() {
   };
 
   return (
-    <div className="flex-1 overflow-auto p-container-padding flex flex-col md:flex-row gap-gutter bg-surface-dim h-full">
+    <div className="flex-1 overflow-auto p-3 sm:p-container-padding flex flex-col md:flex-row gap-gutter bg-surface-dim h-full">
       {/* Center Column */}
       <div className="flex-1 flex flex-col gap-gutter">
         <div className="flex justify-between items-end mb-2">
@@ -134,7 +134,7 @@ export default function IncomeStrategyFlow() {
       </div>
 
       {/* Right Panel: Manual Allocation */}
-      <div className="w-full md:w-80 bg-surface border border-outline-variant rounded-DEFAULT flex flex-col shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+      <div className="w-full md:w-80 bg-surface border border-outline-variant rounded-DEFAULT flex flex-col shadow-[0_4px_12px_rgba(0,0,0,0.5)] shrink-0">
         <div className="p-4 border-b border-outline-variant flex items-center gap-2 bg-surface-container-highest">
           <span className="material-symbols-outlined text-primary text-fluid-18">tune</span>
           <h2 className="font-h2 text-h2 text-on-surface">Manual Allocation</h2>

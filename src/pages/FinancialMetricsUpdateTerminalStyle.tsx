@@ -31,7 +31,7 @@ export default function FinancialMetricsUpdateTerminalStyle() {
 
   return (
     <div className="flex-1 flex flex-col md:flex-row overflow-hidden h-full">
-      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4 custom-scrollbar">
         <header className="mb-6 flex justify-between items-end">
           <div>
             <h1 className="font-h1 text-primary uppercase tracking-tight">Manual Updates</h1>
@@ -123,7 +123,7 @@ export default function FinancialMetricsUpdateTerminalStyle() {
         </section>
       </div>
 
-      <aside className="w-full md:w-80 bg-surface-container border-t md:border-t-0 md:border-l border-outline-variant flex flex-col p-4 overflow-y-auto shrink-0">
+      <aside className="hidden md:flex w-80 bg-surface-container border-l border-outline-variant flex-col p-4 overflow-y-auto shrink-0">
         <h3 className="font-label-caps text-on-surface-variant uppercase tracking-[0.2em] mb-4 text-fluid-10">Impact Analysis</h3>
         <div className="space-y-4 mb-8">
           <div className="bg-surface-container-low p-4 border border-outline-variant glow-cyan">

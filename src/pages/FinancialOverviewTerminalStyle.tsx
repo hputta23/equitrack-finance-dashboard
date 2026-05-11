@@ -18,7 +18,7 @@ export default function FinancialOverviewTerminalStyle() {
   const recentTrades = useMemo(() => (state.trades || []).slice(0, 4), [state.trades]);
 
   // Debt obligations
-  const DEBT_CATEGORIES = ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'];
+  const DEBT_CATEGORIES = ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical', 'Rent'];
   const debts = useMemo(() => (state.liabilities || []).filter(l => DEBT_CATEGORIES.includes(l.category) && l.status !== 'Paid Off'), [state.liabilities]);
   const totalMinPayments = useMemo(() => debts.reduce((s, d) => s + (d.minPayment || 0), 0), [debts]);
   const obligationPct = state.monthlyIncome > 0 ? (totalMinPayments / state.monthlyIncome) * 100 : 0;
