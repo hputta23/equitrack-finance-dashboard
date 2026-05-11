@@ -7,7 +7,7 @@ export default function IncomeStrategyFlow() {
   const [buckets, setBuckets] = useState([
     { name: 'Fixed Expenses', pct: 42, color: 'error', target: 40 },
     { name: 'Investments', pct: 35, color: 'primary', target: 35 },
-    { name: 'Debt Service', pct: 23, color: 'tertiary', target: 25 },
+    { name: 'Obligations', pct: 23, color: 'tertiary', target: 25 },
   ]);
 
   const grossIncome = state.monthlyIncome > 0 ? state.monthlyIncome : (state.monthlyBurn > 0 ? state.monthlyBurn / (buckets[0].pct / 100) : 0);
@@ -15,22 +15,21 @@ export default function IncomeStrategyFlow() {
 
   // Calculate Real-World Actuals
   const currentMonthPrefix = new Date().toISOString().substring(0, 7);
+  const DEBT_CATEGORIES = ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical', 'Rent'];
+  
   const actualExpensesVolume = state.liabilities
-    .filter(l => !['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'].includes(l.category) && (l.nextPayment || '').startsWith(currentMonthPrefix))
+    .filter(l => !DEBT_CATEGORIES.includes(l.category) && (l.nextPayment || '').startsWith(currentMonthPrefix))
     .reduce((s, l) => s + l.principal, 0);
   
   const actualDebtVolume = state.liabilities
-    .filter(l => ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'].includes(l.category))
-    .reduce((s, l) => {
-      const minPayment = l.apr > 0 ? (l.principal * (l.apr / 100) / 12) : (l.principal * 0.01);
-      return s + minPayment;
-    }, 0);
+    .filter(l => DEBT_CATEGORIES.includes(l.category) && l.status !== 'Paid Off')
+    .reduce((s, l) => s + (l.minPayment || 0), 0);
 
   const bucketsWithActuals = buckets.map(b => {
     let actualVolume = 0;
     if (b.name === 'Fixed Expenses') {
       actualVolume = actualExpensesVolume;
-    } else if (b.name === 'Debt Service') {
+    } else if (b.name === 'Obligations') {
       actualVolume = actualDebtVolume;
     } else {
       actualVolume = Math.max(0, grossIncome - actualExpensesVolume - actualDebtVolume);

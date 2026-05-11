@@ -223,16 +223,24 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                         <div className="text-on-surface-variant text-fluid-10">{l.category}</div>
                       </td>
                       <td className="px-4 py-2 text-right">
-                        <div className="flex flex-col items-end">
-                          <span className="text-on-surface">${l.principal.toLocaleString()}</span>
-                          {l.maxLimit ? <span className="text-on-surface-variant text-[10px] mt-0.5 uppercase tracking-wider">Limit: ${l.maxLimit.toLocaleString()}</span> : null}
-                        </div>
+                        {l.category === 'Rent' ? (
+                          <span className="text-on-surface-variant italic">—</span>
+                        ) : (
+                          <div className="flex flex-col items-end">
+                            <span className="text-on-surface">${l.principal.toLocaleString()}</span>
+                            {l.maxLimit ? <span className="text-on-surface-variant text-[10px] mt-0.5 uppercase tracking-wider">Limit: ${l.maxLimit.toLocaleString()}</span> : null}
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-2 text-right">
-                        <div className="flex flex-col items-end">
-                          <span className={l.apr >= 15 ? 'text-error font-bold' : 'text-on-surface'}>{l.apr.toFixed(1)}%</span>
-                          {l.isIntroApr && <span className="text-primary text-[9px] uppercase font-bold tracking-widest bg-primary/10 px-1 mt-0.5 rounded border border-primary/20">Intro APR</span>}
-                        </div>
+                        {l.category === 'Rent' ? (
+                          <span className="text-on-surface-variant italic">—</span>
+                        ) : (
+                          <div className="flex flex-col items-end">
+                            <span className={l.apr >= 15 ? 'text-error font-bold' : 'text-on-surface'}>{l.apr.toFixed(1)}%</span>
+                            {l.isIntroApr && <span className="text-primary text-[9px] uppercase font-bold tracking-widest bg-primary/10 px-1 mt-0.5 rounded border border-primary/20">Intro APR</span>}
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-2 text-right">
                         <span className={l.minPayment ? 'text-tertiary font-semibold' : 'text-on-surface-variant italic text-[11px]'}>
@@ -333,20 +341,30 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                 <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Name</label>
                 <input className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={editValues.name || ''} onChange={e => setEditValues(v => ({ ...v, name: e.target.value }))} />
               </div>
-              <div>
-                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Balance Owed</label>
-                <div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
-                <input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={editValues.principal || ''} onChange={e => setEditValues(v => ({ ...v, principal: Number(e.target.value) }))} /></div>
-              </div>
-              <div>
-                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Interest Rate</label>
-                <div className="relative"><input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pr-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={editValues.apr || ''} onChange={e => setEditValues(v => ({ ...v, apr: Number(e.target.value) }))} /><span className="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">%</span></div>
-              </div>
-              <div>
-                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Min Monthly Payment</label>
-                <div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
-                <input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-tertiary outline-none" value={editValues.minPayment || ''} onChange={e => setEditValues(v => ({ ...v, minPayment: Number(e.target.value) }))} /></div>
-              </div>
+              {editValues.category === 'Rent' ? (
+                <div>
+                  <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Monthly Rent</label>
+                  <div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
+                  <input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-tertiary outline-none" value={editValues.minPayment || ''} onChange={e => setEditValues(v => ({ ...v, minPayment: Number(e.target.value) }))} /></div>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Balance Owed</label>
+                    <div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
+                    <input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={editValues.principal || ''} onChange={e => setEditValues(v => ({ ...v, principal: Number(e.target.value) }))} /></div>
+                  </div>
+                  <div>
+                    <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Interest Rate</label>
+                    <div className="relative"><input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pr-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={editValues.apr || ''} onChange={e => setEditValues(v => ({ ...v, apr: Number(e.target.value) }))} /><span className="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">%</span></div>
+                  </div>
+                  <div>
+                    <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Min Monthly Payment</label>
+                    <div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
+                    <input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-tertiary outline-none" value={editValues.minPayment || ''} onChange={e => setEditValues(v => ({ ...v, minPayment: Number(e.target.value) }))} /></div>
+                  </div>
+                </>
+              )}
               <div>
                 <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Status</label>
                 <select className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={editValues.status} onChange={e => setEditValues(v => ({ ...v, status: e.target.value }))}>
@@ -378,22 +396,31 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                   <option value="Credit Card">Credit Card</option><option value="Personal">Personal Loan</option><option value="Mortgage">Mortgage</option><option value="Student Loan">Student Loan</option><option value="Auto Loan">Auto / Car Loan</option><option value="Medical">Medical Bill</option><option value="Rent">Rent Payment</option>
                 </select>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div><label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Balance</label><div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span><input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.principal || ''} onChange={e => setNewLiability(v => ({ ...v, principal: Number(e.target.value) }))} /></div></div>
-                <div><label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">APR</label><div className="relative"><input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pr-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.apr || ''} onChange={e => setNewLiability(v => ({ ...v, apr: Number(e.target.value) }))} /><span className="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">%</span></div></div>
-              </div>
-              {newLiability.category === 'Credit Card' && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-outline-variant/30 mt-2">
-                  <div><label className="text-fluid-10 text-primary uppercase tracking-wider mb-0.5 block">Max Limit</label><div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span><input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.maxLimit || ''} onChange={e => setNewLiability(v => ({ ...v, maxLimit: Number(e.target.value) }))} /></div></div>
-                  <div className="flex items-end pb-1"><label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 accent-primary" checked={newLiability.isIntroApr || false} onChange={e => setNewLiability(v => ({ ...v, isIntroApr: e.target.checked }))} /><span className="text-fluid-10 text-on-surface-variant uppercase tracking-wider">Intro APR?</span></label></div>
+              {newLiability.category === 'Rent' ? (
+                <div className="pt-2 border-t border-outline-variant/30 mt-1">
+                  <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block flex items-center gap-1"><span className="material-symbols-outlined text-fluid-12 text-tertiary">home</span>Monthly Rent</label>
+                  <div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span><input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-tertiary outline-none" value={newLiability.minPayment || ''} onChange={e => setNewLiability(v => ({ ...v, minPayment: Number(e.target.value), principal: 0, apr: 0 }))} placeholder="2000.00" /></div>
                 </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div><label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Balance</label><div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span><input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.principal || ''} onChange={e => setNewLiability(v => ({ ...v, principal: Number(e.target.value) }))} /></div></div>
+                    <div><label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">APR</label><div className="relative"><input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pr-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.apr || ''} onChange={e => setNewLiability(v => ({ ...v, apr: Number(e.target.value) }))} /><span className="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">%</span></div></div>
+                  </div>
+                  {newLiability.category === 'Credit Card' && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-outline-variant/30 mt-2">
+                      <div><label className="text-fluid-10 text-primary uppercase tracking-wider mb-0.5 block">Max Limit</label><div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span><input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.maxLimit || ''} onChange={e => setNewLiability(v => ({ ...v, maxLimit: Number(e.target.value) }))} /></div></div>
+                      <div className="flex items-end pb-1"><label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 accent-primary" checked={newLiability.isIntroApr || false} onChange={e => setNewLiability(v => ({ ...v, isIntroApr: e.target.checked }))} /><span className="text-fluid-10 text-on-surface-variant uppercase tracking-wider">Intro APR?</span></label></div>
+                    </div>
+                  )}
+                  <div className="pt-2 border-t border-outline-variant/30 mt-1">
+                    <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block flex items-center gap-1"><span className="material-symbols-outlined text-fluid-12 text-tertiary">event_repeat</span>Min Payment</label>
+                    <div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span><input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-tertiary outline-none" value={newLiability.minPayment || ''} onChange={e => setNewLiability(v => ({ ...v, minPayment: Number(e.target.value) }))} placeholder="25.00" /></div>
+                  </div>
+                </>
               )}
-              <div className="pt-2 border-t border-outline-variant/30 mt-1">
-                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block flex items-center gap-1"><span className="material-symbols-outlined text-fluid-12 text-tertiary">event_repeat</span>Min Payment</label>
-                <div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span><input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-tertiary outline-none" value={newLiability.minPayment || ''} onChange={e => setNewLiability(v => ({ ...v, minPayment: Number(e.target.value) }))} placeholder="25.00" /></div>
-              </div>
             </div>
-            <button onClick={handleAddDebt} disabled={!newLiability.name || !newLiability.principal}
+            <button onClick={handleAddDebt} disabled={!newLiability.name || (newLiability.category === 'Rent' ? !newLiability.minPayment : !newLiability.principal)}
               className="mt-3 w-full bg-primary text-on-primary font-bold py-3 uppercase tracking-tighter text-sm flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded">
               <span className="material-symbols-outlined text-sm">add</span> Add Debt
             </button>
