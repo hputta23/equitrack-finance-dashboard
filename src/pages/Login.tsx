@@ -18,6 +18,10 @@ export default function Login() {
       setErrorMsg('Required fields missing');
       return;
     }
+    if (!isResetMode && isSignUp && password.length < 8) {
+      setErrorMsg('Password must be at least 8 characters');
+      return;
+    }
     
     setLoading(true);
     setErrorMsg('');
@@ -32,14 +36,19 @@ export default function Login() {
     const success = await login(email, password, isSignUp);
     setLoading(false);
     
-    if (success) {
+    if (success && isSignUp) {
+      // Signup success — toast shown by context; prompt user to check email
+      setIsSignUp(false);
+      setPassword('');
+    } else if (success && !isSignUp) {
+      // Sign-in success: navigate based on onboarding state
       if (state.hasCompletedOnboarding) {
         navigate('/');
       } else {
         navigate('/onboarding');
       }
-    } else {
-      setErrorMsg(isSignUp ? 'Registration failed. Check your details.' : 'Invalid credentials. Connection refused.');
+    } else if (!success) {
+      setErrorMsg('Authentication failed. Check your credentials.');
     }
   };
 

@@ -34,7 +34,7 @@ export default function FinancialMetricsUpdateTerminalStyle() {
       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
         <header className="mb-6 flex justify-between items-end">
           <div>
-            <h1 className="font-h1 text-primary-container uppercase tracking-tight">Manual Updates</h1>
+            <h1 className="font-h1 text-primary uppercase tracking-tight">Manual Updates</h1>
             <p className="text-on-surface-variant font-body-base text-xs mt-1">Directly update your core numbers and balances.</p>
           </div>
         </header>

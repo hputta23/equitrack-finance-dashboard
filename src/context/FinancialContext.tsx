@@ -95,16 +95,17 @@ export function FinancialProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleSupabaseLogin = async (userId: string) => {
+  const handleSupabaseLogin = useCallback(async (userId: string) => {
     if (!supabase) return;
     const { data } = await supabase.from('profiles').select('state').eq('id', userId).single();
     if (data && data.state && Object.keys(data.state).length > 0) {
-      // Merge cloud state with default state to ensure no missing keys
-      setState(() => ({ ...defaultState, ...data.state, isAuthenticated: true }));
+      // Strip server-side auth flags — isAuthenticated is derived from session, not stored state
+      const { isAuthenticated: _ia, ...cloudState } = data.state;
+      setState(() => ({ ...defaultState, ...cloudState, isAuthenticated: true }));
     } else {
       setState(prev => ({ ...prev, isAuthenticated: true }));
     }
-  };
+  }, []);
 
   // LocalStorage fallback and Cloud Sync (Debounced)
   useEffect(() => { 
@@ -121,8 +122,9 @@ export function FinancialProvider({ children }: { children: ReactNode }) {
       const timer = setTimeout(async () => {
         const { data: { session } } = await sb.auth.getSession();
         if (session) {
-          // Sync state to cloud, omit local-only UI state if desired
-          await sb.from('profiles').upsert({ id: session.user.id, state });
+          // Strip runtime-only flags before persisting to cloud
+          const { isAuthenticated: _ia, darkMode: _dm, ...persistableState } = state;
+          await sb.from('profiles').upsert({ id: session.user.id, state: persistableState });
         }
       }, 2000);
       return () => clearTimeout(timer);
@@ -222,9 +224,7 @@ export function FinancialProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string, isSignUp: boolean) => { 
     if (!supabase) {
-      // Fallback for demo mode
-      if (password === 'admin123') { updateMetrics({ isAuthenticated: true }); logChange('AUTH', 'System', 'User logged in to local mode'); return true; }
-      addToast('Supabase not configured. Using local mode.', 'info');
+      addToast('Supabase is not configured. Please contact support.', 'error');
       return false;
     }
     
@@ -232,11 +232,11 @@ export function FinancialProvider({ children }: { children: ReactNode }) {
       if (isSignUp) {
         const { data, error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        // The trigger will create the profile, or we upsert it
         if (data.user) {
-          await supabase.from('profiles').upsert({ id: data.user.id, state: state });
+          await supabase.from('profiles').upsert({ id: data.user.id, state: { hasCompletedOnboarding: false } });
         }
         logChange('AUTH', 'System', 'User signed up');
+        addToast('Account created! Check your email to confirm your address.', 'success');
         return true;
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -316,12 +316,17 @@ export function FinancialProvider({ children }: { children: ReactNode }) {
   };
 
   const exportCSV = () => {
-    const rows: string[] = ['Type,Name,Category,Value,APR,Status'];
-    state.assets.forEach(a => rows.push(`Asset,${a.name},${a.category},${a.quantity * a.unitPrice},,`));
-    state.liabilities.forEach(l => rows.push(`Liability,${l.name},${l.category},${l.principal},${l.apr}%,${l.status}`));
-    rows.push('', 'Date,Ticker,Direction,Shares,Entry,Exit,Fees,P&L,P&L%,Notes');
-    state.trades.forEach(t => rows.push(`${t.date},${t.ticker},${t.direction},${t.shares},${t.entryPrice},${t.exitPrice},${t.fees},${t.pnl.toFixed(2)},${t.pnlPercent.toFixed(2)}%,"${t.notes}"`));
-    rows.push('', `Summary,Net Worth,,${totalAssets - totalDebt},,`, `Summary,Total Assets,,${totalAssets},,`, `Summary,Total Debt,,${totalDebt},,`);
+    // Sanitize values to prevent CSV injection (prefixes like =, +, -, @ can trigger formulas in Excel)
+    const safe = (v: string | number) => {
+      const s = String(v).replace(/"/g, '""');
+      return /^[=+\-@\t\r]/.test(s) ? `"'${s}"` : `"${s}"`;
+    };
+    const rows: string[] = ['"Type","Name","Category","Value","APR","Status"'];
+    state.assets.forEach(a => rows.push(`"Asset",${safe(a.name)},${safe(a.category)},${safe(a.quantity * a.unitPrice)},"",""`));
+    state.liabilities.forEach(l => rows.push(`"Liability",${safe(l.name)},${safe(l.category)},${safe(l.principal)},${safe(l.apr + '%')},${safe(l.status)}`));
+    rows.push('', '"Date","Ticker","Direction","Shares","Entry","Exit","Fees","P&L","P&L%","Notes"');
+    state.trades.forEach(t => rows.push(`${safe(t.date)},${safe(t.ticker)},${safe(t.direction)},${safe(t.shares)},${safe(t.entryPrice)},${safe(t.exitPrice)},${safe(t.fees)},${safe(t.pnl.toFixed(2))},${safe(t.pnlPercent.toFixed(2) + '%')},${safe(t.notes)}`));
+    rows.push('', `"Summary","Net Worth","",${safe(totalAssets - totalDebt)},"",""`, `"Summary","Total Assets","",${safe(totalAssets)},"",""`, `"Summary","Total Debt","",${safe(totalDebt)},"",""`);
     const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
     const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url;
     a.download = `2026track_export_${new Date().toISOString().split('T')[0]}.csv`; a.click(); URL.revokeObjectURL(url);

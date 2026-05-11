@@ -92,7 +92,7 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
       <div className="flex-1 overflow-y-auto p-4">
         <header className="mb-4 flex justify-between items-end">
           <div>
-            <h1 className="font-h1 text-primary-container uppercase tracking-tight">My Expenses</h1>
+            <h1 className="font-h1 text-primary uppercase tracking-tight">My Expenses</h1>
             <p className="text-on-surface-variant font-body-base text-xs mt-1">Track daily spending and manage your debts in one place.</p>
           </div>
           <button onClick={exportCSV} className="px-3 py-1 bg-surface-container border border-outline-variant text-on-surface text-xs font-mono-data rounded hover:bg-surface-container-high transition-colors flex items-center gap-1">

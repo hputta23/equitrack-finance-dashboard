@@ -53,9 +53,10 @@ export default function TradingJournal() {
     const profitFactor = Math.abs(avgLoss) > 0 ? avgWin / Math.abs(avgLoss) : avgWin > 0 ? Infinity : 0;
     const totalVolume = t.reduce((s, tr) => s + (tr.shares * tr.entryPrice), 0);
     const totalFees = t.reduce((s, tr) => s + tr.fees, 0);
-    // Current streak
+    // Streak: iterate newest-first (trades are stored newest-first, so slice is correct)
     let streak = 0; let streakType: 'W' | 'L' | '' = '';
-    for (const tr of t) {
+    const sortedByDate = [...t].sort((a, b) => b.date.localeCompare(a.date));
+    for (const tr of sortedByDate) {
       if (streakType === '') { streakType = tr.pnl > 0 ? 'W' : 'L'; streak = 1; }
       else if ((tr.pnl > 0 && streakType === 'W') || (tr.pnl <= 0 && streakType === 'L')) streak++;
       else break;
@@ -148,6 +149,7 @@ export default function TradingJournal() {
       case 'ytd': return ytdChartData;
       case 'yearly': return yearlyChartData;
       case 'alltime': return alltimeChartData;
+      default: return dailyChartData;
     }
   }, [chartPeriod, dailyChartData, weeklyChartData, monthlyChartData, ytdChartData, yearlyChartData, alltimeChartData]);
 
@@ -226,7 +228,7 @@ export default function TradingJournal() {
       <div className="flex-1 overflow-y-auto p-4" ref={printRef}>
         <header className="mb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
-            <h1 className="font-h1 text-primary-container uppercase tracking-tight">Trading Journal</h1>
+            <h1 className="font-h1 text-primary uppercase tracking-tight">Trading Journal</h1>
             <p className="text-on-surface-variant font-body-base text-xs mt-1">Log trades, track performance, and analyze patterns.</p>
           </div>
           <button onClick={exportPDF} className="px-3 py-1 bg-surface-container border border-outline-variant text-on-surface text-xs font-mono-data rounded hover:bg-surface-container-high transition-colors flex items-center gap-1">

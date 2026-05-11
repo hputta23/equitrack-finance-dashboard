@@ -53,7 +53,7 @@ export default function OnboardingWizardTerminalStyle() {
     setPendingLiabilities(prev => [...prev, {
       name: liabilityName, category: liabilityCategory,
       principal: Number(liabilityPrincipal), apr: Number(liabilityApr) || 0,
-      nextPayment: 'Next Month', status: 'Active'
+      nextPayment: 'Next Month', status: 'Active', minPayment: 0,
     }]);
     setLiabilityName(''); setLiabilityPrincipal(''); setLiabilityApr(''); setLiabilityCategory('Personal');
   };

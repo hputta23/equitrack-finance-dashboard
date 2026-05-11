@@ -26,8 +26,12 @@ export default function ResetPassword() {
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!password || password !== confirmPassword) {
-      setErrorMsg('Passwords must match and be at least 6 characters');
+    if (password.length < 8) {
+      setErrorMsg('Password must be at least 8 characters long');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setErrorMsg('Passwords do not match');
       return;
     }
     
@@ -38,7 +42,7 @@ export default function ResetPassword() {
     setLoading(false);
     
     if (success) {
-      navigate('/login');
+      navigate('/'); // User is already authenticated; go to dashboard
     }
   };
 

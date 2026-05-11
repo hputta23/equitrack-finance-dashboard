@@ -53,7 +53,7 @@ export default function PortfolioTrackerTerminalStyle() {
       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
         <header className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
-            <h1 className="font-h1 text-primary-container uppercase tracking-tight">PORTFOLIO.SYS</h1>
+            <h1 className="font-h1 text-primary uppercase tracking-tight">PORTFOLIO.SYS</h1>
             <p className="text-on-surface-variant font-body-base text-xs mt-1">Real-time asset telemetry and allocation mapping</p>
           </div>
           <button onClick={exportCSV} className="px-3 py-1 bg-surface-container border border-outline-variant text-on-surface text-xs font-mono-data rounded hover:bg-surface-container-high transition-colors flex items-center gap-1">
