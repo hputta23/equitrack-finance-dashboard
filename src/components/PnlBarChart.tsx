@@ -20,8 +20,8 @@ export default function PnlBarChart({ data, title, icon, height = 160 }: BarChar
     return (
       <div className="bg-surface-container border border-outline-variant rounded flex flex-col">
         <div className="px-3 py-2 border-b border-outline-variant flex items-center gap-1.5 bg-surface-container-high">
-          <span className="material-symbols-outlined text-primary text-[14px]">{icon}</span>
-          <span className="text-[10px] text-on-surface-variant uppercase tracking-wider font-bold">{title}</span>
+          <span className="material-symbols-outlined text-primary text-fluid-14">{icon}</span>
+          <span className="text-fluid-10 text-on-surface-variant uppercase tracking-wider font-bold">{title}</span>
         </div>
         <div className="flex items-center justify-center text-on-surface-variant text-xs italic" style={{ height }}>
           No data
@@ -38,10 +38,10 @@ export default function PnlBarChart({ data, title, icon, height = 160 }: BarChar
       {title && (
         <div className="px-3 py-2 border-b border-outline-variant flex items-center justify-between bg-surface-container-high">
           <div className="flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-primary text-[14px]">{icon}</span>
-            <span className="text-[10px] text-on-surface-variant uppercase tracking-wider font-bold">{title}</span>
+            <span className="material-symbols-outlined text-primary text-fluid-14">{icon}</span>
+            <span className="text-fluid-10 text-on-surface-variant uppercase tracking-wider font-bold">{title}</span>
           </div>
-          <span className="text-[9px] font-mono-data text-on-surface-variant">{data.length} periods</span>
+          <span className="text-fluid-9 font-mono-data text-on-surface-variant">{data.length} periods</span>
         </div>
       )}
       <div className="px-3 py-2 overflow-x-auto">

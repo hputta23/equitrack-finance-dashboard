@@ -13,12 +13,36 @@ export default function IncomeStrategyFlow() {
   const grossIncome = state.monthlyIncome > 0 ? state.monthlyIncome : (state.monthlyBurn > 0 ? state.monthlyBurn / (buckets[0].pct / 100) : 0);
   const totalPct = buckets.reduce((s, b) => s + b.pct, 0);
 
+  // Calculate Real-World Actuals
+  const currentMonthPrefix = new Date().toISOString().substring(0, 7);
+  const actualExpensesVolume = state.liabilities
+    .filter(l => l.apr === 0 && (l.nextPayment || '').startsWith(currentMonthPrefix))
+    .reduce((s, l) => s + l.principal, 0);
+  
+  const actualDebtVolume = state.liabilities
+    .filter(l => l.apr > 0)
+    .reduce((s, l) => s + (l.principal * (l.apr / 100) / 12), 0); // Approx monthly interest/minimum
+
+  const bucketsWithActuals = buckets.map(b => {
+    let actualVolume = 0;
+    if (b.name === 'Fixed Expenses') {
+      actualVolume = actualExpensesVolume;
+    } else if (b.name === 'Debt Service') {
+      actualVolume = actualDebtVolume;
+    } else {
+      actualVolume = Math.max(0, grossIncome - actualExpensesVolume - actualDebtVolume);
+    }
+    const actualPct = grossIncome > 0 ? (actualVolume / grossIncome) * 100 : 0;
+    const targetVolume = grossIncome * b.pct / 100;
+    return { ...b, actualVolume, actualPct, targetVolume };
+  });
+
   const updateBucket = (index: number, pct: number) => {
     setBuckets(prev => prev.map((b, i) => i === index ? { ...b, pct } : b));
   };
 
-  const getStatus = (actual: number, target: number) => {
-    const diff = actual - target;
+  const getStatus = (actualPct: number, targetPct: number) => {
+    const diff = actualPct - targetPct;
     if (diff > 5) return { label: 'OVR', cls: 'bg-error-container text-on-error-container' };
     if (diff < -5) return { label: 'UND', cls: 'bg-surface-container-high border border-outline-variant text-on-surface-variant' };
     if (Math.abs(diff) > 2) return { label: 'WRN', cls: 'bg-tertiary-container text-on-tertiary-container' };
@@ -26,7 +50,7 @@ export default function IncomeStrategyFlow() {
   };
 
   return (
-    <div className="flex-1 overflow-auto p-container-padding flex gap-gutter bg-surface-dim h-full">
+    <div className="flex-1 overflow-auto p-container-padding flex flex-col md:flex-row gap-gutter bg-surface-dim h-full">
       {/* Center Column */}
       <div className="flex-1 flex flex-col gap-gutter">
         <div className="flex justify-between items-end mb-2">
@@ -35,7 +59,7 @@ export default function IncomeStrategyFlow() {
             <p className="font-body text-body text-on-surface-variant">Real-time allocation flows & distribution targets.</p>
           </div>
           <button onClick={exportCSV} className="px-3 py-1 bg-surface-container border border-outline-variant text-on-surface text-xs font-mono-data rounded hover:bg-surface-container-high transition-colors flex items-center gap-1">
-            <span className="material-symbols-outlined text-[14px]">download</span> EXPORT CSV
+            <span className="material-symbols-outlined text-fluid-14">download</span> EXPORT CSV
           </button>
         </div>
 
@@ -50,18 +74,18 @@ export default function IncomeStrategyFlow() {
             </svg>
             {/* Source */}
             <div className="z-10 w-48 bg-surface-container border border-outline-variant rounded p-3 flex flex-col shadow-[0_0_15px_rgba(123,208,255,0.1)] border-l-2 border-l-primary">
-              <div className="text-[10px] text-on-surface-variant uppercase tracking-wider mb-1">Gross Income (Mo)</div>
-              <div className="font-mono-data text-[18px] text-primary">${grossIncome.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+              <div className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-1">Gross Income (Mo)</div>
+              <div className="font-mono-data text-fluid-18 text-primary">${grossIncome.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
             </div>
             {/* Nodes */}
             <div className="z-10 flex flex-col gap-6 w-48">
               {buckets.map((b) => (
                 <div key={b.name} className={`bg-surface-container border border-outline-variant rounded p-2 flex flex-col border-l-2 border-l-${b.color}`}>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-[10px] text-on-surface-variant uppercase tracking-wider">{b.name}</span>
-                    <span className={`font-mono-data text-[10px] text-${b.color}`}>{b.pct}%</span>
+                    <span className="text-fluid-10 text-on-surface-variant uppercase tracking-wider">{b.name}</span>
+                    <span className={`font-mono-data text-fluid-10 text-${b.color}`}>{b.pct}%</span>
                   </div>
-                  <div className="font-mono-data text-[14px] text-on-surface">
+                  <div className="font-mono-data text-fluid-14 text-on-surface">
                     ${(grossIncome * b.pct / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
@@ -74,7 +98,7 @@ export default function IncomeStrategyFlow() {
         <div className="bg-surface border border-outline-variant rounded-DEFAULT flex flex-col h-64 overflow-hidden">
           <div className="p-3 border-b border-outline-variant bg-surface-container-high flex justify-between items-center">
             <span className="font-label-caps text-label-caps text-on-surface-variant">DISTRIBUTION BREAKDOWN</span>
-            <span className="material-symbols-outlined text-[16px] text-outline">filter_list</span>
+            <span className="material-symbols-outlined text-fluid-16 text-outline">filter_list</span>
           </div>
           <div className="overflow-y-auto">
             <table className="w-full text-left border-collapse">
@@ -88,16 +112,15 @@ export default function IncomeStrategyFlow() {
                 </tr>
               </thead>
               <tbody className="font-mono-data text-mono-data text-on-surface">
-                {buckets.map(b => {
-                  const volume = grossIncome * b.pct / 100;
-                  const status = getStatus(b.pct, b.target);
+                {bucketsWithActuals.map(b => {
+                  const status = getStatus(b.actualPct, b.pct);
                   return (
                     <tr key={b.name} className="border-b border-surface-container hover:bg-surface-container-low transition-colors h-row-height-condensed">
                       <td className="py-1 px-3 flex items-center gap-2"><div className={`w-2 h-2 bg-${b.color} rounded-sm`}></div> {b.name}</td>
-                      <td className="py-1 px-3">{b.target.toFixed(2)}%</td>
-                      <td className={`py-1 px-3 ${b.pct > b.target + 5 ? 'text-error' : b.pct < b.target - 5 ? 'text-tertiary' : ''}`}>{b.pct.toFixed(2)}%</td>
-                      <td className="py-1 px-3 text-right">${volume.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                      <td className="py-1 px-3 text-center"><span className={`px-1.5 py-0.5 text-[9px] uppercase tracking-wider rounded ${status.cls}`}>{status.label}</span></td>
+                      <td className="py-1 px-3">{b.pct.toFixed(2)}%</td>
+                      <td className={`py-1 px-3 ${b.actualPct > b.pct + 5 ? 'text-error' : b.actualPct < b.pct - 5 ? 'text-tertiary' : ''}`}>{b.actualPct.toFixed(2)}%</td>
+                      <td className="py-1 px-3 text-right">${b.actualVolume.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                      <td className="py-1 px-3 text-center"><span className={`px-1.5 py-0.5 text-fluid-9 uppercase tracking-wider rounded ${status.cls}`}>{status.label}</span></td>
                     </tr>
                   );
                 })}
@@ -108,9 +131,9 @@ export default function IncomeStrategyFlow() {
       </div>
 
       {/* Right Panel: Manual Allocation */}
-      <div className="w-80 bg-surface border border-outline-variant rounded-DEFAULT flex flex-col shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+      <div className="w-full md:w-80 bg-surface border border-outline-variant rounded-DEFAULT flex flex-col shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
         <div className="p-4 border-b border-outline-variant flex items-center gap-2 bg-surface-container-highest">
-          <span className="material-symbols-outlined text-primary text-[18px]">tune</span>
+          <span className="material-symbols-outlined text-primary text-fluid-18">tune</span>
           <h2 className="font-h2 text-h2 text-on-surface">Manual Allocation</h2>
         </div>
         <div className="p-4 flex-1 overflow-y-auto flex flex-col gap-6">
@@ -127,7 +150,7 @@ export default function IncomeStrategyFlow() {
                 max="100" min="0" type="range" value={b.pct}
                 onChange={e => updateBucket(i, Number(e.target.value))}
               />
-              <div className="flex justify-between text-[10px] font-mono-data text-outline">
+              <div className="flex justify-between text-fluid-10 font-mono-data text-outline">
                 <span>0</span>
                 <span>${(grossIncome * b.pct / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>

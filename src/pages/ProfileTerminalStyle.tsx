@@ -79,7 +79,7 @@ export default function ProfileTerminalStyle() {
               { label: 'Credit Score', value: state.creditScore.toString(), editValue: profileCredit, setter: setProfileCredit, type: 'number' },
             ].map(f => (
               <div key={f.label} className="space-y-1">
-                <label className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider">{f.label}</label>
+                <label className="font-label-caps text-fluid-10 text-on-surface-variant uppercase tracking-wider">{f.label}</label>
                 {editingProfile ? (
                   <input type={f.type} className="w-full bg-surface border border-outline-variant p-2 font-mono text-sm text-on-surface focus:border-primary outline-none" value={f.editValue} onChange={e => f.setter(e.target.value)} />
                 ) : (
@@ -114,13 +114,13 @@ export default function ProfileTerminalStyle() {
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="material-symbols-outlined text-[20px]">{t.icon}</span>
+                  <span className="material-symbols-outlined text-fluid-20">{t.icon}</span>
                   <span className="font-mono text-sm text-on-surface uppercase font-bold tracking-wider">{t.label}</span>
                   {state.themeMode === t.mode && (
-                    <span className="ml-auto text-primary material-symbols-outlined text-[16px]">check_circle</span>
+                    <span className="ml-auto text-primary material-symbols-outlined text-fluid-16">check_circle</span>
                   )}
                 </div>
-                <p className="text-[11px] text-on-surface-variant">{t.desc}</p>
+                <p className="text-fluid-11 text-on-surface-variant">{t.desc}</p>
               </button>
             ))}
           </div>
@@ -142,13 +142,13 @@ export default function ProfileTerminalStyle() {
                 className="w-full bg-surface border border-outline-variant p-2 font-mono text-sm text-on-surface focus:border-primary outline-none"
                 value={sheetUrl} onChange={(e) => setSheetUrl(e.target.value)} />
             </div>
-            <div className="text-[10px] text-on-surface-variant bg-surface-container-low p-2 rounded border border-outline-variant/30">
+            <div className="text-fluid-10 text-on-surface-variant bg-surface-container-low p-2 rounded border border-outline-variant/30">
               <span className="font-bold text-primary">Sheet 1:</span> Trading Journal data &nbsp;|&nbsp; <span className="font-bold text-primary">Sheet 2:</span> Version history (changelog)
             </div>
             <div className="flex gap-4">
               <button onClick={handleSaveSettings} className="bg-primary/10 text-primary border border-primary px-4 py-2 text-sm font-mono uppercase tracking-wider hover:bg-primary/20 transition-colors">Save URL</button>
               <button onClick={handleForceSync} disabled={isSyncing} className="bg-primary text-on-primary px-4 py-2 text-sm font-mono uppercase tracking-wider hover:bg-on-primary-fixed-variant transition-colors disabled:opacity-50 flex items-center gap-2">
-                {isSyncing ? <span className="material-symbols-outlined animate-spin text-[16px]">refresh</span> : <span className="material-symbols-outlined text-[16px]">sync</span>}
+                {isSyncing ? <span className="material-symbols-outlined animate-spin text-fluid-16">refresh</span> : <span className="material-symbols-outlined text-fluid-16">sync</span>}
                 Sync Now
               </button>
             </div>
@@ -178,7 +178,7 @@ export default function ProfileTerminalStyle() {
             </div>
             <div className="pt-4">
               <button onClick={logout} className="w-full bg-error-container/20 text-error border border-error px-4 py-3 text-sm font-mono uppercase tracking-wider hover:bg-error hover:text-on-error transition-colors flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-[18px]">logout</span> Terminate Session
+                <span className="material-symbols-outlined text-fluid-18">logout</span> Terminate Session
               </button>
             </div>
           </div>

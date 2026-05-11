@@ -18,12 +18,12 @@ export default function ToastContainer() {
               : 'bg-surface-container border-outline-variant text-on-surface'
           }`}
         >
-          <span className="material-symbols-outlined text-[18px]">
+          <span className="material-symbols-outlined text-fluid-18">
             {toast.type === 'success' ? 'check_circle' : toast.type === 'error' ? 'error' : 'info'}
           </span>
           <span className="flex-1">{toast.message}</span>
           <button onClick={() => removeToast(toast.id)} className="opacity-70 hover:opacity-100 transition-opacity">
-            <span className="material-symbols-outlined text-[16px]">close</span>
+            <span className="material-symbols-outlined text-fluid-16">close</span>
           </button>
         </div>
       ))}

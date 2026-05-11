@@ -1,5 +1,7 @@
 import { useState, useMemo, useRef } from 'react';
 import { useFinancial } from '../context/FinancialContext';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 import PnlBarChart from '../components/PnlBarChart';
 
 export default function TradingJournal() {
@@ -172,81 +174,70 @@ export default function TradingJournal() {
   const fmt = (v: number) => (v >= 0 ? '+' : '') + '$' + Math.abs(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const pnlColor = (v: number) => v > 0 ? 'text-[#4ade80]' : v < 0 ? 'text-error' : 'text-on-surface-variant';
 
-  // PDF Export via print
-  const exportPDF = () => {
+  // PDF Export via html2canvas and jsPDF
+  const exportPDF = async () => {
     const content = printRef.current;
     if (!content) return;
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) { addToast('Please allow popups for PDF export', 'error'); return; }
-    const totalPnl = trades.reduce((s, t) => s + t.pnl, 0);
-    const wins = trades.filter(t => t.pnl > 0).length;
-    printWindow.document.write(`<!DOCTYPE html><html><head><title>Trading Journal Export</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Courier New', monospace; background: #000; color: #e0e0e0; padding: 24px; font-size: 11px; }
-  h1 { font-size: 20px; color: #fff; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 2px; }
-  .sub { color: #888; font-size: 10px; margin-bottom: 16px; }
-  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }
-  .metric { border: 1px solid #333; padding: 8px; text-align: center; }
-  .metric .label { font-size: 8px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-  .metric .value { font-size: 16px; font-weight: bold; }
-  .green { color: #4ade80; } .red { color: #f87171; }
-  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-  th { font-size: 8px; text-transform: uppercase; letter-spacing: 1px; color: #888; padding: 6px 8px; border-bottom: 1px solid #333; text-align: left; }
-  td { padding: 5px 8px; border-bottom: 1px solid #1a1a1a; font-size: 10px; }
-  .right { text-align: right; }
-  .badge { display: inline-block; padding: 1px 6px; font-size: 8px; font-weight: bold; border-radius: 2px; }
-  .long { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
-  .short { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
-  @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #000 !important; color: #e0e0e0 !important; } }
-</style></head><body>
-  <h1>EquiTrack — Trading Journal</h1>
-  <div class="sub">Generated ${new Date().toLocaleString()} // ${trades.length} total trades</div>
-  <div class="metrics">
-    <div class="metric"><div class="label">Total P&L</div><div class="value ${totalPnl >= 0 ? 'green' : 'red'}">${fmt(totalPnl)}</div></div>
-    <div class="metric"><div class="label">Win Rate</div><div class="value ${wins / Math.max(trades.length, 1) >= 0.5 ? 'green' : 'red'}">${trades.length > 0 ? ((wins / trades.length) * 100).toFixed(1) : '0'}%</div></div>
-    <div class="metric"><div class="label">Total Trades</div><div class="value">${trades.length}</div></div>
-    <div class="metric"><div class="label">Total Fees</div><div class="value red">$${trades.reduce((s, t) => s + t.fees, 0).toFixed(2)}</div></div>
-  </div>
-  <table>
-    <thead><tr><th>Date</th><th>Ticker</th><th>Dir</th><th class="right">Shares</th><th class="right">Entry</th><th class="right">Exit</th><th class="right">Fees</th><th class="right">P&L</th><th class="right">P&L %</th><th>Notes</th></tr></thead>
-    <tbody>${trades.map(t => `<tr>
-      <td>${new Date(t.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
-      <td><strong>${t.ticker}</strong> ${t.companyName || ''}</td>
-      <td><span class="badge ${t.direction === 'LONG' ? 'long' : 'short'}">${t.direction}</span></td>
-      <td class="right">${t.shares}</td>
-      <td class="right">$${t.entryPrice.toFixed(2)}</td>
-      <td class="right">$${t.exitPrice.toFixed(2)}</td>
-      <td class="right">$${t.fees.toFixed(2)}</td>
-      <td class="right ${t.pnl >= 0 ? 'green' : 'red'}" style="font-weight:bold">${fmt(t.pnl)}</td>
-      <td class="right ${t.pnlPercent >= 0 ? 'green' : 'red'}">${t.pnlPercent >= 0 ? '+' : ''}${t.pnlPercent.toFixed(2)}%</td>
-      <td>${t.notes || '—'}</td>
-    </tr>`).join('')}</tbody>
-  </table>
-</body></html>`);
-    printWindow.document.close();
-    setTimeout(() => { printWindow.print(); }, 500);
-    addToast('PDF export opened in new tab');
+    
+    addToast('Generating PDF... Please wait.');
+    
+    try {
+      // Temporarily remove overflow to capture the entire scrolling content
+      const originalOverflow = content.style.overflow;
+      const originalHeight = content.style.height;
+      content.style.overflow = 'visible';
+      content.style.height = 'auto';
+      
+      const canvas = await html2canvas(content, {
+        scale: 2, // Higher resolution
+        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#0f1418', // Dynamic background
+        logging: false,
+      });
+      
+      // Restore original styles
+      content.style.overflow = originalOverflow;
+      content.style.height = originalHeight;
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      // Add image to PDF
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      
+      // Save the file
+      pdf.save(`Trading_Journal_${new Date().toISOString().split('T')[0]}.pdf`);
+      addToast('PDF exported successfully!', 'success');
+    } catch (err) {
+      console.error(err);
+      addToast('Failed to generate PDF.', 'error');
+    }
   };
 
   return (
-    <div className="flex-1 flex overflow-hidden h-full">
+    <div className="flex-1 flex flex-col md:flex-row overflow-hidden h-full">
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto p-4" ref={printRef}>
-        <header className="mb-4 flex justify-between items-end">
+        <header className="mb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
             <h1 className="font-h1 text-primary-container uppercase tracking-tight">Trading Journal</h1>
             <p className="text-on-surface-variant font-body-base text-xs mt-1">Log trades, track performance, and analyze patterns.</p>
           </div>
           <button onClick={exportPDF} className="px-3 py-1 bg-surface-container border border-outline-variant text-on-surface text-xs font-mono-data rounded hover:bg-surface-container-high transition-colors flex items-center gap-1">
-            <span className="material-symbols-outlined text-[14px]">picture_as_pdf</span> EXPORT PDF
+            <span className="material-symbols-outlined text-fluid-14">picture_as_pdf</span> EXPORT PDF
           </button>
         </header>
 
         {/* Time Filter */}
         <div className="flex gap-2 mb-4">
           {(['all', 'today', 'week', 'month'] as const).map(f => (
-            <button key={f} onClick={() => setTimeFilter(f)} className={`px-3 py-1 text-[10px] uppercase font-mono tracking-wider border rounded transition-colors ${timeFilter === f ? 'bg-primary/20 border-primary text-primary' : 'border-outline-variant text-on-surface-variant hover:bg-surface-container'}`}>
+            <button key={f} onClick={() => setTimeFilter(f)} className={`px-3 py-1 text-fluid-10 uppercase font-mono tracking-wider border rounded transition-colors ${timeFilter === f ? 'bg-primary/20 border-primary text-primary' : 'border-outline-variant text-on-surface-variant hover:bg-surface-container'}`}>
               {f === 'all' ? 'All Time' : f === 'today' ? 'Today' : f === 'week' ? 'This Week' : 'This Month'}
             </button>
           ))}
@@ -254,59 +245,59 @@ export default function TradingJournal() {
 
         {/* Metrics Grid */}
         {metrics && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-4">
             <div className="bg-surface-container border border-outline-variant p-3 text-center">
-              <div className="text-[9px] text-on-surface-variant uppercase tracking-wider mb-1">Total P&L</div>
+              <div className="text-fluid-9 text-on-surface-variant uppercase tracking-wider mb-1">Total P&L</div>
               <div className={`font-mono-data text-lg font-bold ${pnlColor(metrics.totalPnl)}`}>{fmt(metrics.totalPnl)}</div>
             </div>
             <div className="bg-surface-container border border-outline-variant p-3 text-center">
-              <div className="text-[9px] text-on-surface-variant uppercase tracking-wider mb-1">Win Rate</div>
+              <div className="text-fluid-9 text-on-surface-variant uppercase tracking-wider mb-1">Win Rate</div>
               <div className={`font-mono-data text-lg font-bold ${metrics.winRate >= 50 ? 'text-[#4ade80]' : 'text-error'}`}>{metrics.winRate.toFixed(1)}%</div>
-              <div className="text-[9px] text-on-surface-variant">{metrics.wins}W / {metrics.losses}L</div>
+              <div className="text-fluid-9 text-on-surface-variant">{metrics.wins}W / {metrics.losses}L</div>
             </div>
             <div className="bg-surface-container border border-outline-variant p-3 text-center">
-              <div className="text-[9px] text-on-surface-variant uppercase tracking-wider mb-1">Avg Win</div>
+              <div className="text-fluid-9 text-on-surface-variant uppercase tracking-wider mb-1">Avg Win</div>
               <div className="font-mono-data text-sm text-[#4ade80]">{fmt(metrics.avgWin)}</div>
-              <div className="text-[9px] text-on-surface-variant mt-0.5">Avg Loss: {fmt(metrics.avgLoss)}</div>
+              <div className="text-fluid-9 text-on-surface-variant mt-0.5">Avg Loss: {fmt(metrics.avgLoss)}</div>
             </div>
             <div className="bg-surface-container border border-outline-variant p-3 text-center">
-              <div className="text-[9px] text-on-surface-variant uppercase tracking-wider mb-1">Profit Factor</div>
+              <div className="text-fluid-9 text-on-surface-variant uppercase tracking-wider mb-1">Profit Factor</div>
               <div className={`font-mono-data text-lg font-bold ${metrics.profitFactor >= 1.5 ? 'text-[#4ade80]' : metrics.profitFactor >= 1 ? 'text-tertiary' : 'text-error'}`}>
                 {metrics.profitFactor === Infinity ? '∞' : metrics.profitFactor.toFixed(2)}
               </div>
             </div>
             <div className="bg-surface-container border border-outline-variant p-3 text-center">
-              <div className="text-[9px] text-on-surface-variant uppercase tracking-wider mb-1">Streak</div>
+              <div className="text-fluid-9 text-on-surface-variant uppercase tracking-wider mb-1">Streak</div>
               <div className={`font-mono-data text-lg font-bold ${metrics.streakType === 'W' ? 'text-[#4ade80]' : 'text-error'}`}>
                 {metrics.streak}{metrics.streakType}
               </div>
             </div>
             <div className="bg-surface-container border border-outline-variant p-3 text-center">
-              <div className="text-[9px] text-on-surface-variant uppercase tracking-wider mb-1">Total Fees</div>
+              <div className="text-fluid-9 text-on-surface-variant uppercase tracking-wider mb-1">Total Fees</div>
               <div className="font-mono-data text-sm text-error">${metrics.totalFees.toFixed(2)}</div>
-              <div className="text-[9px] text-on-surface-variant">{metrics.totalTrades} trades</div>
+              <div className="text-fluid-9 text-on-surface-variant">{metrics.totalTrades} trades</div>
             </div>
           </div>
         )}
 
         {/* Extremes Row */}
         {metrics && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 mb-4">
             <div className="bg-surface-container border border-outline-variant p-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-[#4ade80] text-[18px]">arrow_upward</span>
-              <div><div className="text-[9px] text-on-surface-variant uppercase">Best Trade</div><div className="font-mono-data text-sm text-[#4ade80]">{fmt(metrics.largestWin)}</div></div>
+              <span className="material-symbols-outlined text-[#4ade80] text-fluid-18">arrow_upward</span>
+              <div><div className="text-fluid-9 text-on-surface-variant uppercase">Best Trade</div><div className="font-mono-data text-sm text-[#4ade80]">{fmt(metrics.largestWin)}</div></div>
             </div>
             <div className="bg-surface-container border border-outline-variant p-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-error text-[18px]">arrow_downward</span>
-              <div><div className="text-[9px] text-on-surface-variant uppercase">Worst Trade</div><div className="font-mono-data text-sm text-error">{fmt(metrics.largestLoss)}</div></div>
+              <span className="material-symbols-outlined text-error text-fluid-18">arrow_downward</span>
+              <div><div className="text-fluid-9 text-on-surface-variant uppercase">Worst Trade</div><div className="font-mono-data text-sm text-error">{fmt(metrics.largestLoss)}</div></div>
             </div>
             <div className="bg-surface-container border border-outline-variant p-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[18px]">bar_chart</span>
-              <div><div className="text-[9px] text-on-surface-variant uppercase">Volume</div><div className="font-mono-data text-sm text-on-surface">${metrics.totalVolume.toLocaleString()}</div></div>
+              <span className="material-symbols-outlined text-primary text-fluid-18">bar_chart</span>
+              <div><div className="text-fluid-9 text-on-surface-variant uppercase">Volume</div><div className="font-mono-data text-sm text-on-surface">${metrics.totalVolume.toLocaleString()}</div></div>
             </div>
             <div className="bg-surface-container border border-outline-variant p-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-tertiary text-[18px]">percent</span>
-              <div><div className="text-[9px] text-on-surface-variant uppercase">Avg Return</div><div className={`font-mono-data text-sm ${pnlColor(metrics.totalPnl / metrics.totalTrades)}`}>{(filteredTrades.reduce((s,t) => s + t.pnlPercent, 0) / metrics.totalTrades).toFixed(2)}%</div></div>
+              <span className="material-symbols-outlined text-tertiary text-fluid-18">percent</span>
+              <div><div className="text-fluid-9 text-on-surface-variant uppercase">Avg Return</div><div className={`font-mono-data text-sm ${pnlColor(metrics.totalPnl / metrics.totalTrades)}`}>{(filteredTrades.reduce((s,t) => s + t.pnlPercent, 0) / metrics.totalTrades).toFixed(2)}%</div></div>
             </div>
           </div>
         )}
@@ -316,12 +307,12 @@ export default function TradingJournal() {
           <div className="mb-4 bg-surface-container border border-outline-variant rounded overflow-hidden">
             <div className="px-3 py-2 border-b border-outline-variant flex items-center justify-between bg-surface-container-high">
               <div className="flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-primary text-[16px]">bar_chart</span>
-                <span className="text-[10px] text-on-surface-variant uppercase tracking-wider font-bold">{chartTitles[chartPeriod]}</span>
+                <span className="material-symbols-outlined text-primary text-fluid-16">bar_chart</span>
+                <span className="text-fluid-10 text-on-surface-variant uppercase tracking-wider font-bold">{chartTitles[chartPeriod]}</span>
               </div>
               <div className="flex gap-1">
                 {(['daily', 'weekly', 'monthly', 'ytd', 'yearly', 'alltime'] as const).map(p => (
-                  <button key={p} onClick={() => setChartPeriod(p)} className={`px-2 py-0.5 text-[9px] uppercase font-mono tracking-wider border rounded transition-colors ${chartPeriod === p ? 'bg-primary/20 border-primary text-primary' : 'border-outline-variant/50 text-on-surface-variant hover:bg-surface-container'}`}>
+                  <button key={p} onClick={() => setChartPeriod(p)} className={`px-2 py-0.5 text-fluid-9 uppercase font-mono tracking-wider border rounded transition-colors ${chartPeriod === p ? 'bg-primary/20 border-primary text-primary' : 'border-outline-variant/50 text-on-surface-variant hover:bg-surface-container'}`}>
                     {p === 'alltime' ? 'All' : p === 'ytd' ? 'YTD' : p.charAt(0).toUpperCase() + p.slice(1)}
                   </button>
                 ))}
@@ -334,14 +325,14 @@ export default function TradingJournal() {
         {/* Trade History */}
         <div className="border border-outline-variant">
           <div className="bg-surface-container-high px-4 py-2 flex items-center gap-2 border-b border-outline-variant">
-            <span className="material-symbols-outlined text-primary text-[16px]">receipt_long</span>
+            <span className="material-symbols-outlined text-primary text-fluid-16">receipt_long</span>
             <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Trade History</span>
-            <span className="ml-auto text-[10px] font-mono-data text-on-surface-variant">{filteredTrades.length} trades</span>
+            <span className="ml-auto text-fluid-10 font-mono-data text-on-surface-variant">{filteredTrades.length} trades</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
-                <tr className="bg-surface-container-high text-[9px] uppercase tracking-wider text-outline font-bold">
+                <tr className="bg-surface-container-high text-fluid-9 uppercase tracking-wider text-outline font-bold">
                   <th className="px-3 py-2">Date</th>
                   <th className="px-3 py-2">Ticker</th>
                   <th className="px-3 py-2">Dir</th>
@@ -367,10 +358,10 @@ export default function TradingJournal() {
                     <td className="px-3 py-1.5 text-on-surface-variant">{new Date(t.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</td>
                     <td className="px-3 py-1.5">
                       <span className="text-on-surface font-bold">{t.ticker}</span>
-                      {t.companyName && <span className="text-on-surface-variant ml-1 text-[9px]">{t.companyName}</span>}
+                      {t.companyName && <span className="text-on-surface-variant ml-1 text-fluid-9">{t.companyName}</span>}
                     </td>
                     <td className="px-3 py-1.5">
-                      <span className={`px-1.5 py-0.5 text-[8px] uppercase font-bold tracking-wider rounded ${t.direction === 'LONG' ? 'bg-[#4ade80]/15 text-[#4ade80] border border-[#4ade80]/30' : 'bg-error/15 text-error border border-error/30'}`}>{t.direction}</span>
+                      <span className={`px-1.5 py-0.5 text-fluid-8 uppercase font-bold tracking-wider rounded ${t.direction === 'LONG' ? 'bg-[#4ade80]/15 text-[#4ade80] border border-[#4ade80]/30' : 'bg-error/15 text-error border border-error/30'}`}>{t.direction}</span>
                     </td>
                     <td className="px-3 py-1.5 text-right text-on-surface">{t.shares}</td>
                     <td className="px-3 py-1.5 text-right text-on-surface">${t.entryPrice.toFixed(2)}</td>
@@ -380,7 +371,7 @@ export default function TradingJournal() {
                     <td className={`px-3 py-1.5 text-right ${pnlColor(t.pnlPercent)}`}>{t.pnlPercent >= 0 ? '+' : ''}{t.pnlPercent.toFixed(2)}%</td>
                     <td className="px-3 py-1.5 text-on-surface-variant max-w-[120px] truncate" title={t.notes}>{t.notes || '—'}</td>
                     <td className="px-3 py-1.5 text-center">
-                      <button onClick={() => removeTrade(t.id)} className="text-error text-[9px] uppercase hover:underline">Del</button>
+                      <button onClick={() => removeTrade(t.id)} className="text-error text-fluid-9 uppercase hover:underline">Del</button>
                     </td>
                   </tr>
                 ))}
@@ -391,47 +382,47 @@ export default function TradingJournal() {
       </div>
 
       {/* Entry Form Sidebar */}
-      <aside className="w-80 bg-surface-container border-l border-outline-variant flex flex-col p-4 overflow-y-auto shrink-0">
+      <aside className="w-full md:w-80 bg-surface-container border-t md:border-t-0 md:border-l border-outline-variant flex flex-col p-4 overflow-y-auto shrink-0">
         <div className="flex items-center gap-2 mb-4">
           <span className="material-symbols-outlined text-primary">edit_note</span>
           <h2 className="font-h3 text-h3 text-on-surface uppercase">Log Trade</h2>
         </div>
         <div className="space-y-3 flex-1">
           <div>
-            <label className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-0.5 block">Date</label>
+            <label className="font-label-caps text-fluid-10 text-on-surface-variant uppercase mb-0.5 block">Date</label>
             <input type="date" className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={form.date} onChange={e => setForm(f => ({...f, date: e.target.value}))} />
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
-              <label className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-0.5 block">Ticker</label>
+              <label className="font-label-caps text-fluid-10 text-on-surface-variant uppercase mb-0.5 block">Ticker</label>
               <input className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none uppercase" value={form.ticker} onChange={e => setForm(f => ({...f, ticker: e.target.value}))} placeholder="AAPL" />
             </div>
             <div>
-              <label className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-0.5 block">Direction</label>
+              <label className="font-label-caps text-fluid-10 text-on-surface-variant uppercase mb-0.5 block">Direction</label>
               <div className="flex border border-outline-variant overflow-hidden">
-                <button onClick={() => setForm(f => ({...f, direction: 'LONG'}))} className={`flex-1 py-2 text-[10px] font-mono uppercase transition-colors ${form.direction === 'LONG' ? 'bg-[#4ade80]/20 text-[#4ade80] border-r border-[#4ade80]/30' : 'bg-surface-container-low text-on-surface-variant border-r border-outline-variant hover:bg-surface-container'}`}>Long</button>
-                <button onClick={() => setForm(f => ({...f, direction: 'SHORT'}))} className={`flex-1 py-2 text-[10px] font-mono uppercase transition-colors ${form.direction === 'SHORT' ? 'bg-error/20 text-error' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'}`}>Short</button>
+                <button onClick={() => setForm(f => ({...f, direction: 'LONG'}))} className={`flex-1 py-2 text-fluid-10 font-mono uppercase transition-colors ${form.direction === 'LONG' ? 'bg-[#4ade80]/20 text-[#4ade80] border-r border-[#4ade80]/30' : 'bg-surface-container-low text-on-surface-variant border-r border-outline-variant hover:bg-surface-container'}`}>Long</button>
+                <button onClick={() => setForm(f => ({...f, direction: 'SHORT'}))} className={`flex-1 py-2 text-fluid-10 font-mono uppercase transition-colors ${form.direction === 'SHORT' ? 'bg-error/20 text-error' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'}`}>Short</button>
               </div>
             </div>
           </div>
           <div>
-            <label className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-0.5 block">Company Name (opt.)</label>
+            <label className="font-label-caps text-fluid-10 text-on-surface-variant uppercase mb-0.5 block">Company Name (opt.)</label>
             <input className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={form.companyName} onChange={e => setForm(f => ({...f, companyName: e.target.value}))} placeholder="Apple Inc." />
           </div>
           <div>
-            <label className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-0.5 block">Shares</label>
+            <label className="font-label-caps text-fluid-10 text-on-surface-variant uppercase mb-0.5 block">Shares</label>
             <input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={form.shares} onChange={e => setForm(f => ({...f, shares: e.target.value}))} placeholder="100" />
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
-              <label className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-0.5 block">{form.direction === 'LONG' ? 'Bought At' : 'Shorted At'}</label>
+              <label className="font-label-caps text-fluid-10 text-on-surface-variant uppercase mb-0.5 block">{form.direction === 'LONG' ? 'Bought At' : 'Shorted At'}</label>
               <div className="relative">
                 <span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
                 <input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={form.entryPrice} onChange={e => setForm(f => ({...f, entryPrice: e.target.value}))} placeholder="150.00" />
               </div>
             </div>
             <div>
-              <label className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-0.5 block">{form.direction === 'LONG' ? 'Sold At' : 'Covered At'}</label>
+              <label className="font-label-caps text-fluid-10 text-on-surface-variant uppercase mb-0.5 block">{form.direction === 'LONG' ? 'Sold At' : 'Covered At'}</label>
               <div className="relative">
                 <span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
                 <input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={form.exitPrice} onChange={e => setForm(f => ({...f, exitPrice: e.target.value}))} placeholder="155.00" />
@@ -442,7 +433,7 @@ export default function TradingJournal() {
           {/* Live P&L Preview */}
           {form.shares && form.entryPrice && form.exitPrice && (
             <div className="bg-surface-container-low border border-outline-variant p-2 rounded">
-              <div className="text-[9px] text-on-surface-variant uppercase mb-1">P&L Preview</div>
+              <div className="text-fluid-9 text-on-surface-variant uppercase mb-1">P&L Preview</div>
               {(() => {
                 const pnl = form.direction === 'LONG'
                   ? (Number(form.exitPrice) - Number(form.entryPrice)) * Number(form.shares) - (Number(form.fees) || 0)
@@ -453,18 +444,18 @@ export default function TradingJournal() {
           )}
 
           <div>
-            <label className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-0.5 block">Fees / Commission</label>
+            <label className="font-label-caps text-fluid-10 text-on-surface-variant uppercase mb-0.5 block">Fees / Commission</label>
             <div className="relative">
               <span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
               <input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={form.fees} onChange={e => setForm(f => ({...f, fees: e.target.value}))} placeholder="0.00" />
             </div>
           </div>
           <div>
-            <label className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-0.5 block">Notes</label>
+            <label className="font-label-caps text-fluid-10 text-on-surface-variant uppercase mb-0.5 block">Notes</label>
             <textarea className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none resize-none h-16" value={form.notes} onChange={e => setForm(f => ({...f, notes: e.target.value}))} placeholder="Entry thesis, exit reason..." />
           </div>
           <div>
-            <label className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-0.5 block">Tags (comma separated)</label>
+            <label className="font-label-caps text-fluid-10 text-on-surface-variant uppercase mb-0.5 block">Tags (comma separated)</label>
             <input className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={form.tags} onChange={e => setForm(f => ({...f, tags: e.target.value}))} placeholder="breakout, earnings, scalp" />
           </div>
         </div>

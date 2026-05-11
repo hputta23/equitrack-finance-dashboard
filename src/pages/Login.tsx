@@ -3,14 +3,35 @@ import { useNavigate } from 'react-router-dom';
 import { useFinancial } from '../context/FinancialContext';
 
 export default function Login() {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(false);
-  const { login, state } = useFinancial();
+  const [isResetMode, setIsResetMode] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const { login, resetPassword, state } = useFinancial();
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = login(password);
+    if (!email || (!isResetMode && !password)) {
+      setErrorMsg('Required fields missing');
+      return;
+    }
+    
+    setLoading(true);
+    setErrorMsg('');
+    
+    if (isResetMode) {
+      const success = await resetPassword(email);
+      setLoading(false);
+      if (success) setIsResetMode(false);
+      return;
+    }
+
+    const success = await login(email, password, isSignUp);
+    setLoading(false);
+    
     if (success) {
       if (state.hasCompletedOnboarding) {
         navigate('/');
@@ -18,7 +39,7 @@ export default function Login() {
         navigate('/onboarding');
       }
     } else {
-      setError(true);
+      setErrorMsg(isSignUp ? 'Registration failed. Check your details.' : 'Invalid credentials. Connection refused.');
     }
   };
 
@@ -29,40 +50,82 @@ export default function Login() {
           <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-on-primary mb-4 shadow-[0_0_15px_rgba(142,213,255,0.3)]">
             <span className="material-symbols-outlined text-2xl">account_balance</span>
           </div>
-          <h1 className="text-2xl font-bold text-on-surface font-mono uppercase tracking-widest">EquiTrack</h1>
-          <p className="text-on-surface-variant text-sm mt-1">Secure Institutional Dashboard</p>
+          <h1 className="text-2xl font-bold text-on-surface font-mono uppercase tracking-widest">2026Track</h1>
+          <p className="text-on-surface-variant text-sm mt-1">{isResetMode ? 'Secure Key Recovery' : 'Secure Institutional Dashboard'}</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleAuth} className="space-y-6">
           <div>
-            <label className="block text-sm font-label-caps text-on-surface-variant uppercase mb-2">Access Key</label>
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">lock</span>
+            <label className="block text-sm font-label-caps text-on-surface-variant uppercase mb-2">Email Identity</label>
+            <div className="relative mb-4">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">mail</span>
               <input
-                type="password"
-                className={`w-full bg-surface-container-lowest border ${error ? 'border-error' : 'border-outline-variant'} rounded py-3 pl-10 pr-4 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-mono`}
-                placeholder="Enter password (admin123)"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError(false);
-                }}
+                type="email"
+                className="w-full bg-surface-container-lowest border border-outline-variant rounded py-3 pl-10 pr-4 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-mono"
+                placeholder="commander@2026track.app"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setErrorMsg(''); }}
               />
             </div>
-            {error && <p className="text-error text-xs mt-2 font-mono">Invalid access key. Connection refused.</p>}
+
+            {!isResetMode && (
+              <>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-label-caps text-on-surface-variant uppercase">Access Key</label>
+                  <button 
+                    type="button"
+                    onClick={() => setIsResetMode(true)}
+                    className="text-xs text-primary hover:underline font-mono uppercase"
+                  >
+                    Forgot?
+                  </button>
+                </div>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">lock</span>
+                  <input
+                    type="password"
+                    className={`w-full bg-surface-container-lowest border ${errorMsg ? 'border-error' : 'border-outline-variant'} rounded py-3 pl-10 pr-4 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-mono`}
+                    placeholder="Enter password"
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); setErrorMsg(''); }}
+                  />
+                </div>
+              </>
+            )}
+            
+            {errorMsg && <p className="text-error text-xs mt-2 font-mono">{errorMsg}</p>}
           </div>
 
           <button
             type="submit"
-            className="w-full bg-primary text-on-primary py-3 rounded hover:bg-on-primary-fixed-variant transition-colors font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2"
+            disabled={loading}
+            className="w-full bg-primary text-on-primary py-3 rounded hover:bg-on-primary-fixed-variant transition-colors font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            Authenticate <span className="material-symbols-outlined text-lg">login</span>
+            {loading ? 'Processing...' : (isResetMode ? 'Send Recovery Link' : (isSignUp ? 'Initialize Profile' : 'Authenticate'))}
+            {!loading && <span className="material-symbols-outlined text-lg">{isResetMode ? 'key' : (isSignUp ? 'person_add' : 'login')}</span>}
           </button>
+          
+          {isResetMode && (
+            <button 
+              type="button"
+              onClick={() => setIsResetMode(false)}
+              className="w-full text-on-surface-variant text-xs font-mono hover:underline uppercase"
+            >
+              Back to Authentication
+            </button>
+          )}
         </form>
         
-        <div className="mt-8 pt-4 border-t border-outline-variant text-center">
-          <p className="text-outline text-xs font-mono">End-to-end encrypted connection.</p>
-        </div>
+        {!isResetMode && (
+          <div className="mt-6 pt-4 border-t border-outline-variant text-center">
+            <button 
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-primary text-sm font-mono hover:underline"
+            >
+              {isSignUp ? 'Already have a profile? Authenticate.' : 'No profile? Initialize one.'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

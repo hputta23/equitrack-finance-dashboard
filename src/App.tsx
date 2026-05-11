@@ -9,6 +9,7 @@ import OnboardingWizardTerminalStyle from './pages/OnboardingWizardTerminalStyle
 import ProfileTerminalStyle from './pages/ProfileTerminalStyle';
 import TradingJournal from './pages/TradingJournal';
 import Login from './pages/Login';
+import ResetPassword from './pages/ResetPassword';
 import { FinancialProvider, useFinancial } from './context/FinancialContext';
 
 // Protected Route Wrapper
@@ -39,6 +40,7 @@ function AppRoutes() {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         
         {/* Onboarding doesn't use the main TerminalLayout */}
         <Route path="/onboarding" element={<OnboardingRouteWrapper />} />

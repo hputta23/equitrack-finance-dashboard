@@ -78,7 +78,7 @@ export default function OnboardingWizardTerminalStyle() {
 
     await syncToGoogleSheets();
     setIsSubmitting(false);
-    addToast('Setup complete! Welcome to EquiTrack.', 'success');
+    addToast('Setup complete! Welcome to 2026Track.', 'success');
     navigate('/');
   };
 
@@ -91,7 +91,7 @@ export default function OnboardingWizardTerminalStyle() {
         <header className="px-margin py-md border-b border-surface-variant flex items-center justify-between bg-surface-container-low">
           <div className="flex items-center gap-sm">
             <span className="material-symbols-outlined text-primary">account_balance</span>
-            <h1 className="font-h3 text-h3 text-on-surface tracking-tight uppercase">EquiTrack Initialization</h1>
+            <h1 className="font-h3 text-h3 text-on-surface tracking-tight uppercase">2026Track Initialization</h1>
           </div>
           <div className="font-mono text-sm text-on-surface-variant flex gap-2">
             <span className={step >= 1 ? 'text-primary font-bold' : ''}>1. Profile</span>
@@ -164,7 +164,7 @@ export default function OnboardingWizardTerminalStyle() {
               {/* Pending assets list */}
               {pendingAssets.length > 0 && (
                 <div className="mb-4 border border-outline-variant">
-                  <div className="bg-surface-container-high px-4 py-2 text-[10px] font-bold text-outline uppercase tracking-wider flex justify-between">
+                  <div className="bg-surface-container-high px-4 py-2 text-fluid-10 font-bold text-outline uppercase tracking-wider flex justify-between">
                     <span>Queued Assets ({pendingAssets.length})</span>
                     <span>Total: ${pendingAssets.reduce((s, a) => s + a.unitPrice, 0).toLocaleString()}</span>
                   </div>
@@ -202,7 +202,7 @@ export default function OnboardingWizardTerminalStyle() {
                   disabled={!assetName || !assetValue}
                   className="px-4 py-2 bg-primary/10 text-primary border border-primary font-mono text-sm uppercase tracking-wider hover:bg-primary/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  <span className="material-symbols-outlined text-[16px]">add</span>
+                  <span className="material-symbols-outlined text-fluid-16">add</span>
                   Add Another Asset
                 </button>
               </div>
@@ -220,7 +220,7 @@ export default function OnboardingWizardTerminalStyle() {
               {/* Pending liabilities list */}
               {pendingLiabilities.length > 0 && (
                 <div className="mb-4 border border-outline-variant">
-                  <div className="bg-surface-container-high px-4 py-2 text-[10px] font-bold text-outline uppercase tracking-wider flex justify-between">
+                  <div className="bg-surface-container-high px-4 py-2 text-fluid-10 font-bold text-outline uppercase tracking-wider flex justify-between">
                     <span>Queued Liabilities ({pendingLiabilities.length})</span>
                     <span>Total: ${pendingLiabilities.reduce((s, l) => s + l.principal, 0).toLocaleString()}</span>
                   </div>
@@ -251,7 +251,7 @@ export default function OnboardingWizardTerminalStyle() {
                     <option value="Medical">Medical</option>
                   </select>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="font-label-caps text-secondary uppercase">Principal Balance ($)</label>
                     <input type="number" className="w-full bg-surface border border-outline-variant p-3 font-mono text-on-surface focus:border-primary outline-none" value={liabilityPrincipal} onChange={e => setLiabilityPrincipal(e.target.value)} placeholder="e.g. 25000" />
@@ -266,7 +266,7 @@ export default function OnboardingWizardTerminalStyle() {
                   disabled={!liabilityName || !liabilityPrincipal}
                   className="px-4 py-2 bg-primary/10 text-primary border border-primary font-mono text-sm uppercase tracking-wider hover:bg-primary/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  <span className="material-symbols-outlined text-[16px]">add</span>
+                  <span className="material-symbols-outlined text-fluid-16">add</span>
                   Add Another Liability
                 </button>
               </div>
@@ -301,7 +301,7 @@ export default function OnboardingWizardTerminalStyle() {
             ) : (
               <button onClick={handleFinish} disabled={isSubmitting} className="px-6 py-2 bg-primary text-on-primary font-mono text-sm uppercase tracking-wider hover:bg-primary/90 transition-colors flex items-center gap-2">
                 {isSubmitting ? 'Saving...' : 'Complete Setup'}
-                <span className="material-symbols-outlined text-[18px]">rocket_launch</span>
+                <span className="material-symbols-outlined text-fluid-18">rocket_launch</span>
               </button>
             )}
           </div>

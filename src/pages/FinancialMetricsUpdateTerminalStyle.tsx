@@ -30,7 +30,7 @@ export default function FinancialMetricsUpdateTerminalStyle() {
     localCreditScore !== state.creditScore.toString();
 
   return (
-    <div className="flex-1 flex overflow-hidden h-full">
+    <div className="flex-1 flex flex-col md:flex-row overflow-hidden h-full">
       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
         <header className="mb-6 flex justify-between items-end">
           <div>
@@ -47,14 +47,14 @@ export default function FinancialMetricsUpdateTerminalStyle() {
           </div>
           <div className="grid grid-cols-1 gap-[2px] bg-outline-variant/20 border border-outline-variant/20">
             {/* Header Row */}
-            <div className="grid grid-cols-12 gap-2 bg-surface-container-high px-4 py-2 text-[10px] uppercase font-mono tracking-widest text-on-surface-variant">
+            <div className="hidden md:grid md:grid-cols-12 gap-2 bg-surface-container-high px-4 py-2 text-fluid-10 uppercase font-mono tracking-widest text-on-surface-variant">
               <div className="col-span-4">Metric</div>
               <div className="col-span-3">Current Value</div>
               <div className="col-span-5">New Value</div>
             </div>
 
             {/* Net Worth (Read Only) */}
-            <div className="grid grid-cols-12 gap-2 bg-surface-container items-center px-4 py-2 opacity-70">
+            <div className="flex flex-col md:grid md:grid-cols-12 gap-2 bg-surface-container md:items-center px-4 py-3 opacity-70">
               <div className="col-span-4 font-mono-data text-xs text-on-surface">Net Worth</div>
               <div className="col-span-3 font-mono-data text-xs text-on-surface-variant">${netWorth.toLocaleString()}</div>
               <div className="col-span-5">
@@ -65,7 +65,7 @@ export default function FinancialMetricsUpdateTerminalStyle() {
             </div>
 
             {/* Total Debt (Read Only) */}
-            <div className="grid grid-cols-12 gap-2 bg-surface-container items-center px-4 py-2 opacity-70">
+            <div className="flex flex-col md:grid md:grid-cols-12 gap-2 bg-surface-container md:items-center px-4 py-3 opacity-70">
               <div className="col-span-4 font-mono-data text-xs text-on-surface">Total Debt</div>
               <div className="col-span-3 font-mono-data text-xs text-on-surface-variant">${totalDebt.toLocaleString()}</div>
               <div className="col-span-5">
@@ -76,7 +76,7 @@ export default function FinancialMetricsUpdateTerminalStyle() {
             </div>
 
             {/* Monthly Income (Editable) */}
-            <div className="grid grid-cols-12 gap-2 bg-surface-container items-center px-4 py-2 group hover:bg-surface-bright transition-colors">
+            <div className="flex flex-col md:grid md:grid-cols-12 gap-2 bg-surface-container md:items-center px-4 py-3 group hover:bg-surface-bright transition-colors">
               <div className="col-span-4 font-mono-data text-xs text-on-surface">Monthly Income</div>
               <div className="col-span-3 font-mono-data text-xs text-on-surface-variant">${state.monthlyIncome.toLocaleString()}</div>
               <div className="col-span-5 relative">
@@ -91,7 +91,7 @@ export default function FinancialMetricsUpdateTerminalStyle() {
             </div>
 
             {/* Monthly Burn (Editable) */}
-            <div className="grid grid-cols-12 gap-2 bg-surface-container items-center px-4 py-2 group hover:bg-surface-bright transition-colors">
+            <div className="flex flex-col md:grid md:grid-cols-12 gap-2 bg-surface-container md:items-center px-4 py-3 group hover:bg-surface-bright transition-colors">
               <div className="col-span-4 font-mono-data text-xs text-on-surface">Monthly Expenses</div>
               <div className="col-span-3 font-mono-data text-xs text-on-surface-variant">${state.monthlyBurn.toLocaleString()}</div>
               <div className="col-span-5 relative">
@@ -106,7 +106,7 @@ export default function FinancialMetricsUpdateTerminalStyle() {
             </div>
 
             {/* Credit Score (Editable) */}
-            <div className="grid grid-cols-12 gap-2 bg-surface-container items-center px-4 py-2 group hover:bg-surface-bright transition-colors">
+            <div className="flex flex-col md:grid md:grid-cols-12 gap-2 bg-surface-container md:items-center px-4 py-3 group hover:bg-surface-bright transition-colors">
               <div className="col-span-4 font-mono-data text-xs text-on-surface">Credit Score</div>
               <div className="col-span-3 font-mono-data text-xs text-on-surface-variant">{state.creditScore}</div>
               <div className="col-span-5">
@@ -123,17 +123,17 @@ export default function FinancialMetricsUpdateTerminalStyle() {
         </section>
       </div>
 
-      <aside className="w-80 bg-surface-container border-l border-outline-variant flex flex-col p-4">
-        <h3 className="font-label-caps text-on-surface-variant uppercase tracking-[0.2em] mb-4 text-[10px]">Impact Analysis</h3>
+      <aside className="w-full md:w-80 bg-surface-container border-t md:border-t-0 md:border-l border-outline-variant flex flex-col p-4 overflow-y-auto shrink-0">
+        <h3 className="font-label-caps text-on-surface-variant uppercase tracking-[0.2em] mb-4 text-fluid-10">Impact Analysis</h3>
         <div className="space-y-4 mb-8">
           <div className="bg-surface-container-low p-4 border border-outline-variant glow-cyan">
-            <p className="text-[10px] text-outline font-bold uppercase mb-1">Net Worth Projection</p>
+            <p className="text-fluid-10 text-outline font-bold uppercase mb-1">Net Worth Projection</p>
             <div className="flex items-baseline gap-2">
               <span className="text-2xl font-mono-data text-primary">${netWorth.toLocaleString()}</span>
             </div>
           </div>
           <div className="bg-surface-container-low p-4 border border-outline-variant">
-            <p className="text-[10px] text-outline font-bold uppercase mb-1">Debt-to-Worth Ratio</p>
+            <p className="text-fluid-10 text-outline font-bold uppercase mb-1">Debt-to-Worth Ratio</p>
             <div className="flex items-baseline gap-2">
               <span className="text-2xl font-mono-data text-on-surface">
                 {netWorth > 0 ? ((totalDebt / netWorth) * 100).toFixed(2) : '0.00'}%
@@ -141,7 +141,7 @@ export default function FinancialMetricsUpdateTerminalStyle() {
             </div>
           </div>
           <div className="bg-surface-container-low p-4 border border-outline-variant">
-            <p className="text-[10px] text-outline font-bold uppercase mb-1">Monthly Savings Rate</p>
+            <p className="text-fluid-10 text-outline font-bold uppercase mb-1">Monthly Savings Rate</p>
             <div className="flex items-baseline gap-2">
               <span className="text-2xl font-mono-data text-primary">
                 {state.monthlyIncome > 0 ? (((state.monthlyIncome - state.monthlyBurn) / state.monthlyIncome) * 100).toFixed(1) : '0.0'}%
@@ -152,8 +152,8 @@ export default function FinancialMetricsUpdateTerminalStyle() {
 
         <div className="mt-auto space-y-2">
           <div className="flex justify-between items-center px-1">
-            <span className="text-[10px] text-on-surface-variant uppercase font-bold">Unsaved Delta</span>
-            <span className={`text-[10px] font-mono-data ${hasChanges ? 'text-primary' : 'text-primary-fixed-dim'}`}>
+            <span className="text-fluid-10 text-on-surface-variant uppercase font-bold">Unsaved Delta</span>
+            <span className={`text-fluid-10 font-mono-data ${hasChanges ? 'text-primary' : 'text-primary-fixed-dim'}`}>
               {hasChanges ? 'PENDING' : 'SYNCED'}
             </span>
           </div>

@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import type { ReactNode } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
 export interface Asset {
   id: string; name: string; category: string; quantity: number; unitPrice: number;
@@ -36,9 +37,12 @@ export interface FinancialContextType {
   updateLiability: (id: string, updates: Partial<Omit<Liability, 'id'>>) => void;
   addTrade: (trade: Omit<Trade, 'id' | 'pnl' | 'pnlPercent'>) => void; removeTrade: (id: string) => void;
   updateTrade: (id: string, updates: Partial<Omit<Trade, 'id' | 'pnl' | 'pnlPercent'>>) => void;
-  login: (password: string) => boolean; logout: () => void;
+  login: (email: string, password: string, isSignUp: boolean) => Promise<boolean>;
+  logout: () => Promise<void>;
   syncToGoogleSheets: () => Promise<boolean>; exportCSV: () => void;
   setThemeMode: (mode: ThemeMode) => void;
+  resetPassword: (email: string) => Promise<boolean>;
+  updatePassword: (password: string) => Promise<boolean>;
   netWorth: number; totalDebt: number; totalAssets: number;
   toasts: Toast[]; addToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   removeToast: (id: string) => void; toggleDarkMode: () => void;
@@ -52,7 +56,7 @@ const defaultState: FinancialState = {
 };
 
 const loadInitialState = (): FinancialState => {
-  const saved = localStorage.getItem('equitrack_state');
+  const saved = localStorage.getItem('2026track_state');
   if (saved) {
     try { return { ...defaultState, ...JSON.parse(saved) }; } catch { console.error("Failed to parse saved state"); }
   }
@@ -64,8 +68,63 @@ const FinancialContext = createContext<FinancialContextType | undefined>(undefin
 export function FinancialProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<FinancialState>(loadInitialState());
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const isFirstRender = useRef(true);
 
-  useEffect(() => { localStorage.setItem('equitrack_state', JSON.stringify(state)); }, [state]);
+  // Auth Listener
+  useEffect(() => {
+    if (!supabase) return;
+
+    // Check active session on mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        handleSupabaseLogin(session.user.id);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        handleSupabaseLogin(session.user.id);
+      } else {
+        setState(prev => ({ ...prev, isAuthenticated: false }));
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSupabaseLogin = async (userId: string) => {
+    if (!supabase) return;
+    const { data } = await supabase.from('profiles').select('state').eq('id', userId).single();
+    if (data && data.state && Object.keys(data.state).length > 0) {
+      // Merge cloud state with default state to ensure no missing keys
+      setState(() => ({ ...defaultState, ...data.state, isAuthenticated: true }));
+    } else {
+      setState(prev => ({ ...prev, isAuthenticated: true }));
+    }
+  };
+
+  // LocalStorage fallback and Cloud Sync (Debounced)
+  useEffect(() => { 
+    localStorage.setItem('2026track_state', JSON.stringify(state)); 
+    
+    // Prevent syncing on the very first render to avoid overwriting cloud state with initial state
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (supabase && state.isAuthenticated) {
+      const sb = supabase;
+      const timer = setTimeout(async () => {
+        const { data: { session } } = await sb.auth.getSession();
+        if (session) {
+          // Sync state to cloud, omit local-only UI state if desired
+          await sb.from('profiles').upsert({ id: session.user.id, state });
+        }
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [state]);
 
   // Apply theme classes
   useEffect(() => {
@@ -158,8 +217,69 @@ export function FinancialProvider({ children }: { children: ReactNode }) {
     addToast('Trade updated successfully');
   };
 
-  const login = (password: string) => { if (password === 'admin123') { updateMetrics({ isAuthenticated: true }); logChange('AUTH', 'System', 'User logged in'); return true; } return false; };
-  const logout = () => { logChange('AUTH', 'System', 'User logged out'); updateMetrics({ isAuthenticated: false }); };
+  const login = async (email: string, password: string, isSignUp: boolean) => { 
+    if (!supabase) {
+      // Fallback for demo mode
+      if (password === 'admin123') { updateMetrics({ isAuthenticated: true }); logChange('AUTH', 'System', 'User logged in to local mode'); return true; }
+      addToast('Supabase not configured. Using local mode.', 'info');
+      return false;
+    }
+    
+    try {
+      if (isSignUp) {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        // The trigger will create the profile, or we upsert it
+        if (data.user) {
+          await supabase.from('profiles').upsert({ id: data.user.id, state: state });
+        }
+        logChange('AUTH', 'System', 'User signed up');
+        return true;
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        logChange('AUTH', 'System', 'User logged in');
+        return true;
+      }
+    } catch (err: any) {
+      addToast(err.message || 'Authentication failed', 'error');
+      return false;
+    }
+  };
+  
+  const logout = async () => { 
+    if (supabase) await supabase.auth.signOut();
+    logChange('AUTH', 'System', 'User logged out'); 
+    setState(prev => ({ ...prev, isAuthenticated: false })); 
+  };
+
+  const resetPassword = async (email: string) => {
+    if (!supabase) return false;
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      addToast('Reset link sent! Check your inbox.', 'success');
+      return true;
+    } catch (err: any) {
+      addToast(err.message || 'Failed to send reset link', 'error');
+      return false;
+    }
+  };
+
+  const updatePassword = async (password: string) => {
+    if (!supabase) return false;
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) throw error;
+      addToast('Password updated successfully!', 'success');
+      return true;
+    } catch (err: any) {
+      addToast(err.message || 'Failed to update password', 'error');
+      return false;
+    }
+  };
 
   const syncToGoogleSheets = async () => {
     if (!state.googleSheetUrl) return false;
@@ -201,7 +321,7 @@ export function FinancialProvider({ children }: { children: ReactNode }) {
     rows.push('', `Summary,Net Worth,,${totalAssets - totalDebt},,`, `Summary,Total Assets,,${totalAssets},,`, `Summary,Total Debt,,${totalDebt},,`);
     const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
     const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url;
-    a.download = `equitrack_export_${new Date().toISOString().split('T')[0]}.csv`; a.click(); URL.revokeObjectURL(url);
+    a.download = `2026track_export_${new Date().toISOString().split('T')[0]}.csv`; a.click(); URL.revokeObjectURL(url);
     logChange('EXPORT', 'System', 'Exported CSV');
     addToast('Financial data exported as CSV');
   };
@@ -227,6 +347,7 @@ export function FinancialProvider({ children }: { children: ReactNode }) {
       addLiability, removeLiability, updateLiability,
       addTrade, removeTrade, updateTrade,
       login, logout, syncToGoogleSheets, exportCSV, setThemeMode,
+      resetPassword, updatePassword,
       netWorth, totalDebt, totalAssets, toasts, addToast, removeToast, toggleDarkMode
     }}>
       {children}

@@ -12,7 +12,7 @@ export default function Layout({ children }: LayoutProps) {
       <header className="mobile-header">
         <div className="mobile-brand">
           <span className="material-symbols-outlined">account_balance</span>
-          <span>EquiTrack Finance</span>
+          <span>2026Track Finance</span>
         </div>
         <div className="mobile-actions">
           <span className="material-symbols-outlined">notifications</span>

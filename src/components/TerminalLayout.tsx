@@ -4,7 +4,7 @@ import { useFinancial } from '../context/FinancialContext';
 import ToastContainer from './ToastContainer';
 
 export default function TerminalLayout() {
-  const { state, toggleDarkMode } = useFinancial();
+  const { state } = useFinancial();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -16,7 +16,7 @@ export default function TerminalLayout() {
 
   const greeting = state.userProfile.name
     ? `Welcome, ${state.userProfile.name.split(' ')[0]}`
-    : 'EquiTrack';
+    : '2026Track';
 
   const navLinks = (
     <>
@@ -45,19 +45,17 @@ export default function TerminalLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface font-body overflow-x-hidden">
+    <div className="h-[100dvh] bg-surface text-on-surface font-body overflow-hidden flex flex-col">
       {/* Mobile Top Navigation */}
-      <div className="md:hidden sticky top-0 z-50 flex items-center justify-between px-4 h-14 w-full bg-surface-container-low border-b border-outline-variant shadow-sm font-sans text-sm">
+      <div className="md:hidden shrink-0 flex items-center justify-between px-4 h-14 w-full bg-surface-container-low border-b border-outline-variant shadow-sm font-sans text-sm">
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-1">
           <span className="material-symbols-outlined text-on-surface">{mobileMenuOpen ? 'close' : 'menu'}</span>
         </button>
         <div className="flex items-center gap-2 text-lg font-bold text-primary">
           <span className="material-symbols-outlined">account_balance</span>
-          <span>EquiTrack</span>
+          <span>2026Track</span>
         </div>
-        <button onClick={toggleDarkMode} className="p-1">
-          <span className="material-symbols-outlined text-on-surface-variant">{state.darkMode ? 'light_mode' : 'dark_mode'}</span>
-        </button>
+        <div className="w-8"></div> {/* Spacer to keep brand centered if needed */}
       </div>
 
       {/* Mobile Menu Overlay */}
@@ -72,16 +70,16 @@ export default function TerminalLayout() {
         </div>
       )}
 
-      <div className="flex min-h-screen w-full">
+      <div className="flex flex-1 w-full overflow-hidden">
         {/* Desktop Side Navigation */}
-        <nav className="hidden md:flex flex-col fixed left-0 top-0 h-screen w-64 border-r bg-surface-container border-r-outline-variant font-sans text-sm tracking-tight z-40">
+        <nav className="hidden md:flex shrink-0 flex-col w-64 h-full border-r bg-surface-container border-r-outline-variant font-sans text-sm tracking-tight z-40">
           <div className="p-6 border-b border-outline-variant flex items-center gap-3">
             <div className="w-10 h-10 rounded-DEFAULT bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
               <span className="material-symbols-outlined text-xl">account_balance</span>
             </div>
             <div>
-              <h1 className="font-black text-primary text-lg leading-tight">EquiTrack</h1>
-              <p className="text-secondary text-[10px] uppercase tracking-wider font-semibold">{greeting}</p>
+              <h1 className="font-black text-primary text-lg leading-tight">2026Track</h1>
+              <p className="text-secondary text-fluid-10 uppercase tracking-wider font-semibold">{greeting}</p>
             </div>
           </div>
           <div className="flex-1 overflow-y-auto py-4 flex flex-col gap-1">
@@ -89,14 +87,14 @@ export default function TerminalLayout() {
           </div>
           {/* Clean footer — version info only */}
           <div className="p-4 border-t border-outline-variant">
-            <div className="flex items-center justify-between text-[10px] text-on-surface-variant">
+            <div className="flex items-center justify-between text-fluid-10 text-on-surface-variant">
               <span className="uppercase tracking-wider">v2.0</span>
               <span>{state.themeMode?.toUpperCase() || 'DARK'} THEME</span>
             </div>
           </div>
         </nav>
 
-        <main className="flex-1 flex flex-col min-w-0 md:ml-64 relative">
+        <main className="flex-1 flex flex-col min-w-0 h-full relative">
           <Outlet />
         </main>
       </div>

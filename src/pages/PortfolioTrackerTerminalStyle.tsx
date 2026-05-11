@@ -49,15 +49,15 @@ export default function PortfolioTrackerTerminalStyle() {
   }, {} as Record<string, number>);
 
   return (
-    <div className="flex-1 flex overflow-hidden h-full">
+    <div className="flex-1 flex flex-col md:flex-row overflow-hidden h-full">
       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-        <header className="mb-6 flex justify-between items-end">
+        <header className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
             <h1 className="font-h1 text-primary-container uppercase tracking-tight">PORTFOLIO.SYS</h1>
             <p className="text-on-surface-variant font-body-base text-xs mt-1">Real-time asset telemetry and allocation mapping</p>
           </div>
           <button onClick={exportCSV} className="px-3 py-1 bg-surface-container border border-outline-variant text-on-surface text-xs font-mono-data rounded hover:bg-surface-container-high transition-colors flex items-center gap-1">
-            <span className="material-symbols-outlined text-[14px]">download</span> EXPORT DATA
+            <span className="material-symbols-outlined text-fluid-14">download</span> EXPORT DATA
           </button>
         </header>
 
@@ -70,10 +70,10 @@ export default function PortfolioTrackerTerminalStyle() {
             </div>
           </div>
           <div className="bg-surface-container border border-outline-variant p-4 shadow-sm">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {['EQUITIES', 'CRYPTOCURRENCY', 'REAL_ESTATE', 'CASH_EQUIVALENT'].map(cat => (
                 <div key={cat} className="text-center">
-                  <div className="text-[10px] text-on-surface-variant uppercase tracking-wider">{cat.replace('_', ' ')}</div>
+                  <div className="text-fluid-10 text-on-surface-variant uppercase tracking-wider">{cat.replace('_', ' ')}</div>
                   <div className="font-mono-data text-sm text-primary">${(breakdown[cat] || 0).toLocaleString()}</div>
                 </div>
               ))}
@@ -84,12 +84,13 @@ export default function PortfolioTrackerTerminalStyle() {
         {/* Asset Ledger Table */}
         <div className="border border-outline-variant">
           <div className="bg-surface-container-high px-4 py-2 flex items-center gap-2 border-b border-outline-variant">
-            <span className="material-symbols-outlined text-primary text-[16px]">table_chart</span>
+            <span className="material-symbols-outlined text-primary text-fluid-16">table_chart</span>
             <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Complete Asset Ledger</span>
           </div>
-          <table className="w-full text-left border-collapse">
+          <div className="w-full overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[600px]">
             <thead>
-              <tr className="bg-surface-container-high text-[10px] uppercase tracking-wider text-outline font-bold">
+              <tr className="bg-surface-container-high text-fluid-10 uppercase tracking-wider text-outline font-bold">
                 <th className="px-4 py-2">Asset Name</th>
                 <th className="px-4 py-2">Class</th>
                 <th className="px-4 py-2 text-right">Vol/Qty</th>
@@ -138,11 +139,12 @@ export default function PortfolioTrackerTerminalStyle() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
 
       {/* Add Asset Sidebar */}
-      <aside className="w-80 bg-surface-container border-l border-outline-variant flex flex-col p-4 overflow-y-auto">
+      <aside className="w-full md:w-80 bg-surface-container border-t md:border-t-0 md:border-l border-outline-variant flex flex-col p-4 overflow-y-auto shrink-0">
         <div className="flex items-center gap-2 mb-4">
           <span className="material-symbols-outlined text-primary">add_circle</span>
           <h2 className="font-h3 text-h3 text-on-surface uppercase">Add Asset</h2>
@@ -161,7 +163,7 @@ export default function PortfolioTrackerTerminalStyle() {
               <option value="CASH_EQUIVALENT">Cash Equivalent</option>
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
               <label className="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1 block">Quantity</label>
               <input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newAsset.quantity || ''} onChange={e => setNewAsset(v => ({ ...v, quantity: Number(e.target.value) }))} />
