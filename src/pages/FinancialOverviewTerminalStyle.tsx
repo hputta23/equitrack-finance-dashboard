@@ -8,7 +8,6 @@ export default function FinancialOverviewTerminalStyle() {
   const fmt = (v: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(v);
   const monthlySavings = state.monthlyIncome - state.monthlyBurn;
   const savingsRate = state.monthlyIncome > 0 ? ((monthlySavings / state.monthlyIncome) * 100) : 0;
-  // debt ratio used contextually in UI
   const tradePnl = (state.trades || []).reduce((s, t) => s + t.pnl, 0);
   const tradeWins = (state.trades || []).filter(t => t.pnl > 0).length;
   const tradeTotal = (state.trades || []).length;
@@ -20,7 +19,7 @@ export default function FinancialOverviewTerminalStyle() {
 
   // Debt obligations
   const DEBT_CATEGORIES = ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'];
-  const debts = useMemo(() => (state.liabilities || []).filter(l => DEBT_CATEGORIES.includes(l.category)), [state.liabilities]);
+  const debts = useMemo(() => (state.liabilities || []).filter(l => DEBT_CATEGORIES.includes(l.category) && l.status !== 'Paid Off'), [state.liabilities]);
   const totalMinPayments = useMemo(() => debts.reduce((s, d) => s + (d.minPayment || 0), 0), [debts]);
   const obligationPct = state.monthlyIncome > 0 ? (totalMinPayments / state.monthlyIncome) * 100 : 0;
 
@@ -44,9 +43,11 @@ export default function FinancialOverviewTerminalStyle() {
     : 'Dashboard';
 
   const pnlColor = (v: number) => v > 0 ? 'text-[#4ade80]' : v < 0 ? 'text-error' : 'text-on-surface-variant';
+  const obligColor = obligationPct > 35 ? 'text-error' : obligationPct > 20 ? 'text-tertiary' : 'text-[#4ade80]';
+  const obligBg = obligationPct > 35 ? 'bg-error' : obligationPct > 20 ? 'bg-tertiary' : 'bg-[#4ade80]';
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 p-4 h-full overflow-y-auto">
+    <div className="flex-1 flex flex-col min-w-0 p-4 pb-8">
       {/* Header */}
       <header className="mb-5 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
         <div>
@@ -55,7 +56,7 @@ export default function FinancialOverviewTerminalStyle() {
             Financial overview • {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
           </p>
         </div>
-        <Link to="/strategy" className="px-3 py-1.5 bg-primary/10 border border-primary/30 text-primary text-xs font-mono-data rounded hover:bg-primary/20 transition-colors flex items-center gap-1.5">
+        <Link to="/strategy" className="px-3 py-1.5 bg-primary/10 border border-primary/30 text-primary text-xs font-mono-data rounded hover:bg-primary/20 transition-colors flex items-center gap-1.5 shrink-0">
           <span className="material-symbols-outlined text-fluid-14">tune</span> Budget Planner
         </Link>
       </header>
@@ -99,7 +100,6 @@ export default function FinancialOverviewTerminalStyle() {
             {monthlySavings >= 0 ? '+' : ''}{fmt(monthlySavings)}
           </div>
           <div className="text-fluid-10 text-on-surface-variant mb-2">/month</div>
-          {/* Savings rate bar */}
           <div className="flex items-center gap-2">
             <div className="flex-1 h-1.5 bg-surface rounded-full overflow-hidden">
               <div className={`h-full rounded-full transition-all duration-500 ${savingsRate >= 20 ? 'bg-[#4ade80]' : savingsRate >= 10 ? 'bg-[#fbbf24]' : 'bg-[#f87171]'}`} style={{ width: `${Math.min(Math.max(savingsRate, 0), 100)}%` }} />
@@ -120,7 +120,6 @@ export default function FinancialOverviewTerminalStyle() {
           </div>
           <div className="font-mono-data text-xl font-bold text-on-surface mb-0.5">{state.creditScore || '—'}</div>
           <div className="text-fluid-10 font-bold uppercase tracking-wider mb-2" style={{ color: creditTier.color }}>{creditTier.label}</div>
-          {/* Score bar */}
           <div className="h-1.5 bg-surface rounded-full overflow-hidden mb-1">
             <div className="h-full rounded-full transition-all duration-700" style={{ width: `${creditPct}%`, backgroundColor: creditTier.color }} />
           </div>
@@ -130,13 +129,44 @@ export default function FinancialOverviewTerminalStyle() {
         </div>
       </div>
 
-      {/* Row 2: Money Flow + Allocation + Trades */}
+      {/* Row 2: Debt Obligations Summary (compact bar — no cards) */}
+      {debts.length > 0 && (
+        <Link to="/expenses" className="mb-4 bg-surface-container border border-outline-variant rounded p-3 flex flex-col sm:flex-row sm:items-center gap-3 hover:border-primary/30 transition-all group block">
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="material-symbols-outlined text-tertiary text-fluid-16">event_repeat</span>
+            <span className="text-fluid-10 text-on-surface-variant uppercase tracking-widest font-bold">Debt Obligations</span>
+          </div>
+          <div className="flex-1">
+            <div className="h-2 bg-surface rounded-full overflow-hidden">
+              <div className={`h-full rounded-full transition-all duration-700 ${obligBg}`} style={{ width: `${Math.min(obligationPct, 100)}%` }} />
+            </div>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="text-right">
+              <span className={`font-mono-data text-sm font-bold ${obligColor}`}>{fmt(totalMinPayments)}/mo</span>
+              <div className="text-[9px] text-on-surface-variant">{obligationPct.toFixed(1)}% of income • {debts.length} debts</div>
+            </div>
+            {obligationPct > 20 && (
+              <span className={`text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded border ${
+                obligationPct > 35
+                  ? 'bg-error/15 text-error border-error/30'
+                  : 'bg-tertiary-container/30 text-tertiary border-tertiary/30'
+              }`}>
+                {obligationPct > 35 ? '⚠ HIGH' : '⚡ WARN'}
+              </span>
+            )}
+            <span className="material-symbols-outlined text-fluid-14 text-on-surface-variant group-hover:text-primary transition-colors">arrow_forward</span>
+          </div>
+        </Link>
+      )}
+
+      {/* Row 3: Nav + Allocation + Trades */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-4">
-        {/* Money Flow */}
-        <div className="lg:col-span-1 bg-surface-container border border-outline-variant rounded overflow-hidden">
+        {/* Quick Nav */}
+        <div className="bg-surface-container border border-outline-variant rounded overflow-hidden">
           <div className="px-3 py-2 border-b border-outline-variant bg-surface-container-high flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary text-fluid-14">device_hub</span>
-            <span className="text-fluid-10 text-on-surface-variant uppercase tracking-widest font-bold">Quick Nav</span>
+            <span className="material-symbols-outlined text-primary text-fluid-14">grid_view</span>
+            <span className="text-fluid-10 text-on-surface-variant uppercase tracking-widest font-bold">Modules</span>
           </div>
           <div className="p-3 grid grid-cols-2 gap-2">
             {[
@@ -235,82 +265,6 @@ export default function FinancialOverviewTerminalStyle() {
         </div>
       </div>
 
-      {/* Row 3: Monthly Debt Obligations */}
-      {debts.length > 0 && (
-        <div className="mb-4 bg-surface-container border border-outline-variant rounded overflow-hidden">
-          <div className="px-3 py-2 border-b border-outline-variant bg-surface-container-high flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-tertiary text-fluid-14">event_repeat</span>
-              <span className="text-fluid-10 text-on-surface-variant uppercase tracking-widest font-bold">Monthly Debt Obligations</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className={`font-mono-data text-sm font-bold ${
-                obligationPct > 35 ? 'text-error' : obligationPct > 20 ? 'text-tertiary' : 'text-[#4ade80]'
-              }`}>{fmt(totalMinPayments)}/mo</span>
-              {obligationPct > 20 && (
-                <span className={`text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded border ${
-                  obligationPct > 35
-                    ? 'bg-error/15 text-error border-error/30'
-                    : 'bg-tertiary-container/30 text-tertiary border-tertiary/30'
-                }`}>
-                  {obligationPct > 35 ? '⚠ HIGH RISK' : '⚡ WARNING'}
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-            {debts.filter(d => d.status !== 'Paid Off').map(d => {
-              const pct = totalMinPayments > 0 ? ((d.minPayment || 0) / totalMinPayments) * 100 : 0;
-              const barColor = d.category === 'Credit Card' ? 'bg-primary' : d.category === 'Mortgage' ? 'bg-[#4ade80]' : d.category === 'Student Loan' ? 'bg-[#a78bfa]' : 'bg-tertiary';
-              return (
-                <div key={d.id} className="bg-surface border border-outline-variant/50 rounded p-2.5 flex flex-col gap-1.5">
-                  <div className="flex items-start justify-between gap-1">
-                    <div className="min-w-0">
-                      <div className="text-on-surface text-xs font-semibold truncate">{d.name}</div>
-                      <div className="text-on-surface-variant text-[10px]">{d.category} • {d.apr > 0 ? `${d.apr}% APR` : '0% APR'}{d.isIntroApr ? ' (intro)' : ''}</div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      {d.minPayment ? (
-                        <span className="font-mono-data text-xs font-bold text-tertiary">{fmt(d.minPayment)}</span>
-                      ) : (
-                        <span className="text-[10px] text-on-surface-variant italic">No min set</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="h-1 bg-surface-container-high rounded-full overflow-hidden">
-                    <div className={`h-full ${barColor} rounded-full transition-all duration-500`} style={{ width: `${pct}%` }} />
-                  </div>
-                  <div className="text-[9px] text-on-surface-variant flex justify-between">
-                    <span>Balance: {fmt(d.principal)}</span>
-                    {d.maxLimit ? <span>Limit: {fmt(d.maxLimit)}</span> : null}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          {/* Summary bar */}
-          <div className="mx-3 mb-3 p-2 bg-surface-container-high border border-outline-variant/50 rounded flex flex-col sm:flex-row sm:items-center gap-2">
-            <div className="flex-1">
-              <div className="text-[10px] text-on-surface-variant uppercase tracking-wider mb-1">Obligations vs Income</div>
-              <div className="h-2 bg-surface rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all duration-700 ${
-                    obligationPct > 35 ? 'bg-error' : obligationPct > 20 ? 'bg-tertiary' : 'bg-[#4ade80]'
-                  }`}
-                  style={{ width: `${Math.min(obligationPct, 100)}%` }}
-                />
-              </div>
-            </div>
-            <div className="text-right">
-              <span className={`font-mono-data text-xs font-bold ${
-                obligationPct > 35 ? 'text-error' : obligationPct > 20 ? 'text-tertiary' : 'text-[#4ade80]'
-              }`}>{obligationPct.toFixed(1)}% of income</span>
-              <div className="text-[9px] text-on-surface-variant">{fmt(state.monthlyIncome - totalMinPayments)} left after payments</div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Row 4: Activity Log */}
       <div className="bg-surface-container border border-outline-variant rounded overflow-hidden">
         <div className="px-3 py-2 border-b border-outline-variant bg-surface-container-high flex items-center justify-between">
@@ -320,7 +274,7 @@ export default function FinancialOverviewTerminalStyle() {
           </div>
           <span className="text-fluid-9 font-mono-data text-on-surface-variant">{(state.changelog || []).length} events</span>
         </div>
-        <div className="max-h-[180px] overflow-y-auto">
+        <div className="max-h-[200px] overflow-y-auto">
           {recentChanges.length === 0 ? (
             <div className="p-4 text-center text-on-surface-variant text-xs italic">No activity yet. Changes will appear here automatically.</div>
           ) : (

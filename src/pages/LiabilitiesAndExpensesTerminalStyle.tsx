@@ -81,8 +81,8 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
     setNewLiability({ name: '', category: 'Credit Card', principal: 0, apr: 0, maxLimit: 0, isIntroApr: false, minPayment: 0 });
   };
 
-  const startEdit = (l: Liability) => { setEditingId(l.id); setEditValues({ principal: l.principal, apr: l.apr, status: l.status, minPayment: l.minPayment || 0 }); };
-  const saveEdit = (id: string) => { updateLiability(id, editValues); setEditingId(null); };
+  const startEdit = (l: Liability) => { setEditingId(l.id); setEditValues({ name: l.name, principal: l.principal, apr: l.apr, status: l.status, minPayment: l.minPayment || 0, category: l.category, maxLimit: l.maxLimit, isIntroApr: l.isIntroApr }); };
+  const saveEdit = (id: string) => { updateLiability(id, editValues); setEditingId(null); setEditValues({}); };
   const cancelEdit = () => { setEditingId(null); setEditValues({}); };
 
   const getCategoryInfo = (cat: string) => EXPENSE_CATEGORIES.find(c => c.value === cat) || EXPENSE_CATEGORIES[EXPENSE_CATEGORIES.length - 1];
@@ -210,65 +210,34 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                     <tr><td colSpan={7} className="text-center py-8 text-on-surface-variant italic">No debts tracked yet. Add your first debt below →</td></tr>
                   )}
                   {filteredLiabilities.map(l => (
-                    <tr key={l.id} className="border-t border-outline-variant/30 hover:bg-surface-container-low transition-colors">
+                    <tr key={l.id} onClick={() => startEdit(l)} className={`border-t border-outline-variant/30 hover:bg-surface-container-low transition-colors cursor-pointer ${editingId === l.id ? 'bg-primary/5 border-l-2 border-l-primary' : ''}`}>
                       <td className="px-4 py-2">
                         <div className="text-on-surface font-semibold">{l.name}</div>
                         <div className="text-on-surface-variant text-fluid-10">{l.category}</div>
                       </td>
                       <td className="px-4 py-2 text-right">
-                        {editingId === l.id ? (
-                          <input type="number" className="w-28 bg-surface border border-primary p-1 text-xs font-mono text-on-surface text-right outline-none" value={editValues.principal} onChange={e => setEditValues(v => ({ ...v, principal: Number(e.target.value) }))} />
-                        ) : (
-                          <div className="flex flex-col items-end">
-                            <span className="text-on-surface">${l.principal.toLocaleString()}</span>
-                            {l.maxLimit ? <span className="text-on-surface-variant text-[10px] mt-0.5 uppercase tracking-wider">Limit: ${l.maxLimit.toLocaleString()}</span> : null}
-                          </div>
-                        )}
+                        <div className="flex flex-col items-end">
+                          <span className="text-on-surface">${l.principal.toLocaleString()}</span>
+                          {l.maxLimit ? <span className="text-on-surface-variant text-[10px] mt-0.5 uppercase tracking-wider">Limit: ${l.maxLimit.toLocaleString()}</span> : null}
+                        </div>
                       </td>
                       <td className="px-4 py-2 text-right">
-                        {editingId === l.id ? (
-                          <input type="number" className="w-20 bg-surface border border-primary p-1 text-xs font-mono text-on-surface text-right outline-none" value={editValues.apr} onChange={e => setEditValues(v => ({ ...v, apr: Number(e.target.value) }))} />
-                        ) : (
-                          <div className="flex flex-col items-end">
-                            <span className={l.apr >= 15 ? 'text-error font-bold' : 'text-on-surface'}>{l.apr.toFixed(1)}%</span>
-                            {l.isIntroApr && <span className="text-primary text-[9px] uppercase font-bold tracking-widest bg-primary/10 px-1 mt-0.5 rounded border border-primary/20">Intro APR</span>}
-                          </div>
-                        )}
+                        <div className="flex flex-col items-end">
+                          <span className={l.apr >= 15 ? 'text-error font-bold' : 'text-on-surface'}>{l.apr.toFixed(1)}%</span>
+                          {l.isIntroApr && <span className="text-primary text-[9px] uppercase font-bold tracking-widest bg-primary/10 px-1 mt-0.5 rounded border border-primary/20">Intro APR</span>}
+                        </div>
                       </td>
                       <td className="px-4 py-2 text-right">
-                        {editingId === l.id ? (
-                          <div className="relative">
-                            <span className="absolute left-1.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[10px]">$</span>
-                            <input type="number" className="w-20 bg-surface border border-primary p-1 pl-4 text-xs font-mono text-on-surface text-right outline-none" value={editValues.minPayment ?? ''} onChange={e => setEditValues(v => ({ ...v, minPayment: Number(e.target.value) }))} placeholder="0" />
-                          </div>
-                        ) : (
-                          <span className={l.minPayment ? 'text-tertiary font-semibold' : 'text-on-surface-variant italic text-[11px]'}>
-                            {l.minPayment ? `$${l.minPayment.toLocaleString()}` : '—'}
-                          </span>
-                        )}
+                        <span className={l.minPayment ? 'text-tertiary font-semibold' : 'text-on-surface-variant italic text-[11px]'}>
+                          {l.minPayment ? `$${l.minPayment.toLocaleString()}` : '—'}
+                        </span>
                       </td>
                       <td className="px-4 py-2 text-on-surface-variant">{l.nextPayment}</td>
                       <td className="px-4 py-2 text-center">
-                        {editingId === l.id ? (
-                          <select className="bg-surface border border-primary p-1 text-xs font-mono text-on-surface outline-none" value={editValues.status} onChange={e => setEditValues(v => ({ ...v, status: e.target.value }))}>
-                            <option value="Active">Active</option><option value="Paid Off">Paid Off</option>
-                          </select>
-                        ) : (
-                          <span className={`px-2 py-0.5 text-fluid-10 uppercase font-bold rounded ${l.status === 'Active' ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-surface-container text-on-surface-variant border border-outline-variant'}`}>{l.status}</span>
-                        )}
+                        <span className={`px-2 py-0.5 text-fluid-10 uppercase font-bold rounded ${l.status === 'Active' ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-surface-container text-on-surface-variant border border-outline-variant'}`}>{l.status}</span>
                       </td>
                       <td className="px-4 py-2 text-center">
-                        {editingId === l.id ? (
-                          <div className="flex gap-2 justify-center">
-                            <button onClick={() => saveEdit(l.id)} className="text-primary text-xs uppercase hover:underline">Save</button>
-                            <button onClick={cancelEdit} className="text-on-surface-variant text-xs uppercase hover:underline">Cancel</button>
-                          </div>
-                        ) : (
-                          <div className="flex gap-2 justify-center">
-                            <button onClick={() => startEdit(l)} className="text-primary text-xs uppercase hover:underline">Edit</button>
-                            <button onClick={() => removeLiability(l.id)} className="text-error text-xs uppercase hover:underline">Delete</button>
-                          </div>
-                        )}
+                        <button onClick={(e) => { e.stopPropagation(); removeLiability(l.id); }} className="text-error text-xs uppercase hover:underline">Delete</button>
                       </td>
                     </tr>
                   ))}
@@ -342,6 +311,48 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
               Add Expense
             </button>
           </>
+        ) : editingId ? (
+          <>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">edit</span>
+                <h2 className="font-h3 text-h3 text-on-surface uppercase">Edit Debt</h2>
+              </div>
+              <button onClick={cancelEdit} className="text-on-surface-variant hover:text-on-surface transition-colors"><span className="material-symbols-outlined text-fluid-18">close</span></button>
+            </div>
+            <div className="space-y-3 flex-1">
+              <div>
+                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Name</label>
+                <input className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={editValues.name || ''} onChange={e => setEditValues(v => ({ ...v, name: e.target.value }))} />
+              </div>
+              <div>
+                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Balance Owed</label>
+                <div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
+                <input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={editValues.principal || ''} onChange={e => setEditValues(v => ({ ...v, principal: Number(e.target.value) }))} /></div>
+              </div>
+              <div>
+                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Interest Rate</label>
+                <div className="relative"><input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pr-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={editValues.apr || ''} onChange={e => setEditValues(v => ({ ...v, apr: Number(e.target.value) }))} /><span className="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">%</span></div>
+              </div>
+              <div>
+                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Min Monthly Payment</label>
+                <div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
+                <input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-tertiary outline-none" value={editValues.minPayment || ''} onChange={e => setEditValues(v => ({ ...v, minPayment: Number(e.target.value) }))} /></div>
+              </div>
+              <div>
+                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Status</label>
+                <select className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={editValues.status} onChange={e => setEditValues(v => ({ ...v, status: e.target.value }))}>
+                  <option value="Active">Active</option><option value="Paid Off">Paid Off</option>
+                </select>
+              </div>
+            </div>
+            <div className="mt-3 space-y-2">
+              <button onClick={() => saveEdit(editingId)} className="w-full bg-primary text-on-primary font-bold py-3 uppercase tracking-tighter text-sm flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors rounded">
+                <span className="material-symbols-outlined text-sm">save</span> Save Changes
+              </button>
+              <button onClick={cancelEdit} className="w-full border border-outline-variant text-on-surface-variant font-bold py-2 uppercase tracking-tighter text-xs hover:bg-surface-container-high transition-colors rounded">Cancel</button>
+            </div>
+          </>
         ) : (
           <>
             <div className="flex items-center gap-2 mb-4">
@@ -356,61 +367,22 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
               <div>
                 <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Type</label>
                 <select className="w-full bg-surface-container-low border border-outline-variant p-2 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.category} onChange={e => setNewLiability(v => ({ ...v, category: e.target.value }))}>
-                  <option value="Credit Card">Credit Card</option>
-                  <option value="Personal">Personal Loan</option>
-                  <option value="Mortgage">Mortgage</option>
-                  <option value="Student Loan">Student Loan</option>
-                  <option value="Auto Loan">Auto / Car Loan</option>
-                  <option value="Medical">Medical Bill</option>
+                  <option value="Credit Card">Credit Card</option><option value="Personal">Personal Loan</option><option value="Mortgage">Mortgage</option><option value="Student Loan">Student Loan</option><option value="Auto Loan">Auto / Car Loan</option><option value="Medical">Medical Bill</option>
                 </select>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div>
-                  <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Balance Owed</label>
-                  <div className="relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
-                    <input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.principal || ''} onChange={e => setNewLiability(v => ({ ...v, principal: Number(e.target.value) }))} />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Interest Rate</label>
-                  <div className="relative">
-                    <input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pr-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.apr || ''} onChange={e => setNewLiability(v => ({ ...v, apr: Number(e.target.value) }))} />
-                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">%</span>
-                  </div>
-                </div>
+                <div><label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Balance</label><div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span><input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.principal || ''} onChange={e => setNewLiability(v => ({ ...v, principal: Number(e.target.value) }))} /></div></div>
+                <div><label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">APR</label><div className="relative"><input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pr-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.apr || ''} onChange={e => setNewLiability(v => ({ ...v, apr: Number(e.target.value) }))} /><span className="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">%</span></div></div>
               </div>
-              
               {newLiability.category === 'Credit Card' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-outline-variant/30 mt-2">
-                  <div>
-                    <label className="text-fluid-10 text-primary uppercase tracking-wider mb-0.5 block flex items-center gap-1">
-                      Max Limit
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
-                      <input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.maxLimit || ''} onChange={e => setNewLiability(v => ({ ...v, maxLimit: Number(e.target.value) }))} placeholder="0.00" />
-                    </div>
-                  </div>
-                  <div className="flex items-end pb-1">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" className="w-4 h-4 accent-primary" checked={newLiability.isIntroApr || false} onChange={e => setNewLiability(v => ({ ...v, isIntroApr: e.target.checked }))} />
-                      <span className="text-fluid-10 text-on-surface-variant uppercase tracking-wider">Is Intro APR?</span>
-                    </label>
-                  </div>
+                  <div><label className="text-fluid-10 text-primary uppercase tracking-wider mb-0.5 block">Max Limit</label><div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span><input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.maxLimit || ''} onChange={e => setNewLiability(v => ({ ...v, maxLimit: Number(e.target.value) }))} /></div></div>
+                  <div className="flex items-end pb-1"><label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 accent-primary" checked={newLiability.isIntroApr || false} onChange={e => setNewLiability(v => ({ ...v, isIntroApr: e.target.checked }))} /><span className="text-fluid-10 text-on-surface-variant uppercase tracking-wider">Intro APR?</span></label></div>
                 </div>
               )}
-              {/* Min Monthly Payment — all debt types */}
               <div className="pt-2 border-t border-outline-variant/30 mt-1">
-                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block flex items-center gap-1">
-                  <span className="material-symbols-outlined text-fluid-12 text-tertiary">event_repeat</span>
-                  Min Monthly Payment
-                </label>
-                <div className="relative">
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
-                  <input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-tertiary outline-none" value={newLiability.minPayment || ''} onChange={e => setNewLiability(v => ({ ...v, minPayment: Number(e.target.value) }))} placeholder="e.g. 25.00" />
-                </div>
-                <p className="text-[10px] text-on-surface-variant mt-1">Shown on dashboard as your monthly obligation.</p>
+                <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block flex items-center gap-1"><span className="material-symbols-outlined text-fluid-12 text-tertiary">event_repeat</span>Min Payment</label>
+                <div className="relative"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span><input type="number" step="0.01" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-tertiary outline-none" value={newLiability.minPayment || ''} onChange={e => setNewLiability(v => ({ ...v, minPayment: Number(e.target.value) }))} placeholder="25.00" /></div>
               </div>
             </div>
             <button onClick={handleAddDebt} disabled={!newLiability.name || !newLiability.principal}
