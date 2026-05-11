@@ -16,12 +16,15 @@ export default function IncomeStrategyFlow() {
   // Calculate Real-World Actuals
   const currentMonthPrefix = new Date().toISOString().substring(0, 7);
   const actualExpensesVolume = state.liabilities
-    .filter(l => l.apr === 0 && (l.nextPayment || '').startsWith(currentMonthPrefix))
+    .filter(l => !['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'].includes(l.category) && (l.nextPayment || '').startsWith(currentMonthPrefix))
     .reduce((s, l) => s + l.principal, 0);
   
   const actualDebtVolume = state.liabilities
-    .filter(l => l.apr > 0)
-    .reduce((s, l) => s + (l.principal * (l.apr / 100) / 12), 0); // Approx monthly interest/minimum
+    .filter(l => ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'].includes(l.category))
+    .reduce((s, l) => {
+      const minPayment = l.apr > 0 ? (l.principal * (l.apr / 100) / 12) : (l.principal * 0.01);
+      return s + minPayment;
+    }, 0);
 
   const bucketsWithActuals = buckets.map(b => {
     let actualVolume = 0;

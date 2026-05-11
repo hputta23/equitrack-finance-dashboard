@@ -31,7 +31,7 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
   const [selectedQuickCat, setSelectedQuickCat] = useState<string | null>(null);
 
   // Debt form
-  const [newLiability, setNewLiability] = useState<Partial<Liability>>({ name: '', category: 'Credit Card', principal: 0, apr: 0 });
+  const [newLiability, setNewLiability] = useState<Partial<Liability>>({ name: '', category: 'Credit Card', principal: 0, apr: 0, maxLimit: 0, isIntroApr: false });
 
   // Edit state
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -42,12 +42,12 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
 
   // Separate daily expenses from debts
   const dailyExpenses = useMemo(() =>
-    state.liabilities.filter(l => !['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal'].includes(l.category) || l.apr === 0)
+    state.liabilities.filter(l => !['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'].includes(l.category))
       .sort((a, b) => b.id.localeCompare(a.id)),
     [state.liabilities]
   );
   const debts = useMemo(() =>
-    state.liabilities.filter(l => ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'].includes(l.category) && l.apr > 0),
+    state.liabilities.filter(l => ['Credit Card', 'Mortgage', 'Student Loan', 'Auto Loan', 'Personal', 'Medical'].includes(l.category)),
     [state.liabilities]
   );
 
@@ -74,8 +74,10 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
       name: newLiability.name!, category: newLiability.category || 'Credit Card',
       principal: newLiability.principal!, apr: newLiability.apr || 0,
       nextPayment: 'Monthly', status: 'Active',
+      maxLimit: newLiability.category === 'Credit Card' ? (newLiability.maxLimit || 0) : undefined,
+      isIntroApr: newLiability.category === 'Credit Card' ? (newLiability.isIntroApr || false) : undefined,
     });
-    setNewLiability({ name: '', category: 'Credit Card', principal: 0, apr: 0 });
+    setNewLiability({ name: '', category: 'Credit Card', principal: 0, apr: 0, maxLimit: 0, isIntroApr: false });
   };
 
   const startEdit = (l: Liability) => { setEditingId(l.id); setEditValues({ principal: l.principal, apr: l.apr, status: l.status }); };
@@ -214,12 +216,22 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                       <td className="px-4 py-2 text-right">
                         {editingId === l.id ? (
                           <input type="number" className="w-28 bg-surface border border-primary p-1 text-xs font-mono text-on-surface text-right outline-none" value={editValues.principal} onChange={e => setEditValues(v => ({ ...v, principal: Number(e.target.value) }))} />
-                        ) : <span className="text-on-surface">${l.principal.toLocaleString()}</span>}
+                        ) : (
+                          <div className="flex flex-col items-end">
+                            <span className="text-on-surface">${l.principal.toLocaleString()}</span>
+                            {l.maxLimit ? <span className="text-on-surface-variant text-[10px] mt-0.5 uppercase tracking-wider">Limit: ${l.maxLimit.toLocaleString()}</span> : null}
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-2 text-right">
                         {editingId === l.id ? (
                           <input type="number" className="w-20 bg-surface border border-primary p-1 text-xs font-mono text-on-surface text-right outline-none" value={editValues.apr} onChange={e => setEditValues(v => ({ ...v, apr: Number(e.target.value) }))} />
-                        ) : <span className={l.apr >= 15 ? 'text-error font-bold' : 'text-on-surface'}>{l.apr.toFixed(1)}%</span>}
+                        ) : (
+                          <div className="flex flex-col items-end">
+                            <span className={l.apr >= 15 ? 'text-error font-bold' : 'text-on-surface'}>{l.apr.toFixed(1)}%</span>
+                            {l.isIntroApr && <span className="text-primary text-[9px] uppercase font-bold tracking-widest bg-primary/10 px-1 mt-0.5 rounded border border-primary/20">Intro APR</span>}
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-2 text-on-surface-variant">{l.nextPayment}</td>
                       <td className="px-4 py-2 text-center">
@@ -354,6 +366,26 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                   </div>
                 </div>
               </div>
+              
+              {newLiability.category === 'Credit Card' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-outline-variant/30 mt-2">
+                  <div>
+                    <label className="text-fluid-10 text-primary uppercase tracking-wider mb-0.5 block flex items-center gap-1">
+                      Max Limit
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
+                      <input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.maxLimit || ''} onChange={e => setNewLiability(v => ({ ...v, maxLimit: Number(e.target.value) }))} placeholder="0.00" />
+                    </div>
+                  </div>
+                  <div className="flex items-end pb-1">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" className="w-4 h-4 accent-primary" checked={newLiability.isIntroApr || false} onChange={e => setNewLiability(v => ({ ...v, isIntroApr: e.target.checked }))} />
+                      <span className="text-fluid-10 text-on-surface-variant uppercase tracking-wider">Is Intro APR?</span>
+                    </label>
+                  </div>
+                </div>
+              )}
             </div>
             <button onClick={handleAddDebt} disabled={!newLiability.name || !newLiability.principal}
               className="mt-3 w-full bg-primary text-on-primary font-bold py-3 uppercase tracking-tighter text-sm flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded">
