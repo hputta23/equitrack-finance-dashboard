@@ -9,6 +9,7 @@ export interface Liability {
   id: string; name: string; category: string; principal: number; apr: number; nextPayment: string; status: string;
   maxLimit?: number;
   isIntroApr?: boolean;
+  minPayment?: number;
 }
 export interface Trade {
   id: string; date: string; ticker: string; companyName: string; direction: 'LONG' | 'SHORT';

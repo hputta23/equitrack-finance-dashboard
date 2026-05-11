@@ -31,7 +31,7 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
   const [selectedQuickCat, setSelectedQuickCat] = useState<string | null>(null);
 
   // Debt form
-  const [newLiability, setNewLiability] = useState<Partial<Liability>>({ name: '', category: 'Credit Card', principal: 0, apr: 0, maxLimit: 0, isIntroApr: false });
+  const [newLiability, setNewLiability] = useState<Partial<Liability>>({ name: '', category: 'Credit Card', principal: 0, apr: 0, maxLimit: 0, isIntroApr: false, minPayment: 0 });
 
   // Edit state
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -76,11 +76,12 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
       nextPayment: 'Monthly', status: 'Active',
       maxLimit: newLiability.category === 'Credit Card' ? (newLiability.maxLimit || 0) : undefined,
       isIntroApr: newLiability.category === 'Credit Card' ? (newLiability.isIntroApr || false) : undefined,
+      minPayment: newLiability.minPayment || 0,
     });
-    setNewLiability({ name: '', category: 'Credit Card', principal: 0, apr: 0, maxLimit: 0, isIntroApr: false });
+    setNewLiability({ name: '', category: 'Credit Card', principal: 0, apr: 0, maxLimit: 0, isIntroApr: false, minPayment: 0 });
   };
 
-  const startEdit = (l: Liability) => { setEditingId(l.id); setEditValues({ principal: l.principal, apr: l.apr, status: l.status }); };
+  const startEdit = (l: Liability) => { setEditingId(l.id); setEditValues({ principal: l.principal, apr: l.apr, status: l.status, minPayment: l.minPayment }); };
   const saveEdit = (id: string) => { updateLiability(id, editValues); setEditingId(null); };
   const cancelEdit = () => { setEditingId(null); setEditValues({}); };
 
@@ -233,7 +234,16 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                           </div>
                         )}
                       </td>
-                      <td className="px-4 py-2 text-on-surface-variant">{l.nextPayment}</td>
+                      <td className="px-4 py-2 text-on-surface-variant">
+                        {editingId === l.id ? (
+                           <input type="number" className="w-20 bg-surface border border-primary p-1 text-xs font-mono text-on-surface outline-none" value={editValues.minPayment || ''} onChange={e => setEditValues(v => ({ ...v, minPayment: Number(e.target.value) }))} placeholder="Min $" />
+                        ) : (
+                          <div className="flex flex-col">
+                            <span className="text-on-surface">${l.minPayment?.toLocaleString() || '0'}/mo</span>
+                            <span className="text-fluid-10">{l.nextPayment}</span>
+                          </div>
+                        )}
+                      </td>
                       <td className="px-4 py-2 text-center">
                         {editingId === l.id ? (
                           <select className="bg-surface border border-primary p-1 text-xs font-mono text-on-surface outline-none" value={editValues.status} onChange={e => setEditValues(v => ({ ...v, status: e.target.value }))}>
@@ -350,7 +360,7 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                   <option value="Medical">Medical Bill</option>
                 </select>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div>
                   <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Balance Owed</label>
                   <div className="relative">
@@ -363,6 +373,13 @@ export default function LiabilitiesAndExpensesTerminalStyle() {
                   <div className="relative">
                     <input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pr-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.apr || ''} onChange={e => setNewLiability(v => ({ ...v, apr: Number(e.target.value) }))} />
                     <span className="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">%</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-fluid-10 text-on-surface-variant uppercase tracking-wider mb-0.5 block">Min Payment</label>
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
+                    <input type="number" className="w-full bg-surface-container-low border border-outline-variant p-2 pl-5 text-sm font-mono-data text-on-surface focus:border-primary outline-none" value={newLiability.minPayment || ''} onChange={e => setNewLiability(v => ({ ...v, minPayment: Number(e.target.value) }))} />
                   </div>
                 </div>
               </div>
