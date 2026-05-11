@@ -69,10 +69,10 @@ export default function IncomeStrategyFlow() {
         <div className="bg-surface border border-outline-variant rounded-DEFAULT p-4 flex-1 min-h-[300px] flex flex-col relative overflow-hidden">
           <div className="absolute top-4 left-4 font-label-caps text-label-caps text-on-surface-variant z-10">INCOME FLOW TOPOLOGY</div>
           <div className="flex-1 flex items-center justify-between mt-6 px-8 relative">
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
-              <path className="sankey-path" d="M 150,150 C 300,150 400,50 600,50" stroke="#ffb4ab"></path>
-              <path className="sankey-path" d="M 150,150 C 300,150 400,150 600,150" stroke="#7bd0ff"></path>
-              <path className="sankey-path" d="M 150,150 C 300,150 400,250 600,250" stroke="#ffc176"></path>
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 800 300">
+              <path fill="none" strokeWidth="3" opacity="0.4" className="sankey-path" d="M 220,150 C 400,150 450,50 580,50" stroke="#ffb4ab"></path>
+              <path fill="none" strokeWidth="3" opacity="0.4" className="sankey-path" d="M 220,150 C 400,150 450,150 580,150" stroke="#7bd0ff"></path>
+              <path fill="none" strokeWidth="3" opacity="0.4" className="sankey-path" d="M 220,150 C 400,150 450,250 580,250" stroke="#ffc176"></path>
             </svg>
             {/* Source */}
             <div className="z-10 w-48 bg-surface-container border border-outline-variant rounded p-3 flex flex-col shadow-[0_0_15px_rgba(123,208,255,0.1)] border-l-2 border-l-primary">
