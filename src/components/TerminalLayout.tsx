@@ -35,6 +35,9 @@ export default function TerminalLayout() {
       <NavLink to="/trades" className={navLinkClass} onClick={() => setMobileMenuOpen(false)}>
         <span className="material-symbols-outlined">candlestick_chart</span>Trade Log
       </NavLink>
+      <NavLink to="/todos" className={navLinkClass} onClick={() => setMobileMenuOpen(false)}>
+        <span className="material-symbols-outlined">checklist</span>Daily Tasks
+      </NavLink>
       <NavLink to="/update" className={navLinkClass} onClick={() => setMobileMenuOpen(false)}>
         <span className="material-symbols-outlined">settings</span>Settings
       </NavLink>

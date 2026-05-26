@@ -19,6 +19,10 @@ export interface Trade {
 export interface ChangeLogEntry {
   id: string; timestamp: string; action: string; module: string; details: string;
 }
+export interface TodoItem {
+  id: string; text: string; completed: boolean; createdAt: string; completedAt?: string;
+  priority: 'low' | 'medium' | 'high';
+}
 export interface UserProfile { name: string; targetNetWorth: number; }
 export interface Toast { id: string; message: string; type: 'success' | 'error' | 'info'; }
 
@@ -28,7 +32,7 @@ export interface FinancialState {
   isAuthenticated: boolean; hasCompletedOnboarding: boolean; googleSheetUrl: string;
   darkMode: boolean; themeMode: ThemeMode;
   userProfile: UserProfile; assets: Asset[]; liabilities: Liability[]; trades: Trade[];
-  changelog: ChangeLogEntry[];
+  todos: TodoItem[]; changelog: ChangeLogEntry[];
   monthlyIncome: number; monthlyBurn: number; creditScore: number;
 }
 
@@ -40,6 +44,10 @@ export interface FinancialContextType {
   updateLiability: (id: string, updates: Partial<Omit<Liability, 'id'>>) => void;
   addTrade: (trade: Omit<Trade, 'id' | 'pnl' | 'pnlPercent'>) => void; removeTrade: (id: string) => void;
   updateTrade: (id: string, updates: Partial<Omit<Trade, 'id' | 'pnl' | 'pnlPercent'>>) => void;
+  addTodo: (text: string, priority?: 'low' | 'medium' | 'high') => void;
+  toggleTodo: (id: string) => void; removeTodo: (id: string) => void;
+  updateTodo: (id: string, updates: Partial<Omit<TodoItem, 'id'>>) => void;
+  clearCompletedTodos: () => void;
   login: (email: string, password: string, isSignUp: boolean) => Promise<boolean>;
   logout: () => Promise<void>;
   syncToGoogleSheets: () => Promise<boolean>; exportCSV: () => void;
@@ -54,7 +62,7 @@ export interface FinancialContextType {
 const defaultState: FinancialState = {
   isAuthenticated: false, hasCompletedOnboarding: false, googleSheetUrl: '', darkMode: true,
   themeMode: 'dark', userProfile: { name: '', targetNetWorth: 0 },
-  assets: [], liabilities: [], trades: [], changelog: [],
+  assets: [], liabilities: [], trades: [], todos: [], changelog: [],
   monthlyIncome: 0, monthlyBurn: 0, creditScore: 0,
 };
 
@@ -222,6 +230,29 @@ export function FinancialProvider({ children }: { children: ReactNode }) {
     addToast('Trade updated successfully');
   };
 
+  // === Todo CRUD ===
+  const addTodo = (text: string, priority: 'low' | 'medium' | 'high' = 'medium') => {
+    const todo: TodoItem = { id: Date.now().toString(), text, completed: false, createdAt: new Date().toISOString(), priority };
+    setState(prev => ({ ...prev, todos: [todo, ...(prev.todos || [])] }));
+    logChange('ADD', 'Tasks', `Added task: "${text}"`);
+  };
+  const toggleTodo = (id: string) => {
+    setState(prev => ({ ...prev, todos: (prev.todos || []).map(t => t.id === id ? { ...t, completed: !t.completed, completedAt: !t.completed ? new Date().toISOString() : undefined } : t) }));
+  };
+  const removeTodo = (id: string) => {
+    const todo = (state.todos || []).find(t => t.id === id);
+    setState(prev => ({ ...prev, todos: (prev.todos || []).filter(t => t.id !== id) }));
+    logChange('DELETE', 'Tasks', `Removed task: "${todo?.text || ''}"`);
+  };
+  const updateTodo = (id: string, updates: Partial<Omit<TodoItem, 'id'>>) => {
+    setState(prev => ({ ...prev, todos: (prev.todos || []).map(t => t.id === id ? { ...t, ...updates } : t) }));
+  };
+  const clearCompletedTodos = () => {
+    const count = (state.todos || []).filter(t => t.completed).length;
+    setState(prev => ({ ...prev, todos: (prev.todos || []).filter(t => !t.completed) }));
+    if (count > 0) { logChange('DELETE', 'Tasks', `Cleared ${count} completed tasks`); addToast(`${count} completed tasks cleared`, 'info'); }
+  };
+
   const login = async (email: string, password: string, isSignUp: boolean) => { 
     if (!supabase) {
       addToast('Supabase is not configured. Please contact support.', 'error');
@@ -354,6 +385,7 @@ export function FinancialProvider({ children }: { children: ReactNode }) {
       state, updateMetrics, addAsset, removeAsset, updateAsset,
       addLiability, removeLiability, updateLiability,
       addTrade, removeTrade, updateTrade,
+      addTodo, toggleTodo, removeTodo, updateTodo, clearCompletedTodos,
       login, logout, syncToGoogleSheets, exportCSV, setThemeMode,
       resetPassword, updatePassword,
       netWorth, totalDebt, totalAssets, toasts, addToast, removeToast, toggleDarkMode

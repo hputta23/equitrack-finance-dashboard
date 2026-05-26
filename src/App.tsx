@@ -8,6 +8,7 @@ import FinancialMetricsUpdateTerminalStyle from './pages/FinancialMetricsUpdateT
 import OnboardingWizardTerminalStyle from './pages/OnboardingWizardTerminalStyle';
 import ProfileTerminalStyle from './pages/ProfileTerminalStyle';
 import TradingJournal from './pages/TradingJournal';
+import DailyTodos from './pages/DailyTodos';
 import Login from './pages/Login';
 import ResetPassword from './pages/ResetPassword';
 import { FinancialProvider, useFinancial } from './context/FinancialContext';
@@ -53,6 +54,7 @@ function AppRoutes() {
             <Route path="portfolio" element={<PortfolioTrackerTerminalStyle />} />
             <Route path="strategy" element={<IncomeStrategyFlow />} />
             <Route path="trades" element={<TradingJournal />} />
+            <Route path="todos" element={<DailyTodos />} />
             <Route path="update" element={<FinancialMetricsUpdateTerminalStyle />} />
             <Route path="profile" element={<ProfileTerminalStyle />} />
           </Route>
